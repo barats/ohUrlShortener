@@ -2,7 +2,7 @@ package db
 
 import "ohurlshortener/core"
 
-var Max_Insert_Count = 1000
+var Max_Insert_Count = 5000
 
 func FindShortUrl(url string) (core.ShortUrl, error) {
 	found := core.ShortUrl{}
