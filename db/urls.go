@@ -33,6 +33,9 @@ func FindAccessLogs(shortUrl string) ([]core.AccessLog, error) {
 }
 
 func InsertAccessLogs(logs []core.AccessLog) error {
+	if len(logs) <= 0 {
+		return nil
+	}
 	query := `INSERT INTO public.access_logs
 	(short_url, access_time, ip, user_agent)
 	VALUES(:short_url,:access_time,:ip,:user_agent)`

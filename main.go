@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 	"ohurlshortener/controller"
 	"ohurlshortener/db"
 	"ohurlshortener/redis"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,6 +45,8 @@ func main() {
 	_, err = service.ReloadUrls()
 	utils.PrintOnError("Realod urls failed.", err)
 
+	go setupTicker()
+
 	err = r.Run(fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.Port))
 	utils.ExitOnError("[ohUrlShortener] web service failed to start.", err)
 }
@@ -62,7 +66,8 @@ func setupWebRoutes(router *gin.Engine) error {
 	router.SetHTMLTemplate(tmpl)
 
 	router.GET("/l/:url", controller.ShortUrlDetail)
-	admin := router.Group("/admin", controller.BaseAuth())
+	admin := router.Group("/admin")
+	admin.Use(gin.BasicAuth(gin.Accounts{"ohUrlShortener": "helloworld"}))
 	admin.POST("/gen-shorturl", controller.GenerateShortUrl)
 	admin.POST("/reload-redis", controller.ReloadRedis)
 
@@ -73,4 +78,13 @@ func setupWebRoutes(router *gin.Engine) error {
 		})
 	})
 	return nil
+}
+
+func setupTicker() {
+	ticker := time.NewTicker(3 * time.Minute)
+	for range ticker.C {
+		if err := service.StoreAccessLog(); err != nil {
+			log.Printf("Error while trying to store access_log %s", err)
+		}
+	}
 }

@@ -59,3 +59,16 @@ func GetString(key string) (string, error) {
 func FlushDB() error {
 	return redisService.redisClient.FlushDB(ctx).Err()
 }
+
+func PushToList(key string, value interface{}) error {
+	return redisService.redisClient.LPush(ctx, key, value).Err()
+	//	return redisService.redisClient.Expire(ctx, key, oredis.KeepTTL).Err()
+}
+
+func GetAllFromList(key string) ([]string, error) {
+	return redisService.redisClient.LRange(ctx, key, 0, -1).Result()
+}
+
+func Expire(key string) error {
+	return redisService.redisClient.Expire(ctx, key, 1*time.Second).Err()
+}
