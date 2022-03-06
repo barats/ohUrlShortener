@@ -71,5 +71,5 @@ func setupTicker() {
 
 ## 关于短域名的一些引用材料
 
-详情请参见 [ohUrlShortener Linked References](referrences.md)
+详情请参见 [ohUrlShortener Linked References](references.md)
 
