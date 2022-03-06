@@ -9,6 +9,7 @@ import (
 	"ohurlshortener/controller"
 	"ohurlshortener/db"
 	"ohurlshortener/redis"
+	"ohurlshortener/service"
 	"ohurlshortener/utils"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,10 @@ func main() {
 	err := setupWebRoutes(r)
 	utils.ExitOnError("Setup routes failed.", err)
 
-	err = r.Run(fmt.Sprintf(":%d", utils.AppConfig.Port))
+	_, err = service.ReloadUrls()
+	utils.PrintOnError("Realod urls failed.", err)
+
+	err = r.Run(fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.Port))
 	utils.ExitOnError("[ohUrlShortener] web service failed to start.", err)
 }
 
@@ -58,8 +62,12 @@ func setupWebRoutes(router *gin.Engine) error {
 	router.SetHTMLTemplate(tmpl)
 
 	router.GET("/l/:url", controller.ShortUrlDetail)
+	admin := router.Group("/admin", controller.BaseAuth())
+	admin.POST("/gen-shorturl", controller.GenerateShortUrl)
+	admin.POST("/reload-redis", controller.ReloadRedis)
+
 	router.NoRoute(func(ctx *gin.Context) {
-		ctx.HTML(http.StatusNotFound, "404.html", gin.H{
+		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
 			"message": "您访问的页面已失效",
 		})

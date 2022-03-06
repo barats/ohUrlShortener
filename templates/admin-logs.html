@@ -1,0 +1,34 @@
+{{define "admin-logs.html" -}}
+{{template "admin-header.html" .}}
+<div id="admin-sidebar-menu" class="ui inverted vertical sidebar menu left">
+  <div class="item">
+    <div class="header">短域名管理</div>
+    <div class="menu">
+      <a class="item" target="_self" href="/admin/urls">仪表盘</a>        
+      <a class="active item" target="_self" href="/admin/logs">短域名管理</a>
+    </div>
+  </div>
+</div>
+<div class="pusher">
+<div class="ui inverted borderless large menu">
+  <div id="sidebar-menu-toggler" class="item"><a><i class="big sidebar icon"></i></a></div>
+  <div class="ui container">
+    <a class="ui inverted header item" target="_self" href="https://gitee.com/barat/ohurlshortener">          
+        <div class="content">ohUrlShortener</div>           
+    </a>                 
+  </div>
+</div>
+<div id="admin-left-menu" class="ui inverted vertical left fixed menu">
+  <div class="item">
+    <div class="header">短域名管理</div>
+    <div class="menu">
+        <a class="item" target="_self" href="/admin/urls">仪表盘</a>        
+        <a class="active item" target="_self" href="/admin/logs">短域名管理</a>        
+    </div>
+  </div>  
+</div>
+<div class="ui vertical segment container" style="padding: 0px;">
+  hello
+</div>
+</div><!--end of pusher-->
+{{end -}}

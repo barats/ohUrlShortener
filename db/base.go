@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"ohurlshortener/utils"
 
@@ -56,7 +57,11 @@ func ExecTx(query string, args ...interface{}) error {
 }
 
 func Get(query string, dest interface{}, args ...interface{}) error {
-	return dbService.Connection.Get(dest, query, args...)
+	err := dbService.Connection.Get(dest, query, args...)
+	if err == sql.ErrNoRows {
+		return nil
+	}
+	return err
 }
 
 func Select(query string, dest interface{}, args ...interface{}) error {

@@ -1,0 +1,13 @@
+#sidebar-menu-toggler {
+  display: none;
+}
+
+@media only screen and (max-width: 580px) {
+  #admin-left-menu {
+    display: none;
+  }
+  
+  #sidebar-menu-toggler {
+    display: block;
+  }
+}

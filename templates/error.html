@@ -1,0 +1,20 @@
+{{define "error.html" -}}
+{{template "header.html" .}}
+<div class="ui inverted borderless large menu">
+  <div class="ui container">
+    <a class="ui inverted header item" target="_self" href="https://gitee.com/barat/ohurlshortener">          
+        <div class="content">ohUrlShortener</div>           
+    </a>                 
+  </div>
+</div>
+<div class="ui top aligned grid" style="height: calc(100% - 160px); margin: 0;">
+  <div class="ui center aligned column">    
+    <div class="ui statistic">
+      <div class="value">{{.code}}</div>
+      <div class="label">{{.label}}</div>
+    </div>    
+      <p>{{ .message }}</p>
+  </div>
+</div>
+{{template "footer.html" .}}
+{{end -}}

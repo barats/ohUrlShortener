@@ -5,7 +5,7 @@ import (
 	"ohurlshortener/utils"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	oredis "github.com/go-redis/redis/v8"
 )
 
 var (
@@ -14,11 +14,11 @@ var (
 )
 
 type RedisService struct {
-	redisClient *redis.Client
+	redisClient *oredis.Client
 }
 
 func InitRedisService() (*RedisService, error) {
-	redisClient := redis.NewClient(&redis.Options{
+	redisClient := oredis.NewClient(&oredis.Options{
 		Addr:     utils.RedisConfig.Host,
 		DB:       utils.RedisConfig.Database,
 		Username: utils.RedisConfig.User,
@@ -45,9 +45,17 @@ func Set30m(key string, value interface{}) error {
 
 //Set4Ever Needs redis version 6.0 or above
 func Set4Ever(key string, value interface{}) error {
-	return Set(key, value, redis.KeepTTL)
+	return Set(key, value, oredis.KeepTTL)
 }
 
 func GetString(key string) (string, error) {
-	return redisService.redisClient.Get(ctx, key).Result()
+	result, err := redisService.redisClient.Get(ctx, key).Result()
+	if err == oredis.Nil {
+		return result, nil
+	}
+	return result, err
+}
+
+func FlushDB() error {
+	return redisService.redisClient.FlushDB(ctx).Err()
 }

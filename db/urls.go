@@ -13,7 +13,7 @@ func FindShortUrl(url string) (core.ShortUrl, error) {
 
 func FindAllShortUrls() ([]core.ShortUrl, error) {
 	found := []core.ShortUrl{}
-	query := `SELECT * FROM public.short_urls`
+	query := `SELECT * FROM public.short_urls ORDER BY created_at DESC`
 	err := Select(query, &found)
 	return found, err
 }

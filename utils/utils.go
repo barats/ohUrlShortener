@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -22,4 +23,11 @@ func PrintOnError(message string, err error) {
 func EemptyString(str string) bool {
 	str = strings.TrimSpace(str)
 	return strings.EqualFold(str, "")
+}
+
+func RaiseError(message string) error {
+	if !EemptyString(message) {
+		return fmt.Errorf(message)
+	}
+	return nil
 }

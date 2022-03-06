@@ -1,0 +1,31 @@
+{{define "login.html" -}}
+{{template "admin-header.html" .}}
+<div class="ui middle aligned center aligned grid" style="height: calc(100% - 60px);">
+  <div class="column" style="max-width: 500px">
+    <h2 class="ui teal image header">      
+      <div class="content">
+        ohUrlShortener Login
+      </div>
+    </h2>
+    <form id="login-form" class="ui large form" action="login" method="post">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <div class="ui fluid large teal submit button">Login</div>
+      </div>  
+      <div class="ui error message"></div>
+    </form>
+  </div>
+</div>
+{{template "footer.html" .}}
+{{end -}}
