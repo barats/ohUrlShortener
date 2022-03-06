@@ -1,3 +1,4 @@
 .vscode
 docker/container-data/*
 !docker/container-data/.keep
+tmp
