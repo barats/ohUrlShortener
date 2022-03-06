@@ -49,8 +49,8 @@ func GetShortUrls(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
-		"message": urls,
-		"result":  nil,
+		"message": "success",
+		"result":  urls,
 	})
 }
 
@@ -67,8 +67,8 @@ func ReloadRedis(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
-		"message": result,
-		"result":  nil,
+		"message": "success",
+		"result":  result,
 	})
 }
 
