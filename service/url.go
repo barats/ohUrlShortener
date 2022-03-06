@@ -10,18 +10,28 @@ import (
 )
 
 func ReloadUrls() (bool, error) {
+	//把所有访问日志记录到数据库中
+	err := StoreAccessLog()
+	if err != nil {
+		log.Println(err)
+		return false, utils.RaiseError("内部错误，请联系管理员")
+	}
+
+	//找出所有已经配置好的短链接
 	urls, err := db.FindAllShortUrls()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
+	//清理 redis db
 	err = redis.FlushDB()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
+	//将所有「有效」状态的短域名再次放入 Redis
 	for _, url := range urls {
 		if url.Valid {
 			err := redis.Set4Ever(url.ShortUrl, url.DestUrl)
@@ -41,6 +51,15 @@ func Search4ShortUrl(shortUrl string) (string, error) {
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
 	return destUrl, nil
+}
+
+func GetAllShortUrls() ([]core.ShortUrl, error) {
+	allUrls, err := db.FindAllShortUrls()
+	if err != nil {
+		log.Println(err)
+		return nil, utils.RaiseError("内部错误，请联系管理员")
+	}
+	return allUrls, nil
 }
 
 func GenerateShortUrl(destUrl string) (string, error) {

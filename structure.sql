@@ -26,19 +26,16 @@ CREATE INDEX access_logs_short_url_idx ON public.access_logs (short_url);
 CREATE INDEX access_logs_access_time_idx ON public.access_logs (access_time);
 CREATE INDEX access_logs_ip_idx ON public.access_logs (ip);
 
-CREATE VIEW public.url_ip_count AS
-SELECT 
-	l.short_url AS "url",
-	count(l.ip) AS "ip_count",
-	count(DISTINCT(l.ip)) AS "distinct_ip_count"
-FROM public.access_logs l
-GROUP BY l.short_url;
-
-CREATE VIEW public.url_ip_count_daily AS 
+CREATE VIEW public.url_ip_count_stats AS 
 SELECT
-	date(l.access_time) AS "date",
-	count(l.ip) AS "ip_count",
-	count(DISTINCT(l.ip)) AS "distinct_ip_count"
-FROM public.access_logs l
-GROUP BY date(l.access_time)
-ORDER BY "date" DESC;
+	l.short_url AS short_url,
+	(SELECT count(id) FROM public.access_logs WHERE date(ACCESS_TIME) = date(NOW()) AND short_url = l.short_url) AS today_count,
+	(SELECT count(id) FROM public.access_logs WHERE date(ACCESS_TIME) = (NOW() - INTERVAL '1 day')::date AND short_url = l.short_url) AS yesterday_count,
+	(SELECT count(id) FROM public.access_logs WHERE DATE_PART('month',access_time) = DATE_PART('month',NOW()) AND short_url = l.short_url) AS monthly_count,
+	(SELECT count(id) FROM public.access_logs WHERE short_url = l.short_url) AS total_count,
+	(SELECT count(DISTINCT(id)) FROM public.access_logs WHERE date(ACCESS_TIME) = date(NOW()) AND short_url = l.short_url) AS d_today_count,
+	(SELECT count(DISTINCT(id)) FROM public.access_logs WHERE date(ACCESS_TIME) = (NOW() - INTERVAL '1 day')::date AND short_url = l.short_url) AS d_yesterday_count,
+	(SELECT count(DISTINCT(id)) FROM public.access_logs WHERE DATE_PART('month',access_time) = DATE_PART('month',NOW()) AND short_url = l.short_url) AS d_monthly_count,
+	(SELECT count(DISTINCT(id)) FROM public.access_logs WHERE short_url = l.short_url) AS d_total_count	
+FROM public.access_logs l 
+GROUP BY l.short_url;

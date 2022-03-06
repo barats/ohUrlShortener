@@ -51,6 +51,13 @@ func InsertAccessLogs(logs []core.AccessLog) error {
 	return NamedExec(query, logs)
 }
 
+func GetUrlStats(url string) (core.ShortUrlStats, error) {
+	found := core.ShortUrlStats{}
+	query := `select * from public.url_ip_count_stats WHERE short_url = $1`
+	err := Get(query, &found, url)
+	return found, err
+}
+
 func splitLogsArray(array []core.AccessLog, size int) [][]core.AccessLog {
 	var chunks [][]core.AccessLog
 	for {

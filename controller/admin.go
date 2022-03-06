@@ -9,6 +9,51 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func ShortUrlsStats(c *gin.Context) {
+	url := c.Param("url")
+	if utils.EemptyString(url) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    http.StatusBadRequest,
+			"message": "缺少参数 url",
+			"result":  nil,
+		})
+		return
+	}
+
+	found, err := service.GetShortUrlStats(url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": err.Error(),
+			"result":  nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": "success",
+		"result":  found,
+	})
+}
+
+func GetShortUrls(c *gin.Context) {
+	urls, err := service.GetAllShortUrls()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": err.Error(),
+			"result":  nil,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"message": urls,
+		"result":  nil,
+	})
+}
+
 func ReloadRedis(c *gin.Context) {
 	result, err := service.ReloadUrls()
 	if err != nil {

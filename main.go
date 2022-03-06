@@ -66,10 +66,15 @@ func setupWebRoutes(router *gin.Engine) error {
 	router.SetHTMLTemplate(tmpl)
 
 	router.GET("/l/:url", controller.ShortUrlDetail)
+
 	admin := router.Group("/admin")
+	//TODO: 实现自己的用户验证逻辑，这里简单处理
 	admin.Use(gin.BasicAuth(gin.Accounts{"ohUrlShortener": "helloworld"}))
-	admin.POST("/gen-shorturl", controller.GenerateShortUrl)
-	admin.POST("/reload-redis", controller.ReloadRedis)
+	admin.GET("/shorturl", controller.GetShortUrls)
+	admin.GET("/shorturl/:url/stats", controller.ShortUrlsStats)
+	admin.POST("/shorturl", controller.GenerateShortUrl)
+
+	admin.POST("/reload_redis", controller.ReloadRedis)
 
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
@@ -81,10 +86,16 @@ func setupWebRoutes(router *gin.Engine) error {
 }
 
 func setupTicker() {
-	ticker := time.NewTicker(3 * time.Minute)
+	//sleep for 30s to make sure main process is gon
+	time.Sleep(35 * time.Second)
+
+	//Clear redis cache every 65 seconds
+	ticker := time.NewTicker(65 * time.Second)
 	for range ticker.C {
+		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLog(); err != nil {
 			log.Printf("Error while trying to store access_log %s", err)
 		}
+		log.Println("[StoreAccessLog] Finish.")
 	}
 }
