@@ -35,12 +35,16 @@ func init() {
 }
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
+
+	if !utils.AppConfig.Debug {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 
-	err := setupWebRoutes(r)
-	utils.ExitOnError("Setup routes failed.", err)
+	err := setupWebRouters(r)
+	utils.ExitOnError("Setup routers failed.", err)
 
 	_, err = service.ReloadUrls()
 	utils.PrintOnError("Realod urls failed.", err)
@@ -51,7 +55,7 @@ func main() {
 	utils.ExitOnError("[ohUrlShortener] web service failed to start.", err)
 }
 
-func setupWebRoutes(router *gin.Engine) error {
+func setupWebRouters(router *gin.Engine) error {
 	sub, err := fs.Sub(FS, "assets")
 	if err != nil {
 		return err
@@ -65,7 +69,7 @@ func setupWebRoutes(router *gin.Engine) error {
 
 	router.SetHTMLTemplate(tmpl)
 
-	router.GET("/l/:url", controller.ShortUrlDetail)
+	router.GET("/:url", controller.ShortUrlDetail)
 
 	admin := router.Group("/admin")
 	//TODO: 实现自己的用户验证逻辑，这里简单处理
@@ -86,11 +90,11 @@ func setupWebRoutes(router *gin.Engine) error {
 }
 
 func setupTicker() {
-	//sleep for 30s to make sure main process is gon
-	time.Sleep(35 * time.Second)
+	//sleep for 60s to make sure main process is gon
+	time.Sleep(60 * time.Second)
 
-	//Clear redis cache every 65 seconds
-	ticker := time.NewTicker(65 * time.Second)
+	//Clear redis cache every 3 minutes
+	ticker := time.NewTicker(3 * time.Minute)
 	for range ticker.C {
 		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLog(); err != nil {

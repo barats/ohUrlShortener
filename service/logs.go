@@ -3,6 +3,7 @@ package service
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"ohurlshortener/core"
 	"ohurlshortener/db"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-const key_access_logs_list = "OH_CURRENT_ACCESS_LOGS"
+const access_logs_prefix = "OH_ACCESS_LOGS#"
 
 func NewAccessLog(url string, ip string, useragent string) error {
 
@@ -23,7 +24,8 @@ func NewAccessLog(url string, ip string, useragent string) error {
 	}
 
 	logJson, _ := json.Marshal(l)
-	err := redis.PushToList(key_access_logs_list, logJson)
+	key := fmt.Sprintf("%s%s", access_logs_prefix, utils.UserAgentIpHash(useragent, ip))
+	err := redis.Set30m(key, logJson)
 	if err != nil {
 		log.Println(err)
 		return utils.RaiseError("内部错误，请联系管理员")
@@ -33,18 +35,23 @@ func NewAccessLog(url string, ip string, useragent string) error {
 }
 
 func StoreAccessLog() error {
-	reuslt, err := redis.GetAllFromList(key_access_logs_list)
+	keys, err := redis.Scan4Keys(access_logs_prefix + "*")
 	if err != nil {
 		log.Println(err)
 		return utils.RaiseError("内部错误，请联系管理员")
 	}
 
 	logs := []core.AccessLog{}
-	for _, r := range reuslt {
+	for _, k := range keys {
+		v, err := redis.GetString(k)
+		if err != nil {
+			log.Printf("redis error for key %s", k)
+			continue
+		}
 		log := core.AccessLog{}
-		json.Unmarshal([]byte(r), &log)
+		json.Unmarshal([]byte(v), &log)
 		logs = append(logs, log)
-	}
+	} //end of for
 
 	err = db.InsertAccessLogs(logs)
 	if err != nil {
@@ -52,11 +59,10 @@ func StoreAccessLog() error {
 		return utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	err = redis.Expire(key_access_logs_list)
+	err = redis.Delete(keys...)
 	if err != nil {
 		log.Println(err)
 		return utils.RaiseError("内部错误，请联系管理员")
 	}
-
 	return nil
 }

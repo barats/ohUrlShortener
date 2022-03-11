@@ -23,15 +23,13 @@ func InitRedisService() (*RedisService, error) {
 		DB:       utils.RedisConfig.Database,
 		Username: utils.RedisConfig.User,
 		Password: utils.RedisConfig.Password,
+		PoolSize: 200,
 	})
-
 	_, err := redisClient.Ping(ctx).Result()
 	if err != nil {
 		return nil, err
 	}
-
 	redisService.redisClient = redisClient
-
 	return redisService, nil
 }
 
@@ -43,9 +41,17 @@ func Set30m(key string, value interface{}) error {
 	return Set(key, value, 30*time.Minute)
 }
 
-//Set4Ever Needs redis version 6.0 or above
 func Set4Ever(key string, value interface{}) error {
 	return Set(key, value, oredis.KeepTTL)
+}
+
+func Scan4Keys(prefix string) ([]string, error) {
+	keys := []string{}
+	sc := redisService.redisClient.Scan(ctx, 0, prefix, 0).Iterator()
+	for sc.Next(ctx) {
+		keys = append(keys, sc.Val())
+	}
+	return keys, nil
 }
 
 func GetString(key string) (string, error) {
@@ -60,15 +66,9 @@ func FlushDB() error {
 	return redisService.redisClient.FlushDB(ctx).Err()
 }
 
-func PushToList(key string, value interface{}) error {
-	return redisService.redisClient.LPush(ctx, key, value).Err()
-	//	return redisService.redisClient.Expire(ctx, key, oredis.KeepTTL).Err()
-}
-
-func GetAllFromList(key string) ([]string, error) {
-	return redisService.redisClient.LRange(ctx, key, 0, -1).Result()
-}
-
-func Expire(key string) error {
-	return redisService.redisClient.Expire(ctx, key, 1*time.Second).Err()
+func Delete(key ...string) error {
+	if len(key) > 0 {
+		return redisService.redisClient.Del(ctx, key...).Err()
+	}
+	return nil
 }
