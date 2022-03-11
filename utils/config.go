@@ -11,7 +11,8 @@ var (
 )
 
 type AppConfigInfo struct {
-	Port int
+	Port  int
+	Debug bool
 }
 
 type RedisConfigInfo struct {
@@ -45,6 +46,7 @@ func InitConfig(file string) (*ini.File, error) {
 
 	appSection := cfg.Section("app")
 	AppConfig.Port = appSection.Key("port").MustInt()
+	AppConfig.Debug = appSection.Key("debug").MustBool()
 
 	redisSection := cfg.Section("redis")
 	RedisConfig.Host = redisSection.Key("host").String()

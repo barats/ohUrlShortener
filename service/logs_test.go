@@ -5,6 +5,7 @@ import (
 	"ohurlshortener/redis"
 	"ohurlshortener/utils"
 	"testing"
+	"time"
 )
 
 func TestStoreAccessLog(t *testing.T) {
@@ -16,8 +17,11 @@ func TestStoreAccessLog(t *testing.T) {
 
 func TestNewAccessLog(t *testing.T) {
 	init4Test(t)
-	if err := NewAccessLog("heh1e99999", "127.0.0.1", "asdfsdfas"); err != nil {
-		t.Error(err)
+	for i := 0; i < 500; i++ {
+		if err := NewAccessLog("=====heh1e99999", "127.2.0.1", "asdfsdfas"); err != nil {
+			t.Error(err)
+		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }
 
