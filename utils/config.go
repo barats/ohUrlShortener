@@ -11,8 +11,10 @@ var (
 )
 
 type AppConfigInfo struct {
-	Port  int
-	Debug bool
+	Port      int
+	AdminPort int
+	UrlPrefix string
+	Debug     bool
 }
 
 type RedisConfigInfo struct {
@@ -45,8 +47,10 @@ func InitConfig(file string) (*ini.File, error) {
 	DatabaseConifg.DbName = section.Key("database").String()
 
 	appSection := cfg.Section("app")
-	AppConfig.Port = appSection.Key("port").MustInt()
 	AppConfig.Debug = appSection.Key("debug").MustBool()
+	AppConfig.Port = appSection.Key("port").MustInt()
+	AppConfig.AdminPort = appSection.Key("admin_port").MustInt()
+	AppConfig.UrlPrefix = appSection.Key("url_prefix").String()
 
 	redisSection := cfg.Section("redis")
 	RedisConfig.Host = redisSection.Key("host").String()

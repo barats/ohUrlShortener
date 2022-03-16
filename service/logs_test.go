@@ -10,7 +10,7 @@ import (
 
 func TestStoreAccessLog(t *testing.T) {
 	init4Test(t)
-	if err := StoreAccessLog(); err != nil {
+	if err := StoreAccessLogs(); err != nil {
 		t.Error(err)
 	}
 }

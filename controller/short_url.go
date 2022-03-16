@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
@@ -16,6 +15,7 @@ func ShortUrlDetail(c *gin.Context) {
 			"title":   "404 - ohUrlShortener",
 			"code":    http.StatusNotFound,
 			"message": "您访问的页面已失效",
+			"label":   "Status Not Found",
 		})
 		return
 	}
@@ -23,9 +23,10 @@ func ShortUrlDetail(c *gin.Context) {
 	destUrl, err := service.Search4ShortUrl(url)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
-			"title":   "错误 - ohUrlShortener",
+			"title":   "内部错误 - ohUrlShortener",
 			"code":    http.StatusInternalServerError,
 			"message": err.Error(),
+			"label":   "Error",
 		})
 		return
 	}
@@ -35,14 +36,12 @@ func ShortUrlDetail(c *gin.Context) {
 			"title":   "404 - ohUrlShortener",
 			"code":    http.StatusNotFound,
 			"message": "您访问的页面已失效",
+			"label":   "Status Not Found",
 		})
 		return
 	}
 
-	err = service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent())
-	if err != nil {
-		log.Println(err)
-	}
+	go service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent())
 
 	c.Redirect(http.StatusFound, destUrl)
 }
