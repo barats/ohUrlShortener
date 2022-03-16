@@ -11,7 +11,7 @@ import (
 
 func ReloadUrls() (bool, error) {
 	//把所有访问日志记录到数据库中
-	err := StoreAccessLog()
+	err := StoreAccessLogs()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")

@@ -25,8 +25,6 @@ func GenerateShortLink(initialLink string) (string, error) {
 
 ## 定时器3分钟清理一次访问日志
 
-`main` 函数启动时，启动了 `Ticker` 每个65秒清理 Redis 中的访问日志
-
 ```
 	ticker := time.NewTicker(3 * time.Minute)
 	for range ticker.C {

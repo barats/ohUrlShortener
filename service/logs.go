@@ -34,7 +34,7 @@ func NewAccessLog(url string, ip string, useragent string) error {
 	return nil
 }
 
-func StoreAccessLog() error {
+func StoreAccessLogs() error {
 	keys, err := redis.Scan4Keys(access_logs_prefix + "*")
 	if err != nil {
 		log.Println(err)
