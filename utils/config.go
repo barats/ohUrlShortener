@@ -22,14 +22,17 @@ type RedisConfigInfo struct {
 	User     string
 	Password string
 	Database int
+	PoolSize int
 }
 
 type DatabaseConfigInfo struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DbName   string
+	Host         string
+	Port         int
+	User         string
+	Password     string
+	DbName       string
+	MaxOpenConns int
+	MaxIdleConn  int
 }
 
 func InitConfig(file string) (*ini.File, error) {
@@ -42,6 +45,8 @@ func InitConfig(file string) (*ini.File, error) {
 	section := cfg.Section("postgres")
 	DatabaseConifg.Host = section.Key("host").String()
 	DatabaseConifg.Port = section.Key("port").MustInt()
+	DatabaseConifg.MaxOpenConns = section.Key("max_open_conn").MustInt()
+	DatabaseConifg.MaxIdleConn = section.Key("max_idle_conn").MustInt()
 	DatabaseConifg.User = section.Key("user").String()
 	DatabaseConifg.Password = section.Key("password").String()
 	DatabaseConifg.DbName = section.Key("database").String()
@@ -57,6 +62,7 @@ func InitConfig(file string) (*ini.File, error) {
 	RedisConfig.User = redisSection.Key("user").String()
 	RedisConfig.Password = redisSection.Key("password").String()
 	RedisConfig.Database = redisSection.Key("database").MustInt()
+	RedisConfig.PoolSize = redisSection.Key("pool_size").MustInt()
 
 	return cfg, err
 }

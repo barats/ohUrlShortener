@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func OhUrlShortenerLogFormat(server string) gin.HandlerFunc {
+func WebLogFormat(server string) gin.HandlerFunc {
 	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		if !strings.HasPrefix(param.Path, "/assets") {
 			return fmt.Sprintf("[%s | %s] %s %s %d %s \t%s %s %s \n",

@@ -1,0 +1,148 @@
+{{define "dashboard.html" -}}
+{{template "header.html" . -}}
+{{template "sidebar.html" . -}}
+<div class="pusher">
+{{template "admin-left-menu.html" . -}}
+{{template "admin-top-menu.html" . -}}
+<div id="admin-right-content" class="ui basic segment">
+  <div class="ui center aligned grid stackable padded">
+    <div class="four wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="ui right floated header red">
+            <i class="icon shopping cart"></i>
+          </div>
+          <div class="header">
+            <div class="ui red header">
+              3958
+            </div>
+          </div>
+          <div class="meta">
+            总链接数
+          </div>
+          <div class="description">
+            当前总短链接数
+          </div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/urls" target="_self" class="ui red button">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+    <div class="four wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="ui right floated header green">
+            <i class="icon clock"></i>
+          </div>
+          <div class="header">
+            <div class="ui header green">57.6%</div>
+          </div>
+          <div class="meta">
+            今日点击量
+          </div>
+          <div class="description">
+            所有链接今日产生的总点击量
+          </div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/access_logs" target="_self" class="ui green button">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+    <div class="four wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="ui right floated header teal">
+            <i class="icon briefcase"></i>
+          </div>
+          <div class="header">
+            <div class="ui teal header">3112</div>
+          </div>
+          <div class="meta">
+            今日独立IP数
+          </div>
+          <div class="description">
+            所有短链接今日点击的总IP数
+          </div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <div class="ui teal button">查看详情</div>
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+  </div><!--end of grid-->
+  <div class="ui grid stackable padded">
+    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
+      <div class="ui purple statistic">
+        <div class="value">
+          1000+
+        </div>
+        <div class="label">
+          最近七日点击量
+        </div>
+      </div>
+    </div>
+    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
+      <div class="ui purple statistic">
+        <div class="value">
+          1000+
+        </div>
+        <div class="label">
+          最近七日独立IP数
+        </div>
+      </div>
+    </div>
+    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
+      <div class="ui purple statistic">
+        <div class="value">
+          1000+
+        </div>
+        <div class="label">
+          总点击量
+        </div>
+      </div>
+    </div>
+    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
+      <div class="ui purple statistic">
+        <div class="value">
+          1000+
+        </div>
+        <div class="label">
+          总独立IP数
+        </div>
+      </div>
+    </div> 
+  </div><!--end of grid-->   
+  <div class="ui grid stackable padded">
+    <div class="column">
+      <table class="ui celled striped table">
+        <thead>
+          <tr>
+            <th colspan="2">今日点击量 Top10</th>
+            <th class="center aligned">创建时间</th>
+            <th class="center aligned">点击量</th>
+            <th class="center aligned">独立IP数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="collapsing"><a href="https://i.barats.cn/zzzzzz" target="_blank">https://i.barats.cn/zzzzzz</a></td>            
+            <td><a href="https://gitee.com/barat/ohurlshortener" target="_blank">https://gitee.com/barat/ohurlshortener</a></td>
+            <td class="center aligned">2022-03-01 12:23:45</td>
+            <td class="center aligned">10</td>
+            <td class="center aligned">10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!--end fo grid-->
+</div><!--end of segment-->
+</div><!--end of pusher-->
+{{end -}}

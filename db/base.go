@@ -23,8 +23,8 @@ func InitDatabaseService() (*DatabaseService, error) {
 	if err != nil {
 		return dbService, err
 	}
-	conn.SetMaxOpenConns(10)
-	conn.SetMaxIdleConns(1)
+	conn.SetMaxOpenConns(utils.DatabaseConifg.MaxOpenConns)
+	conn.SetMaxIdleConns(utils.DatabaseConifg.MaxIdleConn)
 	conn.SetConnMaxLifetime(0) //always REUSE
 	dbService.Connection = conn
 	return dbService, nil

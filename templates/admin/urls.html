@@ -1,0 +1,93 @@
+{{define "urls.html" -}}
+{{template "header.html" . -}}
+{{template "sidebar.html" . -}}
+<div class="pusher">
+{{template "admin-left-menu.html" . -}}
+{{template "admin-top-menu.html" . -}}
+<div id="admin-right-content" class="ui basic segment">  
+  <div class="ui grid stackable padded">
+    <div class="column">
+      <table class="ui celled striped table">
+        <thead>
+          <tr>
+            <th colspan="3">
+              <div class="ui labeled action input">
+                <div class="ui label">
+                  https://i.barats.cn/
+                </div>
+                <input type="text" placeholder="短链接">
+                <button class="ui teal right labeled icon button"><i class="search icon"></i>查询</button>                
+              </div>              
+            </th>
+            <th colspan="7"><button id="new-shorturl-btn" class="ui primary button">新建短链接</button></th>
+          </tr>
+          <tr>            
+            <th>短链接</th>
+            <th>备注</th>            
+            <th class="center aligned">生成时间</th>
+            <th class="center aligned">目标链接</th>
+            <th class="center aligned">今日点击量</th>
+            <th class="center aligned">今日独立IP数</th>
+            <th class="center aligned">昨日点击量</th>
+            <th class="center aligned">昨日独立IP数</th>
+            <th class="center aligned">总点击量</th>
+            <th class="center aligned">总独立IP数</th>            
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://i.barats.cn/A1HeJzob" target="_blank">A1HeJzob</a></td>
+            <td>OH官网330特效节目推广</td>
+            <td class="center aligned">2022-03-01 12:23:34</td>
+            <td><a href="https://gitee.com/barat/ohurlshortener" target="_blank">打开链接</a></td>            
+            <td class="center aligned">22</td>
+            <td class="center aligned">33</td>
+            <td class="center aligned">44</td>
+            <td class="center aligned">55</td>
+            <td class="center aligned">66</td>
+            <td class="center aligned">77</td>                        
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>            
+            <th colspan="10" class="center aligned">
+              <a class="ui small labeled icon button"><i class="arrow alternate circle left outline icon"></i> 上一页</a>
+              <a class="ui small labeled icon button"><i class="arrow alternate circle right outline icon"></i> 下一页</a>              
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div><!--end fo grid-->
+</div><!--end of segment-->
+</div><!--end of pusher-->
+<div id="new-shorturl-modal"  class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    新建短链接
+  </div>
+  <div class="content">   
+    <div class="description">      
+      <div class="ui form">
+        <div class="field">
+          <label>目标链接</label>
+          <textarea rows="1"></textarea>
+        </div>
+        <div class="field">
+          <label>备注</label>
+          <textarea rows="2"></textarea>
+        </div>
+      </div>      
+    </div>
+  </div>
+  <div class="actions">
+    <div class="ui black deny button">
+      放弃
+    </div>
+    <div class="ui primary right labeled icon button">
+      确认新建
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>
+{{end -}}

@@ -23,7 +23,7 @@ func InitRedisService() (*RedisService, error) {
 		DB:       utils.RedisConfig.Database,
 		Username: utils.RedisConfig.User,
 		Password: utils.RedisConfig.Password,
-		PoolSize: 200,
+		PoolSize: utils.RedisConfig.PoolSize,
 	})
 	_, err := redisClient.Ping(ctx).Result()
 	if err != nil {

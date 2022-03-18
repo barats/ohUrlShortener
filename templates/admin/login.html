@@ -1,0 +1,38 @@
+{{define "login.html" -}}
+{{- template "header.html" .}}
+<div class="ui inverted borderless large menu">
+  <div class="ui container">
+    <a class="ui inverted header item" target="_self" href="https://gitee.com/barat/ohurlshortener">          
+        <div class="content">ohUrlShortener</div>           
+    </a>                 
+  </div>
+</div>
+<div id="login-grid" class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui image header">      
+      <div class="content">
+        ohUrlShortener Admin Login
+      </div>
+    </h2>
+    <form id="login-form" class="ui large form" action="/login" method="post">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="account" placeholder="Account">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <div class="ui fluid large black submit button">Login</div>
+      </div>  
+      <div class="ui error message"></div>
+    </form>
+  </div>
+</div>
+{{- template "footer.html" .}}
+{{end -}}
