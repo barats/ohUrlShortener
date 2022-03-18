@@ -17,8 +17,8 @@ func TestStoreAccessLog(t *testing.T) {
 
 func TestNewAccessLog(t *testing.T) {
 	init4Test(t)
-	for i := 0; i < 500; i++ {
-		if err := NewAccessLog("=====heh1e99999", "127.2.0.1", "asdfsdfas", "fffff"); err != nil {
+	for i := 0; i < 100; i++ {
+		if err := NewAccessLog("A1HeJzob", "192.168.2.1", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36", "fffff"); err != nil {
 			t.Error(err)
 		}
 		time.Sleep(10 * time.Millisecond)

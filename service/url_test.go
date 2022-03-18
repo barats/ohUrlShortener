@@ -12,7 +12,7 @@ func TestGenerateShortUrl(t *testing.T) {
 		t.Error(err)
 	}
 
-	res, err := GenerateShortUrl("https://github.com/barats/ohurlshortener")
+	res, err := GenerateShortUrl("https://ww2222.ortener", "")
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,0 +1,53 @@
+package db
+
+import (
+	"ohurlshortener/core"
+	"ohurlshortener/utils"
+)
+
+func FindAccessLogs(shortUrl string) ([]core.AccessLog, error) {
+	found := []core.AccessLog{}
+	query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
+	err := Select(query, &found, shortUrl)
+	return found, err
+}
+
+func InsertAccessLogs(logs []core.AccessLog) error {
+	if len(logs) <= 0 {
+		return nil
+	}
+	query := `INSERT INTO public.access_logs (short_url, access_time, ip, user_agent) VALUES(:short_url,:access_time,:ip,:user_agent)`
+	if len(logs) >= Max_Insert_Count {
+		logsSlice := splitLogsArray(logs, Max_Insert_Count)
+		for _, slice := range logsSlice {
+			err := NamedExec(query, slice)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return NamedExec(query, logs)
+}
+
+func FindAccessLogsCount(url string) (int, error) {
+	var rowCount int
+	query := "SELECT count(l.id) FROM public.access_logs l"
+	if !utils.EemptyString(url) {
+		query = "SELECT count(l.id) FROM public.access_logs l WHERE l.short_url = $1"
+		err := Get(query, &rowCount, url)
+		return rowCount, err
+	}
+	return rowCount, Get(query, &rowCount)
+}
+
+func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error) {
+	found := []core.AccessLog{}
+	offset := (page - 1) * size
+	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC LIMIT $1 OFFSET $2"
+	if !utils.EemptyString(url) {
+		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC LIMIT $2 OFFSET $3"
+		err := Select(query, &found, url, size, offset)
+		return found, err
+	}
+	return found, Select(query, &found, size, offset)
+}

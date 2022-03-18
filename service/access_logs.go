@@ -66,3 +66,15 @@ func StoreAccessLogs() error {
 	}
 	return nil
 }
+
+func GetPagedAccessLogs(url string, page int, size int) ([]core.AccessLog, error) {
+	if page < 1 || size < 1 {
+		return nil, nil
+	}
+	allAccessLogs, err := db.FindAllAccessLogs(url, page, size)
+	if err != nil {
+		log.Println(err)
+		return allAccessLogs, utils.RaiseError("内部错误，请联系管理员")
+	}
+	return allAccessLogs, nil
+}

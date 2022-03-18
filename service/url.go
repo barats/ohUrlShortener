@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"log"
 	"ohurlshortener/core"
 	"ohurlshortener/db"
@@ -53,16 +54,19 @@ func Search4ShortUrl(shortUrl string) (string, error) {
 	return destUrl, nil
 }
 
-func GetAllShortUrls() ([]core.ShortUrl, error) {
-	allUrls, err := db.FindAllShortUrls()
+func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) {
+	if page < 1 || size < 1 {
+		return nil, nil
+	}
+	allUrls, err := db.FindPagedShortUrls(url, page, size)
 	if err != nil {
 		log.Println(err)
-		return nil, utils.RaiseError("内部错误，请联系管理员")
+		return allUrls, utils.RaiseError("内部错误，请联系管理员")
 	}
 	return allUrls, nil
 }
 
-func GenerateShortUrl(destUrl string) (string, error) {
+func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	shortUrl, err := core.GenerateShortLink(destUrl)
 	if err != nil {
 		log.Println(err)
@@ -79,12 +83,19 @@ func GenerateShortUrl(destUrl string) (string, error) {
 		return shortUrl, nil
 	}
 
+	var nsMemo sql.NullString
+	if !utils.EemptyString(memo) {
+		nsMemo = sql.NullString{Valid: true, String: memo}
+	}
+
 	url := core.ShortUrl{
 		DestUrl:   destUrl,
 		ShortUrl:  shortUrl,
 		CreatedAt: time.Now(),
 		Valid:     true,
+		Memo:      nsMemo,
 	}
+
 	if err := db.InsertShortUrl(url); err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")

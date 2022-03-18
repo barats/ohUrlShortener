@@ -5,28 +5,28 @@
 {{template "admin-left-menu.html" . -}}
 {{template "admin-top-menu.html" . -}}
 <div id="admin-right-content" class="ui basic segment">
+  {{if .error}}
+  <div class="ui basic segment">
+    <div class="ui negative message">
+      <div class="header">温馨提示</div>
+      <p>{{.error}}</p>
+    </div>
+  </div>  
+  {{end}}
   <div class="ui grid stackable padded">
     <div class="column">
       <table class="ui celled striped table">
         <thead>
           <tr>
             <th colspan="4">
+              <form action="/admin/access_logs" method="get">
               <div class="ui labeled action input">
-                <div class="ui label">
-                  https://i.barats.cn/
-                </div>
-                <input type="text" placeholder="短链接">                
+                <div class="ui label">{{.prefix}}</div>
+                <input name="url" type="text" value="{{.url}}" placeholder="短链接">                
               </div>
-              <div class="ui input">
-                <input type="text" placeholder="访问起始时间">
-              </div>                            
-              <div class="ui input">
-                <input type="text" placeholder="访问截至时间">
-              </div>
-              <div class="ui input">
-                <input type="text" placeholder="访问IP">
-              </div>                                                        
-              <button class="ui teal right labeled icon button"><i class="search icon"></i>查询</button>                
+              <button class="ui teal right labeled icon button" type="submit"><i class="search icon"></i>查询</button>                
+              <a class="ui teal right labeled icon button" href="/admin/access_logs"><i class="undo alternate icon"></i>重置</a>                              
+            </form>
             </th>
           </tr>
           <tr>
@@ -37,18 +37,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><a href="https://i.barats.cn/A1HeJzob" target="_blank">A1HeJzob</a></td>            
-            <td class="center aligned">2022-03-01 12:23:34</td>
-            <td class="center aligned">192.168.0.1</td>
-            <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36</td>                                  
+          {{range .logs}}          
+          <tr>            
+            <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a></td>            
+            <td class="center aligned collapsing">{{.AccessTime | date "2006-01-02 15:04:05"}}</td>
+            <td class="center aligned collapsing">{{.Ip.String}}</td>
+            <td>{{.UserAgent.String}}</td>                                  
           </tr>
+          {{end}}
         </tbody>
         <tfoot>
           <tr>            
-            <th colspan="4" class="center aligned">
-              <a class="ui small labeled icon button"><i class="arrow alternate circle left outline icon"></i> 上一页</a>
-              <a class="ui small labeled icon button"><i class="arrow alternate circle right outline icon"></i> 下一页</a>              
+            <th colspan="4" class="center aligned">              
+              {{if not .first_page}}
+              <a class="ui small labeled icon button" href="/admin/access_logs?url={{.url}}&page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i> 上一页</a>
+              {{end}}
+              {{if not .last_page}}
+              <a class="ui small labeled icon button" href="/admin/access_logs?url={{.url}}&page={{add .page 1}}"><i class="arrow alternate circle right outline icon"></i> 下一页</a>              
+              {{end}}              
             </th>
           </tr>
         </tfoot>

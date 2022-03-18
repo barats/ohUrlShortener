@@ -1,6 +1,7 @@
 package core
 
 import (
+	"database/sql"
 	"fmt"
 	"math/big"
 	"ohurlshortener/utils"
@@ -9,11 +10,12 @@ import (
 )
 
 type ShortUrl struct {
-	ID        int64     `db:"id" json:"id"`
-	ShortUrl  string    `db:"short_url" json:"short_url"`
-	DestUrl   string    `db:"dest_url" json:"desc_url"`
-	CreatedAt time.Time `db:"created_at" json:"created_at"`
-	Valid     bool      `db:"is_valid" json:"is_valid"`
+	ID        int64          `db:"id" json:"id"`
+	ShortUrl  string         `db:"short_url" json:"short_url"`
+	DestUrl   string         `db:"dest_url" json:"desc_url"`
+	CreatedAt time.Time      `db:"created_at" json:"created_at"`
+	Valid     bool           `db:"is_valid" json:"is_valid"`
+	Memo      sql.NullString `db:"memo" json:"memo"`
 }
 
 func (url ShortUrl) IsEmpty() bool {
