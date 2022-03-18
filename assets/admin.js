@@ -36,6 +36,5 @@ $(document).ready(function() {
 
     $('#new-shorturl-btn').click(function(){
       $('#new-shorturl-modal').modal('show');
-    });
-
+    });    
 });

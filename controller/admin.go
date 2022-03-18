@@ -1,12 +1,18 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	DEFAULT_PAGE_NUM  = 1
+	DEFAULT_PAGE_SIZE = 20
 )
 
 func LoginPage(c *gin.Context) {
@@ -31,106 +37,55 @@ func DashbaordPage(c *gin.Context) {
 }
 
 func UrlsPage(c *gin.Context) {
+	url := c.DefaultQuery("url", "")
+	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DEFAULT_PAGE_NUM
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DEFAULT_PAGE_SIZE
+	}
+	urls, err := service.GetPagesShortUrls(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "urls.html", gin.H{
 		"title":       "短链接列表 - ohUrlShortener",
 		"current_url": c.Request.URL.Path,
+		"error":       err,
+		"shortUrls":   urls,
+		"page":        page,
+		"size":        size,
+		"prefix":      utils.AppConfig.UrlPrefix,
+		"first_page":  page == 1,
+		"last_page":   len(url) < size,
+		"url":         strings.TrimSpace(url),
 	})
 }
 
 func AccessLogsPage(c *gin.Context) {
+	url := c.DefaultQuery("url", "")
+	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DEFAULT_PAGE_NUM
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DEFAULT_PAGE_SIZE
+	}
+	logs, err := service.GetPagedAccessLogs(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "access_logs.html", gin.H{
 		"title":       "访问日志查询 - ohUrlShortener",
 		"current_url": c.Request.URL.Path,
-	})
-}
-
-func ShortUrlsStats(c *gin.Context) {
-	url := c.Param("url")
-	if utils.EemptyString(url) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": "缺少参数 url",
-			"result":  nil,
-		})
-		return
-	}
-
-	found, err := service.GetShortUrlStats(url)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code":    http.StatusInternalServerError,
-			"message": err.Error(),
-			"result":  nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "success",
-		"result":  found,
-	})
-}
-
-func GetShortUrls(c *gin.Context) {
-	urls, err := service.GetAllShortUrls()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code":    http.StatusInternalServerError,
-			"message": err.Error(),
-			"result":  nil,
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "success",
-		"result":  urls,
-	})
-}
-
-func ReloadRedis(c *gin.Context) {
-	result, err := service.ReloadUrls()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": err.Error(),
-			"result":  nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "success",
-		"result":  result,
-	})
-}
-
-func GenerateShortUrl(c *gin.Context) {
-	destUrl := c.PostForm("dest_url")
-	if utils.EemptyString(destUrl) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": "缺少参数 dest_url",
-			"result":  nil,
-		})
-		return
-	}
-
-	shortUrl, err := service.GenerateShortUrl(destUrl)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":    http.StatusBadRequest,
-			"message": err.Error(),
-			"result":  nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "success",
-		"result":  fmt.Sprintf("https://i.barats.cn/l/%s", shortUrl),
+		"error":       err,
+		"logs":        logs,
+		"page":        page,
+		"size":        size,
+		"prefix":      utils.AppConfig.UrlPrefix,
+		"first_page":  page == 1,
+		"last_page":   len(logs) < size,
+		"url":         strings.TrimSpace(url),
 	})
 }

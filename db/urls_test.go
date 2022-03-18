@@ -45,3 +45,32 @@ func TestFindShortUrl(t *testing.T) {
 	}
 	log.Printf("%v", found)
 }
+
+func TestFindPagedShortUrls(t *testing.T) {
+	init4Test(t)
+	type args struct {
+		url  string
+		page int
+		size int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase 1", args: args{url: "", page: 1, size: 10}, want: 0, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FindPagedShortUrls(tt.args.url, tt.args.page, tt.args.size)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindPagedShortUrls() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if len(got) != tt.want {
+				t.Errorf("FindPagedShortUrls() = %d, want %v", len(got), tt.want)
+			}
+		})
+	}
+}
