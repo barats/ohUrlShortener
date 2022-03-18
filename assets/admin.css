@@ -1,0 +1,38 @@
+
+#login-grid {
+  height: calc(100% - 125px); 
+  margin: 0; 
+}
+
+#login-grid>.column {
+  max-width: 500px;
+}
+
+#admin-left-menu {
+  max-width: 200px;    
+}
+
+#admin-top-menu {
+  display: none;
+  max-height: 60px;
+}
+
+#admin-right-content {  
+  padding-left: 200px;
+}
+
+@media only screen and (max-width: 550px) {
+
+  #admin-left-menu {
+    display: none;
+  }
+
+  #admin-top-menu {
+    display: block;
+  }
+
+  #admin-right-content {
+    padding-top: 60px;
+    padding-left: 0px;
+  }  
+}

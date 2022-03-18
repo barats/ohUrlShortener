@@ -9,6 +9,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func LoginPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", gin.H{
+		"title": "登录 - ohUrlShortener",
+	})
+}
+
+func DoLogin(c *gin.Context) {
+	//TODO: Login logic
+}
+
+func DoLogout(c *gin.Context) {
+	//TODO: Login logic
+}
+
+func DashbaordPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+		"title":       "仪表盘 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+	})
+}
+
+func UrlsPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "urls.html", gin.H{
+		"title":       "短链接列表 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+	})
+}
+
+func AccessLogsPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "access_logs.html", gin.H{
+		"title":       "访问日志查询 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+	})
+}
+
 func ShortUrlsStats(c *gin.Context) {
 	url := c.Param("url")
 	if utils.EemptyString(url) {

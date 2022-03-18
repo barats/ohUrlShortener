@@ -1,0 +1,60 @@
+{{define "access_logs.html" -}}
+{{template "header.html" . -}}
+{{template "sidebar.html" . -}}
+<div class="pusher">
+{{template "admin-left-menu.html" . -}}
+{{template "admin-top-menu.html" . -}}
+<div id="admin-right-content" class="ui basic segment">
+  <div class="ui grid stackable padded">
+    <div class="column">
+      <table class="ui celled striped table">
+        <thead>
+          <tr>
+            <th colspan="4">
+              <div class="ui labeled action input">
+                <div class="ui label">
+                  https://i.barats.cn/
+                </div>
+                <input type="text" placeholder="短链接">                
+              </div>
+              <div class="ui input">
+                <input type="text" placeholder="访问起始时间">
+              </div>                            
+              <div class="ui input">
+                <input type="text" placeholder="访问截至时间">
+              </div>
+              <div class="ui input">
+                <input type="text" placeholder="访问IP">
+              </div>                                                        
+              <button class="ui teal right labeled icon button"><i class="search icon"></i>查询</button>                
+            </th>
+          </tr>
+          <tr>
+            <th>短链接</th>
+            <th class="center aligned">访问时间</th>
+            <th class="center aligned">访问IP</th>
+            <th>UserAgent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://i.barats.cn/A1HeJzob" target="_blank">A1HeJzob</a></td>            
+            <td class="center aligned">2022-03-01 12:23:34</td>
+            <td class="center aligned">192.168.0.1</td>
+            <td>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36</td>                                  
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>            
+            <th colspan="4" class="center aligned">
+              <a class="ui small labeled icon button"><i class="arrow alternate circle left outline icon"></i> 上一页</a>
+              <a class="ui small labeled icon button"><i class="arrow alternate circle right outline icon"></i> 下一页</a>              
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div><!--end fo grid-->
+</div> 
+</div><!--end of pusher-->
+{{end -}}

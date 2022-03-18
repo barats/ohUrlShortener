@@ -1,0 +1,34 @@
+{{define "sidebar.html" -}}
+<div id="sidebar-menu" class="ui inverted vertical sidebar menu left">
+  <div class="item">
+    <div class="ui inverted header">业务管理</div>
+    <div class="menu">
+      <a class="{{if eq .current_url "/admin/dashboard"}}active {{end}}item" target="_self" href="/admin/dashboard">仪表盘</a>
+      <a class="{{if eq .current_url "/admin/urls"}}active {{end}}item" target="_self" href="/admin/urls">短链接列表</a>
+      <a class="{{if eq .current_url "/admin/access_logs"}}active {{end}}item" target="_self"  href="/admin/access_logs">访问日志查询</a> 
+    </div>    
+  </div>   
+  <a class="item" href="/admin/logout" target="_self">安全退出</a>
+</div><!--end of sidebar-menu-->
+{{end -}}
+
+{{define "admin-top-menu.html" -}}
+<div id="admin-top-menu" class="ui top fixed inverted borderless menu">  
+  <div id="sidebar-menu-toggler" class="header item"><a><i class="big sidebar icon"></i></a>ohUrlShortener</div>  
+</div><!--end of admin-top-menu -->
+{{end -}}
+
+{{define "admin-left-menu.html" -}}
+<div id="admin-left-menu" class="ui inverted vertical left fixed menu"> 
+  <div class="ui inverted header item">ohUrlShortener</div> 
+  <div class="item">
+    <div class="ui inverted header">业务管理</div>
+    <div class="menu">
+      <a class="{{if eq .current_url "/admin/dashboard"}}active {{end}}item" target="_self" href="/admin/dashboard">仪表盘</a>
+      <a class="{{if eq .current_url "/admin/urls"}}active {{end}}item" target="_self" href="/admin/urls">短链接列表</a>
+      <a class="{{if eq .current_url "/admin/access_logs"}}active {{end}}item" target="_self"  href="/admin/access_logs">访问日志查询</a> 
+    </div>    
+  </div>      
+  <a class="item" target="_self" href="/admin/dashboard">安全退出</a>
+</div><!--end of left-menu-->
+{{end -}}

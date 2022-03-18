@@ -19,18 +19,23 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+const (
+	CONFIG_FILE               = "config.ini"
+	ACCESS_LOG_CLEAN_INTERVAL = 3 * time.Minute
+	WEB_READ_TIMEOUT          = 10 * time.Second
+	WEB_WRITE_TIMEOUT         = 10 * time.Second
+)
+
 var (
 	//go:embed assets/* templates/*
 	FS embed.FS
-
-	config_file = "config.ini"
 
 	group errgroup.Group
 )
 
 func init() {
 	//Things MUST BE DONE before app starts
-	_, err := utils.InitConfig(config_file)
+	_, err := utils.InitConfig(CONFIG_FILE)
 	utils.ExitOnError("Config initialization failed.", err)
 
 	_, err = redis.InitRedisService()
@@ -54,31 +59,31 @@ func main() {
 	serverWeb := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.Port),
 		Handler:      router01,
-		ReadTimeout:  time.Second * 10,
-		WriteTimeout: time.Second * 10,
+		ReadTimeout:  WEB_READ_TIMEOUT,
+		WriteTimeout: WEB_WRITE_TIMEOUT,
 	}
 
 	serverAdmin := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.AdminPort),
 		Handler:      router02,
-		ReadTimeout:  time.Second * 10,
-		WriteTimeout: time.Second * 10,
+		ReadTimeout:  WEB_READ_TIMEOUT,
+		WriteTimeout: WEB_WRITE_TIMEOUT,
 	}
 
 	group.Go(func() error {
+		log.Printf("[ohUrlShortener] portal starts at http://127.0.0.1:%d", utils.AppConfig.Port)
 		return serverWeb.ListenAndServe()
 	})
 
 	group.Go(func() error {
+		log.Printf("[ohUrlShortener] admin starts at http://127.0.0.1:%d", utils.AppConfig.AdminPort)
 		return serverAdmin.ListenAndServe()
 	})
 
 	group.Go(func() error {
+		log.Println("[ohUrlShortener] ticker starts to serve")
 		return startTicker()
 	})
-
-	log.Printf("[ohUrlShortener] portal starts http://127.0.0.1:%d", utils.AppConfig.Port)
-	log.Printf("[ohUrlShortener] admin starts http://127.0.0.1:%d", utils.AppConfig.AdminPort)
 
 	err = group.Wait()
 	utils.ExitOnError("Group failed,", err)
@@ -93,7 +98,7 @@ func initializeRoute01() (http.Handler, error) {
 	}
 
 	router := gin.New()
-	router.Use(gin.Recovery(), utils.OhUrlShortenerLogFormat("Portal"))
+	router.Use(gin.Recovery(), utils.WebLogFormat("Portal"))
 
 	sub, err := fs.Sub(FS, "assets")
 	if err != nil {
@@ -128,7 +133,7 @@ func initializeRoute02() (http.Handler, error) {
 	}
 
 	router := gin.New()
-	router.Use(gin.Recovery(), utils.OhUrlShortenerLogFormat("Admin"))
+	router.Use(gin.Recovery(), utils.WebLogFormat("Admin"))
 
 	sub, err := fs.Sub(FS, "assets")
 	if err != nil {
@@ -143,7 +148,20 @@ func initializeRoute02() (http.Handler, error) {
 
 	router.SetHTMLTemplate(tmpl)
 
-	router.GET("/login", controller.ShortUrlDetail)
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
+	})
+	router.GET("/login", controller.LoginPage)
+	router.POST("/login", controller.DoLogin)
+	router.POST("/logout", controller.DoLogout)
+
+	admin := router.Group("/admin", controller.AdminAuthHandler())
+	admin.GET("/", func(ctx *gin.Context) {
+		ctx.Redirect(http.StatusTemporaryRedirect, "/admin/dashboard")
+	})
+	admin.GET("/dashboard", controller.DashbaordPage)
+	admin.GET("/urls", controller.UrlsPage)
+	admin.GET("/access_logs", controller.AccessLogsPage)
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
@@ -156,16 +174,11 @@ func initializeRoute02() (http.Handler, error) {
 } //end of router01
 
 func startTicker() error {
-	//sleep for 60s to make sure main process is running
-	time.Sleep(60 * time.Second)
-
-	//Clear redis cache every 3 minutes
-	ticker := time.NewTicker(3 * time.Minute)
+	ticker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
 	for range ticker.C {
 		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLogs(); err != nil {
 			log.Printf("Error while trying to store access_log %s", err)
-			return err
 		}
 		log.Println("[StoreAccessLog] Finish.")
 	}

@@ -14,7 +14,7 @@ import (
 
 const access_logs_prefix = "OH_ACCESS_LOGS#"
 
-func NewAccessLog(url string, ip string, useragent string) error {
+func NewAccessLog(url string, ip string, useragent string, referer string) error {
 
 	l := core.AccessLog{
 		ShortUrl:   url,
