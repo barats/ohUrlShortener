@@ -6,8 +6,8 @@ CREATE DATABASE oh_url_shortener ENCODING 'UTF8';
 
 CREATE TABLE public.short_urls (
   id serial4 NOT NULL,
-	short_url text NOT NULL,
-	dest_url varchar(200) NOT NULL,	
+	short_url varchar(200) NOT NULL,
+	dest_url text NOT NULL,	
 	created_at timestamp with time zone NOT NULL DEFAULT now(),
 	is_valid bool NOT NULL DEFAULT true,	
 	memo text,

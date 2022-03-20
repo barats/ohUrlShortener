@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
 	"strconv"
@@ -36,6 +38,27 @@ func DashbaordPage(c *gin.Context) {
 	})
 }
 
+func GenerateShortUrl(c *gin.Context) {
+	destUrl := c.PostForm("dest_url")
+	memo := c.PostForm("memo")
+
+	if utils.EemptyString(destUrl) {
+		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不能为空！"))
+		return
+	}
+
+	result, err := service.GenerateShortUrl(destUrl, memo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
+		return
+	}
+
+	json := map[string]string{
+		"short_url": fmt.Sprintf("%s%s", utils.AppConfig.UrlPrefix, result),
+	}
+	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(json))
+}
+
 func UrlsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
 	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
@@ -58,7 +81,7 @@ func UrlsPage(c *gin.Context) {
 		"size":        size,
 		"prefix":      utils.AppConfig.UrlPrefix,
 		"first_page":  page == 1,
-		"last_page":   len(url) < size,
+		"last_page":   len(urls) < size,
 		"url":         strings.TrimSpace(url),
 	})
 }
