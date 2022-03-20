@@ -6,10 +6,10 @@ import (
 )
 
 type ResultJson struct {
-	Code    int
-	Message string
-	Result  interface{}
-	Date    time.Time
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Result  interface{} `json:"result"`
+	Date    time.Time   `json:"date"`
 }
 
 func ResultJsonSuccess() ResultJson {

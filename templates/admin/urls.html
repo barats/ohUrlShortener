@@ -5,14 +5,6 @@
 {{template "admin-left-menu.html" . -}}
 {{template "admin-top-menu.html" . -}}
 <div id="admin-right-content" class="ui basic segment">  
-  {{if .error}}
-  <div class="ui basic segment">
-    <div class="ui negative message">
-      <div class="header">温馨提示</div>
-      <p>{{.error}}</p>
-    </div>
-  </div>  
-  {{end}}
   <div class="ui grid stackable padded">
     <div class="column">
       <table class="ui celled striped table">
@@ -28,7 +20,7 @@
                 <a class="ui teal right labeled icon button" href="/admin/urls"><i class="undo alternate icon"></i>重置</a>                              
               </form>             
             </th>
-            <th colspan="7"><button id="new-shorturl-btn" class="ui primary button">新建短链接</button></th>
+            <th colspan="7"><button id="btn-new-shorturl-modal" class="ui primary button">新建短链接</button></th>
           </tr>
           <tr>            
             <th>短链接</th>
@@ -54,8 +46,12 @@
         <tfoot>
           <tr>            
             <th colspan="10" class="center aligned">
-              <a class="ui small labeled icon button"><i class="arrow alternate circle left outline icon"></i> 上一页</a>
-              <a class="ui small labeled icon button"><i class="arrow alternate circle right outline icon"></i> 下一页</a>              
+              {{if not .first_page}}
+              <a class="ui small labeled icon button" href="/admin/urls?url={{.url}}&page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i>上一页</a>
+              {{end}}
+              {{if not .last_page}}
+              <a class="ui small labeled icon button" href="/admin/urls?url={{.url}}&page={{add .page 1}}"><i class="arrow alternate circle right outline icon"></i>下一页</a>              
+              {{end}} 
             </th>
           </tr>
         </tfoot>
@@ -64,21 +60,19 @@
   </div><!--end fo grid-->
 </div><!--end of segment-->
 </div><!--end of pusher-->
-<div id="new-shorturl-modal"  class="ui modal">
+<div id="new-shorturl-modal"  class="ui modal">  
   <i class="close icon"></i>
-  <div class="header">
-    新建短链接
-  </div>
+  <div class="header">新建短链接</div>
   <div class="content">   
     <div class="description">      
-      <div class="ui form">
+      <div class="ui form">        
         <div class="field">
           <label>目标链接</label>
-          <textarea rows="1"></textarea>
+          <textarea id="input_dest_url" name="dest_url" rows="1"></textarea>
         </div>
         <div class="field">
           <label>备注</label>
-          <textarea rows="2"></textarea>
+          <textarea id="input_demo" name="memo" rows="2"></textarea>
         </div>
       </div>      
     </div>
@@ -87,7 +81,7 @@
     <div class="ui black deny button">
       放弃
     </div>
-    <div class="ui primary right labeled icon button">
+    <div id="btn-gen-short-url" class="ui primary right labeled icon button">
       确认新建
       <i class="checkmark icon"></i>
     </div>

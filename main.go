@@ -98,7 +98,7 @@ func initializeRoute01() (http.Handler, error) {
 	}
 
 	router := gin.New()
-	router.Use(gin.Recovery(), utils.WebLogFormat("Portal"))
+	router.Use(gin.Recovery(), controller.WebLogFormatHandler("Portal"))
 
 	sub, err := fs.Sub(FS, "assets")
 	if err != nil {
@@ -133,7 +133,7 @@ func initializeRoute02() (http.Handler, error) {
 	}
 
 	router := gin.New()
-	router.Use(gin.Recovery(), utils.WebLogFormat("Admin"))
+	router.Use(gin.Recovery(), controller.WebLogFormatHandler("Admin"))
 
 	sub, err := fs.Sub(FS, "assets")
 	if err != nil {
@@ -162,6 +162,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/dashboard", controller.DashbaordPage)
 	admin.GET("/urls", controller.UrlsPage)
 	admin.GET("/access_logs", controller.AccessLogsPage)
+	admin.POST("/urls/generate", controller.GenerateShortUrl)
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",

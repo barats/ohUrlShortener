@@ -14,7 +14,8 @@
   <link rel="stylesheet" type="text/css" href="/assets/admin.css">    
   <script src="/assets/jquery.min.js" type="text/javascript"></script>
   <script src="/assets/semantic.min.js" type="text/javascript"></script>
-  <script src="/assets/admin.js" type="text/javascript"></script>
+  <script src="/assets/admin.js" type="text/javascript"></script>  
 </head>
 <body>
+{{if .error}}<script>errorToast('{{.error}}')</script>{{end}}
 {{end -}}
