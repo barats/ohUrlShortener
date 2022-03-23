@@ -16,7 +16,7 @@ services:
     ports:
       - ${PG_LOCAL_PORT}:5432
     networks:
-      - network_ohurlshortener
+      - ohurlshortener
 
   redis:
     image: redis:${RD_VERSION}
@@ -25,11 +25,11 @@ services:
     ports:    
       - ${RD_LOCAL_PORT}:6379
     networks:
-      - network_ohurlshortener 
+      - ohurlshortener 
       
 networks:
-  network_ohurlshortener:
+  ohurlshortener:
     driver: bridge
-    name: network_ohurlshortener
+    name: "network_ohurlshortener"
     driver_opts:
       com.docker.network.enable_ipv6: "true"
