@@ -17,6 +17,8 @@ import (
 	"time"
 )
 
+// 从数据库中获取所有「有效」状态的短链接
+// 并将其可以 key-> value 形式存入 Redis 中
 func ReloadUrls() (bool, error) {
 	//把所有访问日志记录到数据库中
 	err := StoreAccessLogs()
@@ -52,6 +54,7 @@ func ReloadUrls() (bool, error) {
 	return true, nil
 }
 
+// 从 Redis 中查询目标短链接是否存在
 func Search4ShortUrl(shortUrl string) (string, error) {
 	destUrl, err := storage.RedisGetString(shortUrl)
 	if err != nil {
@@ -61,6 +64,7 @@ func Search4ShortUrl(shortUrl string) (string, error) {
 	return destUrl, nil
 }
 
+// 获取分页的短链接信息
 func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) {
 	if page < 1 || size < 1 {
 		return nil, nil
@@ -73,6 +77,7 @@ func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) 
 	return allUrls, nil
 }
 
+// 生成短链接
 func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	shortUrl, err := core.GenerateShortLink(destUrl)
 	if err != nil {
@@ -114,4 +119,31 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	}
 
 	return shortUrl, nil
+}
+
+//禁用/启用短链接
+func ChangeState(shortUrl string, enable bool) (bool, error) {
+	found, err := storage.FindShortUrl(shortUrl)
+	if err != nil {
+		return false, utils.RaiseError("内部错误，请联系管理员")
+	}
+
+	if found.IsEmpty() {
+		return false, utils.RaiseError("该短链接不存在")
+	}
+
+	found.Valid = enable
+
+	e := storage.UpdateShortUrl(found)
+	if e != nil {
+		return false, utils.RaiseError("内部错误，请联系管理员")
+	}
+
+	if enable {
+		storage.RedisSet4Ever(found.ShortUrl, found.DestUrl)
+	} else {
+		storage.RedisDelete(found.ShortUrl)
+	}
+
+	return true, nil
 }

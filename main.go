@@ -170,6 +170,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/urls", controller.UrlsPage)
 	admin.GET("/access_logs", controller.AccessLogsPage)
 	admin.POST("/urls/generate", controller.GenerateShortUrl)
+	admin.POST("/urls/state", controller.ChangeState)
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",

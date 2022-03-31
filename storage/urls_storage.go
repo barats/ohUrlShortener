@@ -15,6 +15,11 @@ import (
 
 var Max_Insert_Count = 5000
 
+func UpdateShortUrl(shortUrl core.ShortUrl) error {
+	query := `UPDATE public.short_urls SET short_url = :short_url, dest_url = :dest_url, is_valid = :is_valid, memo = :memo WHERE id = :id`
+	return DbNamedExec(query, shortUrl)
+}
+
 func FindShortUrl(url string) (core.ShortUrl, error) {
 	found := core.ShortUrl{}
 	query := `SELECT * FROM public.short_urls WHERE short_url = $1`

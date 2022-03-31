@@ -91,7 +91,7 @@ $(document).ready(function() {
 function successToast(message) {
   $('body').toast({
     class: 'success',
-    displayTime: 3000,
+    displayTime: 2500,
     message: message,    
     showIcon:'exclamation circle',
     showProgress: 'bottom',
@@ -102,9 +102,29 @@ function successToast(message) {
 function errorToast(message) {
   $('body').toast({
     class: 'error',
-    displayTime: 3000,
+    displayTime: 2500,
     message: message,    
     showIcon:'exclamation circle',
     showProgress: 'bottom'
+  });
+}
+
+function enable_url(url,state) {
+  var data = {
+    "dest_url": url,
+    "enable": state
+  }
+
+  $.ajax({
+    type: "POST",
+    url: '/admin/urls/state',
+    data: data,
+    dataType: 'json',
+    success: function() {                              
+      successToast('操作成功')
+    },
+    error: function(e) {          
+      errorToast($.parseJSON(e.responseText).message)
+    } 
   });
 }
