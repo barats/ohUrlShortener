@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-package db
+package storage
 
 import (
 	"ohurlshortener/core"
@@ -16,7 +16,7 @@ import (
 func FindAccessLogs(shortUrl string) ([]core.AccessLog, error) {
 	found := []core.AccessLog{}
 	query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
-	err := Select(query, &found, shortUrl)
+	err := DbSelect(query, &found, shortUrl)
 	return found, err
 }
 
@@ -28,13 +28,13 @@ func InsertAccessLogs(logs []core.AccessLog) error {
 	if len(logs) >= Max_Insert_Count {
 		logsSlice := splitLogsArray(logs, Max_Insert_Count)
 		for _, slice := range logsSlice {
-			err := NamedExec(query, slice)
+			err := DbNamedExec(query, slice)
 			if err != nil {
 				return err
 			}
 		}
 	}
-	return NamedExec(query, logs)
+	return DbNamedExec(query, logs)
 }
 
 func FindAccessLogsCount(url string) (int, error) {
@@ -42,10 +42,10 @@ func FindAccessLogsCount(url string) (int, error) {
 	query := "SELECT count(l.id) FROM public.access_logs l"
 	if !utils.EemptyString(url) {
 		query = "SELECT count(l.id) FROM public.access_logs l WHERE l.short_url = $1"
-		err := Get(query, &rowCount, url)
+		err := DbGet(query, &rowCount, url)
 		return rowCount, err
 	}
-	return rowCount, Get(query, &rowCount)
+	return rowCount, DbGet(query, &rowCount)
 }
 
 func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error) {
@@ -54,8 +54,8 @@ func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error)
 	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC LIMIT $1 OFFSET $2"
 	if !utils.EemptyString(url) {
 		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC LIMIT $2 OFFSET $3"
-		err := Select(query, &found, url, size, offset)
+		err := DbSelect(query, &found, url, size, offset)
 		return found, err
 	}
-	return found, Select(query, &found, size, offset)
+	return found, DbSelect(query, &found, size, offset)
 }

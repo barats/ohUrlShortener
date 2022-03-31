@@ -6,14 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-package redis
+package storage
 
 import (
 	"context"
 	"ohurlshortener/utils"
 	"time"
 
-	oredis "github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v8"
 )
 
 var (
@@ -22,11 +22,11 @@ var (
 )
 
 type RedisService struct {
-	redisClient *oredis.Client
+	redisClient *redis.Client
 }
 
 func InitRedisService() (*RedisService, error) {
-	redisClient := oredis.NewClient(&oredis.Options{
+	redisClient := redis.NewClient(&redis.Options{
 		Addr:     utils.RedisConfig.Host,
 		DB:       utils.RedisConfig.Database,
 		Username: utils.RedisConfig.User,
@@ -41,19 +41,19 @@ func InitRedisService() (*RedisService, error) {
 	return redisService, nil
 }
 
-func Set(key string, value interface{}, ttl time.Duration) error {
+func RedisSet(key string, value interface{}, ttl time.Duration) error {
 	return redisService.redisClient.Set(ctx, key, value, ttl).Err()
 }
 
-func Set30m(key string, value interface{}) error {
-	return Set(key, value, 30*time.Minute)
+func RedisSet30m(key string, value interface{}) error {
+	return RedisSet(key, value, 30*time.Minute)
 }
 
-func Set4Ever(key string, value interface{}) error {
-	return Set(key, value, oredis.KeepTTL)
+func RedisSet4Ever(key string, value interface{}) error {
+	return RedisSet(key, value, redis.KeepTTL)
 }
 
-func Scan4Keys(prefix string) ([]string, error) {
+func RedisScan4Keys(prefix string) ([]string, error) {
 	keys := []string{}
 	sc := redisService.redisClient.Scan(ctx, 0, prefix, 0).Iterator()
 	for sc.Next(ctx) {
@@ -62,19 +62,19 @@ func Scan4Keys(prefix string) ([]string, error) {
 	return keys, nil
 }
 
-func GetString(key string) (string, error) {
+func RedisGetString(key string) (string, error) {
 	result, err := redisService.redisClient.Get(ctx, key).Result()
-	if err == oredis.Nil {
+	if err == redis.Nil {
 		return result, nil
 	}
 	return result, err
 }
 
-func FlushDB() error {
+func RedisFlushDB() error {
 	return redisService.redisClient.FlushDB(ctx).Err()
 }
 
-func Delete(key ...string) error {
+func RedisDelete(key ...string) error {
 	if len(key) > 0 {
 		return redisService.redisClient.Del(ctx, key...).Err()
 	}

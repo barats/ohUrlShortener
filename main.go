@@ -16,9 +16,8 @@ import (
 	"log"
 	"net/http"
 	"ohurlshortener/controller"
-	"ohurlshortener/db"
-	"ohurlshortener/redis"
 	"ohurlshortener/service"
+	"ohurlshortener/storage"
 	"ohurlshortener/utils"
 	"time"
 
@@ -46,10 +45,10 @@ func init() {
 	_, err := utils.InitConfig(CONFIG_FILE)
 	utils.ExitOnError("Config initialization failed.", err)
 
-	_, err = redis.InitRedisService()
+	_, err = storage.InitRedisService()
 	utils.ExitOnError("Redis initialization failed.", err)
 
-	_, err = db.InitDatabaseService()
+	_, err = storage.InitDatabaseService()
 	utils.ExitOnError("Database initialization failed.", err)
 
 	_, err = service.ReloadUrls()

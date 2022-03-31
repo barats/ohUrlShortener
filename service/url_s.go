@@ -12,8 +12,7 @@ import (
 	"database/sql"
 	"log"
 	"ohurlshortener/core"
-	"ohurlshortener/db"
-	"ohurlshortener/redis"
+	"ohurlshortener/storage"
 	"ohurlshortener/utils"
 	"time"
 )
@@ -27,14 +26,14 @@ func ReloadUrls() (bool, error) {
 	}
 
 	//找出所有已经配置好的短链接
-	urls, err := db.FindAllShortUrls()
+	urls, err := storage.FindAllShortUrls()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
 	//清理 redis db
-	err = redis.FlushDB()
+	err = storage.RedisFlushDB()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
@@ -43,7 +42,7 @@ func ReloadUrls() (bool, error) {
 	//将所有「有效」状态的短域名再次放入 Redis
 	for _, url := range urls {
 		if url.Valid {
-			err := redis.Set4Ever(url.ShortUrl, url.DestUrl)
+			err := storage.RedisSet4Ever(url.ShortUrl, url.DestUrl)
 			if err != nil {
 				log.Println(err)
 				continue
@@ -54,7 +53,7 @@ func ReloadUrls() (bool, error) {
 }
 
 func Search4ShortUrl(shortUrl string) (string, error) {
-	destUrl, err := redis.GetString(shortUrl)
+	destUrl, err := storage.RedisGetString(shortUrl)
 	if err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
@@ -66,7 +65,7 @@ func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) 
 	if page < 1 || size < 1 {
 		return nil, nil
 	}
-	allUrls, err := db.FindPagedShortUrls(url, page, size)
+	allUrls, err := storage.FindPagedShortUrls(url, page, size)
 	if err != nil {
 		log.Println(err)
 		return allUrls, utils.RaiseError("内部错误，请联系管理员")
@@ -81,7 +80,7 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	foundUrl, err := db.FindShortUrl(shortUrl)
+	foundUrl, err := storage.FindShortUrl(shortUrl)
 	if err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
@@ -104,12 +103,12 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 		Memo:      nsMemo,
 	}
 
-	if err := db.InsertShortUrl(url); err != nil {
+	if err := storage.InsertShortUrl(url); err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	if err := redis.Set4Ever(shortUrl, destUrl); err != nil {
+	if err := storage.RedisSet4Ever(shortUrl, destUrl); err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}

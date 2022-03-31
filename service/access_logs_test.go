@@ -9,8 +9,7 @@
 package service
 
 import (
-	"ohurlshortener/db"
-	"ohurlshortener/redis"
+	"ohurlshortener/storage"
 	"ohurlshortener/utils"
 	"testing"
 	"time"
@@ -39,13 +38,13 @@ func init4Test(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	_, err = db.InitDatabaseService()
+	_, err = storage.InitDatabaseService()
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	_, err = redis.InitRedisService()
+	_, err = storage.InitRedisService()
 	if err != nil {
 		t.Error(err)
 		return
