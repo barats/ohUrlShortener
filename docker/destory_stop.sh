@@ -1,2 +1,2 @@
 # !/bin/bash
-docker-compose -f services.yml  --env-file vars.env down
+docker-compose -p ohurlshortener -f services.yml  --env-file vars.env down
