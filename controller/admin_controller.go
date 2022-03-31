@@ -46,6 +46,30 @@ func DashbaordPage(c *gin.Context) {
 	})
 }
 
+func ChangeState(c *gin.Context) {
+	destUrl := c.PostForm("dest_url")
+	enable := c.PostForm("enable")
+
+	if utils.EemptyString(destUrl) {
+		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不存在！"))
+		return
+	}
+
+	destEnable, err := strconv.ParseBool(enable)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, core.ResultJsonError("参数不合法！"))
+		return
+	}
+
+	result, er := service.ChangeState(destUrl, destEnable)
+	if er != nil {
+		c.JSON(http.StatusInternalServerError, core.ResultJsonError(er.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(result))
+}
+
 func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")

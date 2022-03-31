@@ -33,13 +33,19 @@
         </thead>
         <tbody>
           {{range .shortUrls}}
-          <tr>
+          <tr {{if not .Valid}}class="negative"{{end}}>
             <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a></td>
             <td class="center aligned collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
             <td>{{.Memo.String}}</td>
             <td class="center aligned">{{.Valid}}</td>            
             <td class="center aligned collapsing"><a href="{{.DestUrl}}" target="_blank">打开链接</a></td>                                   
-            <td class="center aligned">hello | world</td>            
+            <td class="center aligned">
+              {{if .Valid}} 
+              <a href="javascript:enable_url('{{.ShortUrl}}',false)">禁用</a> 
+              {{else}}
+              <a href="javascript:enable_url('{{.ShortUrl}}',true)">开启</a> 
+              {{end}}
+              | <a href="/admin/access_logs?url={{.ShortUrl}}" target="_blank">查看访问日志</a></td>            
           </tr>
           {{end}}
         </tbody>
