@@ -30,6 +30,24 @@ $(document).ready(function() {
         }
       }
     });
+
+    $('#form-search-url').form({
+      fields:{
+        url: {rules:[{
+          type:'empty',
+          prompt:'链接不能为空'
+        }]}
+      }
+    });
+
+    $('#form-search-logs').form({
+      fields: {
+        url: {rules:[{
+          type:'empty',
+          prompt:'链接不能为空'
+        }]}
+      }
+    });
   
 
     $('#sidebar-menu').sidebar('attach events', '#sidebar-menu-toggler');
