@@ -26,14 +26,17 @@ func GenerateShortLink(initialLink string) (string, error) {
 ## 定时器3分钟清理一次访问日志
 
 ```
-	ticker := time.NewTicker(3 * time.Minute)
+func startTicker() error {
+	ticker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
 	for range ticker.C {
 		log.Println("[StoreAccessLog] Start.")
-		if err := service.StoreAccessLog(); err != nil {
+		if err := service.StoreAccessLogs(); err != nil {
 			log.Printf("Error while trying to store access_log %s", err)
 		}
 		log.Println("[StoreAccessLog] Finish.")
 	}
+	return nil
+}
 ```
 
 ## 关于短域名的一些引用材料
