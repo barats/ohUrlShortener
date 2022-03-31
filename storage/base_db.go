@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-package db
+package storage
 
 import (
 	"database/sql"
@@ -38,12 +38,12 @@ func InitDatabaseService() (*DatabaseService, error) {
 	return dbService, nil
 }
 
-func NamedExec(query string, args interface{}) error {
+func DbNamedExec(query string, args interface{}) error {
 	_, err := dbService.Connection.NamedExec(query, args)
 	return err
 }
 
-func ExecTx(query string, args ...interface{}) error {
+func DbExecTx(query string, args ...interface{}) error {
 	tx, err := dbService.Connection.Begin()
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func ExecTx(query string, args ...interface{}) error {
 	return nil
 }
 
-func Get(query string, dest interface{}, args ...interface{}) error {
+func DbGet(query string, dest interface{}, args ...interface{}) error {
 	err := dbService.Connection.Get(dest, query, args...)
 	if err == sql.ErrNoRows {
 		return nil
@@ -72,10 +72,10 @@ func Get(query string, dest interface{}, args ...interface{}) error {
 	return err
 }
 
-func Select(query string, dest interface{}, args ...interface{}) error {
+func DbSelect(query string, dest interface{}, args ...interface{}) error {
 	return dbService.Connection.Select(dest, query, args...)
 }
 
-func Close() {
+func DbClose() {
 	dbService.Connection.Close()
 }

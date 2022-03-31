@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-package db
+package storage
 
 import (
 	"ohurlshortener/core"
@@ -18,14 +18,14 @@ var Max_Insert_Count = 5000
 func FindShortUrl(url string) (core.ShortUrl, error) {
 	found := core.ShortUrl{}
 	query := `SELECT * FROM public.short_urls WHERE short_url = $1`
-	err := Get(query, &found, url)
+	err := DbGet(query, &found, url)
 	return found, err
 }
 
 func FindAllShortUrls() ([]core.ShortUrl, error) {
 	found := []core.ShortUrl{}
 	query := `SELECT * FROM public.short_urls ORDER BY created_at DESC`
-	err := Select(query, &found)
+	err := DbSelect(query, &found)
 	return found, err
 }
 
@@ -36,25 +36,25 @@ func FindPagedShortUrls(url string, page int, size int) ([]core.ShortUrl, error)
 	if !utils.EemptyString(url) {
 		query := "SELECT * FROM public.short_urls u WHERE u.short_url = $1 ORDER BY u.id DESC LIMIT $2 OFFSET $3"
 		var foundUrl core.ShortUrl
-		err := Get(query, &foundUrl, url, size, offset)
+		err := DbGet(query, &foundUrl, url, size, offset)
 		if !foundUrl.IsEmpty() {
 			found = append(found, foundUrl)
 		}
 		return found, err
 	}
-	return found, Select(query, &found, size, offset)
+	return found, DbSelect(query, &found, size, offset)
 }
 
 func InsertShortUrl(url core.ShortUrl) error {
 	query := `INSERT INTO public.short_urls (short_url, dest_url, created_at, is_valid, memo)
 	 VALUES(:short_url,:dest_url,:created_at,:is_valid,:memo)`
-	return NamedExec(query, url)
+	return DbNamedExec(query, url)
 }
 
 func GetUrlStats(url string) (core.ShortUrlStats, error) {
 	found := core.ShortUrlStats{}
 	query := `select * from public.url_ip_count_stats WHERE short_url = $1`
-	err := Get(query, &found, url)
+	err := DbGet(query, &found, url)
 	return found, err
 }
 
