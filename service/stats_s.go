@@ -9,17 +9,42 @@
 package service
 
 import (
-	"log"
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
 )
 
+func GetSumOfUrlStats() (int, core.ShortUrlStats, error) {
+	var (
+		totalCount int
+		result     core.ShortUrlStats
+	)
+
+	totalCount, err := storage.GetUrlCount()
+	if err != nil {
+		return totalCount, result, utils.RaiseError("内部错误，请联系管理员！")
+	}
+
+	result, er := storage.GetSumOfUrlStats()
+	if er != nil {
+		return totalCount, result, utils.RaiseError("内部错误，请联系管理员！")
+	}
+
+	return totalCount, result, nil
+}
+
 func GetShortUrlStats(url string) (core.ShortUrlStats, error) {
 	found, err := storage.GetUrlStats(url)
 	if err != nil {
-		log.Println(err)
-		return found, utils.RaiseError("内部错误，请联系管理员")
+		return found, utils.RaiseError("内部错误，请联系管理员！")
+	}
+	return found, nil
+}
+
+func GetTop25Url() ([]core.Top25Url, error) {
+	found, err := storage.GetTop25()
+	if err != nil {
+		return found, utils.RaiseError("内部错误，请联系管理员！")
 	}
 	return found, nil
 }

@@ -21,3 +21,8 @@ type ShortUrlStats struct {
 	DistinctMonthlyCount   int    `db:"d_monthly_count" json:"d_monthly_count"`
 	DistinctTotalCount     int    `db:"d_total_count" json:"d_total_count"`
 }
+
+type Top25Url struct {
+	ShortUrl
+	ShortUrlStats
+}

@@ -56,13 +56,6 @@ func InsertShortUrl(url core.ShortUrl) error {
 	return DbNamedExec(query, url)
 }
 
-func GetUrlStats(url string) (core.ShortUrlStats, error) {
-	found := core.ShortUrlStats{}
-	query := `select * from public.url_ip_count_stats WHERE short_url = $1`
-	err := DbGet(query, &found, url)
-	return found, err
-}
-
 func splitLogsArray(array []core.AccessLog, size int) [][]core.AccessLog {
 	var chunks [][]core.AccessLog
 	for {

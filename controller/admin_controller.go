@@ -39,13 +39,6 @@ func DoLogout(c *gin.Context) {
 	//TODO: Login logic
 }
 
-func DashbaordPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"title":       "仪表盘 - ohUrlShortener",
-		"current_url": c.Request.URL.Path,
-	})
-}
-
 func ChangeState(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	enable := c.PostForm("enable")
@@ -89,6 +82,33 @@ func GenerateShortUrl(c *gin.Context) {
 		"short_url": fmt.Sprintf("%s%s", utils.AppConfig.UrlPrefix, result),
 	}
 	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(json))
+}
+
+func StatsPage(c *gin.Context) {
+	url := c.DefaultQuery("url", "")
+	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DEFAULT_PAGE_NUM
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DEFAULT_PAGE_SIZE
+	}
+	urls, err := service.GetPagesShortUrls(strings.TrimSpace(url), page, size)
+	c.HTML(http.StatusOK, "stats.html", gin.H{
+		"title":       "数据统计 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+		"error":       err,
+		"shortUrls":   urls,
+		"page":        page,
+		"size":        size,
+		"prefix":      utils.AppConfig.UrlPrefix,
+		"first_page":  page == 1,
+		"last_page":   len(urls) < size,
+		"url":         strings.TrimSpace(url),
+	})
 }
 
 func UrlsPage(c *gin.Context) {
@@ -142,5 +162,37 @@ func AccessLogsPage(c *gin.Context) {
 		"first_page":  page == 1,
 		"last_page":   len(logs) < size,
 		"url":         strings.TrimSpace(url),
+	})
+}
+
+func DashbaordPage(c *gin.Context) {
+	count, stats, err := service.GetSumOfUrlStats()
+	if err != nil {
+		c.HTML(http.StatusOK, "dashboard.html", gin.H{
+			"title":       "仪表盘 - ohUrlShortener",
+			"current_url": c.Request.URL.Path,
+			"error":       err,
+		})
+		return
+	}
+
+	top25, er := service.GetTop25Url()
+	if er != nil {
+		c.HTML(http.StatusOK, "dashboard.html", gin.H{
+			"title":       "仪表盘 - ohUrlShortener",
+			"current_url": c.Request.URL.Path,
+			"error":       er,
+		})
+		return
+	}
+
+	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+		"title":       "仪表盘 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+		"error":       err,
+		"total_count": count,
+		"prefix":      utils.AppConfig.UrlPrefix,
+		"stats":       stats,
+		"top25":       top25,
 	})
 }
