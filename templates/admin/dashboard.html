@@ -9,20 +9,11 @@
     <div class="four wide computer eight wide tablet sixteen wide mobile column">
       <div class="ui fluid card">
         <div class="content">
-          <div class="ui right floated header red">
-            <i class="icon shopping cart"></i>
-          </div>
           <div class="header">
-            <div class="ui red header">
-              3958
-            </div>
+            <div class="ui red header">{{.total_count}}</div>
           </div>
-          <div class="meta">
-            总链接数
-          </div>
-          <div class="description">
-            当前总短链接数
-          </div>
+          <div class="meta">总链接数</div>
+          <div class="description">当前总短链接数</div>
         </div>
         <div class="extra content">
           <div class="ui two buttons">
@@ -34,18 +25,11 @@
     <div class="four wide computer eight wide tablet sixteen wide mobile column">
       <div class="ui fluid card">
         <div class="content">
-          <div class="ui right floated header green">
-            <i class="icon clock"></i>
-          </div>
           <div class="header">
-            <div class="ui header green">57.6%</div>
+            <div class="ui header green">{{.stats.TodayCount}}</div>
           </div>
-          <div class="meta">
-            今日点击量
-          </div>
-          <div class="description">
-            所有链接今日产生的总点击量
-          </div>
+          <div class="meta">今日点击量</div>
+          <div class="description">所有链接今日产生的总点击量</div>
         </div>
         <div class="extra content">
           <div class="ui two buttons">
@@ -57,18 +41,11 @@
     <div class="four wide computer eight wide tablet sixteen wide mobile column">
       <div class="ui fluid card">
         <div class="content">
-          <div class="ui right floated header teal">
-            <i class="icon briefcase"></i>
-          </div>
           <div class="header">
-            <div class="ui teal header">3112</div>
+            <div class="ui teal header">{{.stats.DistinctTodayCount}}</div>
           </div>
-          <div class="meta">
-            今日独立IP数
-          </div>
-          <div class="description">
-            所有短链接今日点击的总IP数
-          </div>
+          <div class="meta">今日独立IP数</div>
+          <div class="description">所有短链接今日点击的总IP数</div>
         </div>
         <div class="extra content">
           <div class="ui two buttons">
@@ -81,42 +58,28 @@
   <div class="ui grid stackable padded">
     <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
       <div class="ui purple statistic">
-        <div class="value">
-          1000+
-        </div>
-        <div class="label">
-          最近七日点击量
-        </div>
+        <div class="value">{{.stats.Last7DaysCount}}</div>
+        <div class="label">最近七日点击量</div>
       </div>
     </div>
     <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
       <div class="ui purple statistic">
         <div class="value">
-          1000+
+          {{.stats.DistinctLast7DaysCount}}
         </div>
-        <div class="label">
-          最近七日独立IP数
-        </div>
+        <div class="label">最近七日独立IP数</div>
       </div>
     </div>
     <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
       <div class="ui purple statistic">
-        <div class="value">
-          1000+
-        </div>
-        <div class="label">
-          总点击量
-        </div>
+        <div class="value">{{.stats.TotalCount}}</div>
+        <div class="label">总点击量</div>
       </div>
     </div>
     <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
       <div class="ui purple statistic">
-        <div class="value">
-          1000+
-        </div>
-        <div class="label">
-          总独立IP数
-        </div>
+        <div class="value">{{.stats.DistinctTotalCount}}</div>
+        <div class="label">总独立IP数</div>
       </div>
     </div> 
   </div><!--end of grid-->   
@@ -125,20 +88,23 @@
       <table class="ui celled striped table">
         <thead>
           <tr>
-            <th colspan="2">今日点击量 Top10</th>
+            <th>今日点击量 Top25</th>
             <th class="center aligned">创建时间</th>
+            <th>备注</th>
             <th class="center aligned">点击量</th>
             <th class="center aligned">独立IP数</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="collapsing"><a href="https://i.barats.cn/zzzzzz" target="_blank">https://i.barats.cn/zzzzzz</a></td>            
-            <td><a href="https://gitee.com/barat/ohurlshortener" target="_blank">https://gitee.com/barat/ohurlshortener</a></td>
-            <td class="center aligned">2022-03-01 12:23:45</td>
-            <td class="center aligned">10</td>
-            <td class="center aligned">10</td>
-          </tr>
+          {{range .top25}}
+            <tr>
+              <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl.ShortUrl}}" target="_blank">{{.ShortUrl.ShortUrl}}</a></td>                          
+              <td class="collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
+              <td>{{.Memo.String}}</td>
+              <td class="center aligned">{{.TodayCount}}</td>
+              <td class="center aligned">{{.DistinctTodayCount}}</td>
+            </tr>
+          {{end}}          
         </tbody>
       </table>
     </div>
