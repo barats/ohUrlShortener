@@ -96,7 +96,7 @@ func StatsPage(c *gin.Context) {
 	if err != nil {
 		size = DEFAULT_PAGE_SIZE
 	}
-	urls, err := service.GetPagesShortUrls(strings.TrimSpace(url), page, size)
+	urls, err := service.GetPagedUrlIpCountStats(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "stats.html", gin.H{
 		"title":       "数据统计 - ohUrlShortener",
 		"current_url": c.Request.URL.Path,

@@ -10,53 +10,60 @@
       <table class="ui celled striped table">
         <thead>
           <tr>
-            <th colspan="3">
-              <form id="form-search-url" action="/admin/urls" method="get">
+            <th colspan="13">
+              <form id="form-search-url" action="/admin/stats" method="get">
                 <div class="ui labeled action input">
                   <div class="ui label">{{.prefix}}</div>
                   <input name="url" type="text" value="{{.url}}" placeholder="短链接">                
                 </div>
                 <button class="ui teal right labeled icon button" type="submit"><i class="search icon"></i>查询</button>
-                <a class="ui teal right labeled icon button" href="/admin/urls"><i class="undo alternate icon"></i>重置</a>                 
+                <a class="ui teal right labeled icon button" href="/admin/stats"><i class="undo alternate icon"></i>重置</a>                 
               </form>             
-            </th>
-            <th colspan="7"><button id="btn-new-shorturl-modal" class="ui primary button">新建短链接</button></th>
+            </th>            
           </tr>
           <tr>            
             <th>短链接</th>
-            <th class="center aligned collapsing">生成时间</th>
-            <th>备注信息</th>  
-            <th class="center aligned collapsing">是否有效</th>                      
-            <th class="center aligned">目标链接</th>
-            <th class="center aligned">操作</th>       
+            <th>生成时间</th>
+            <th>今日点击量</th>  
+            <th>今日独立IP数</th>  
+            <th>昨日点击量</th>  
+            <th>昨日独立IP数</th>  
+            <th>过去七日点击量</th>  
+            <th>过去七日独立IP数</th>  
+            <th>当月点击量</th>  
+            <th>当月独立IP数</th>  
+            <th>总点击量</th>  
+            <th>总独立IP数</th>
+            <th>操作</th>  
           </tr>
         </thead>
         <tbody>
           {{range .shortUrls}}
           <tr {{if not .Valid}}class="negative"{{end}}>
-            <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a></td>
+            <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl.ShortUrl}}" target="_blank">{{.ShortUrl.ShortUrl}}</a></td>
             <td class="center aligned collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
-            <td>{{.Memo.String}}</td>
-            <td class="center aligned">{{.Valid}}</td>            
-            <td class="center aligned collapsing"><a href="{{.DestUrl}}" target="_blank">打开链接</a></td>                                   
-            <td class="center aligned">
-              {{if .Valid}} 
-              <a href="javascript:enable_url('{{.ShortUrl}}',false)">禁用</a> 
-              {{else}}
-              <a href="javascript:enable_url('{{.ShortUrl}}',true)">开启</a> 
-              {{end}}
-              | <a href="/admin/access_logs?url={{.ShortUrl}}" target="_blank">查看访问日志</a></td>            
+            <td>{{.TodayCount}}</td>  
+            <td>{{.DistinctTodayCount}}</td>  
+            <td>{{.YesterdayCount}}</td>  
+            <td>{{.DistinctYesterdayCount}}</td>  
+            <td>{{.Last7DaysCount}}</td>  
+            <td>{{.DistinctLast7DaysCount}}</td>  
+            <td>{{.MonthlyCount}}</td>  
+            <td>{{.DistinctMonthlyCount}}</td>  
+            <td>{{.TotalCount}}</td>  
+            <td>{{.DistinctTotalCount}}</td>
+            <td><a href="/admin/access_logs?url={{.ShortUrl.ShortUrl}}" target="_blank">查看访问日志</a></th>  
           </tr>
           {{end}}
         </tbody>
         <tfoot>
           <tr>            
-            <th colspan="10" class="center aligned">
+            <th colspan="13" class="center aligned">
               {{if not .first_page}}
-              <a class="ui small labeled icon button" href="/admin/urls?url={{.url}}&page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i>上一页</a>
+              <a class="ui small labeled icon button" href="/admin/stats?url={{.url}}&page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i>上一页</a>
               {{end}}
               {{if not .last_page}}
-              <a class="ui small labeled icon button" href="/admin/urls?url={{.url}}&page={{add .page 1}}"><i class="arrow alternate circle right outline icon"></i>下一页</a>              
+              <a class="ui small labeled icon button" href="/admin/stats?url={{.url}}&page={{add .page 1}}"><i class="arrow alternate circle right outline icon"></i>下一页</a>              
               {{end}} 
             </th>
           </tr>
@@ -66,31 +73,4 @@
   </div><!--end fo grid-->
 </div><!--end of segment-->
 </div><!--end of pusher-->
-<div id="new-shorturl-modal"  class="ui modal">  
-  <i class="close icon"></i>
-  <div class="header">新建短链接</div>
-  <div class="content">   
-    <div class="description">      
-      <div class="ui form">        
-        <div class="field">
-          <label>目标链接</label>
-          <textarea id="input_dest_url" name="dest_url" rows="1"></textarea>
-        </div>
-        <div class="field">
-          <label>备注</label>
-          <textarea id="input_demo" name="memo" rows="2"></textarea>
-        </div>
-      </div>      
-    </div>
-  </div>
-  <div class="actions">
-    <div class="ui black deny button">
-      放弃
-    </div>
-    <div id="btn-gen-short-url" class="ui primary right labeled icon button">
-      确认新建
-      <i class="checkmark icon"></i>
-    </div>
-  </div>
-</div>
 {{end -}}

@@ -28,7 +28,7 @@ import (
 
 const (
 	CONFIG_FILE               = "config.ini"
-	ACCESS_LOG_CLEAN_INTERVAL = 3 * time.Minute
+	ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
 	WEB_READ_TIMEOUT          = 10 * time.Second
 	WEB_WRITE_TIMEOUT         = 10 * time.Second
 )

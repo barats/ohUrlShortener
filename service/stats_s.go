@@ -48,3 +48,14 @@ func GetTop25Url() ([]core.Top25Url, error) {
 	}
 	return found, nil
 }
+
+func GetPagedUrlIpCountStats(url string, page int, size int) ([]core.UrlIpCountStats, error) {
+	if page < 1 || size < 1 {
+		return nil, nil
+	}
+	found, err := storage.FindPagedUrlIpCountStats(url, page, size)
+	if err != nil {
+		return found, utils.RaiseError("内部错误，请联系管理员！")
+	}
+	return found, nil
+}
