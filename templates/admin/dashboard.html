@@ -33,7 +33,7 @@
         </div>
         <div class="extra content">
           <div class="ui two buttons">
-            <a href="/admin/access_logs" target="_self" class="ui green button">查看详情</a>
+            <a href="/admin/stats" target="_self" class="ui green button">查看详情</a>
           </div>
         </div>
       </div>
@@ -49,40 +49,12 @@
         </div>
         <div class="extra content">
           <div class="ui two buttons">
-            <div class="ui teal button">查看详情</div>
+            <a href="/admin/stats" target="_self" class="ui teal button">查看详情</a>            
           </div>
         </div>
       </div>
     </div><!--end of column-->
-  </div><!--end of grid-->
-  <div class="ui grid stackable padded">
-    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
-      <div class="ui purple statistic">
-        <div class="value">{{.stats.Last7DaysCount}}</div>
-        <div class="label">最近七日点击量</div>
-      </div>
-    </div>
-    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
-      <div class="ui purple statistic">
-        <div class="value">
-          {{.stats.DistinctLast7DaysCount}}
-        </div>
-        <div class="label">最近七日独立IP数</div>
-      </div>
-    </div>
-    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
-      <div class="ui purple statistic">
-        <div class="value">{{.stats.TotalCount}}</div>
-        <div class="label">总点击量</div>
-      </div>
-    </div>
-    <div class="four wide computer eight wide tablet sixteen wide mobile center aligned column">
-      <div class="ui purple statistic">
-        <div class="value">{{.stats.DistinctTotalCount}}</div>
-        <div class="label">总独立IP数</div>
-      </div>
-    </div> 
-  </div><!--end of grid-->   
+  </div><!--end of grid-->  
   <div class="ui grid stackable padded">
     <div class="column">
       <table class="ui celled striped table">

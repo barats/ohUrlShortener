@@ -26,3 +26,8 @@ type Top25Url struct {
 	ShortUrl
 	ShortUrlStats
 }
+
+type UrlIpCountStats struct {
+	ShortUrl
+	ShortUrlStats
+}

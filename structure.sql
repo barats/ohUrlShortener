@@ -46,18 +46,11 @@ FROM public.short_urls u
 GROUP BY u.short_url;
 
 CREATE VIEW public.sum_url_ip_count_stats AS 
-	SELECT 
-		SUM(s.today_count) AS today_count,
-		SUM(s.yesterday_count) AS yesterday_count,
-		SUM(s.last_7_days_count) AS last_7_days_count,
-		SUM(s.monthly_count) AS monthly_count,
-		SUM(s.total_count) AS total_count,
-		SUM(s.d_today_count) AS d_today_count,
-		SUM(s.d_yesterday_count) AS d_yesterday_count,
-		SUM(s.d_last_7_days_count) AS d_last_7_days_count,
-		SUM(s.d_monthly_count) AS d_monthly_count,
-		SUM(s.d_total_count) AS d_total_count
-	FROM public.url_ip_count_stats s;
+SELECT 
+	COUNT(l.ip) AS today_count,	
+	COUNT(DISTINCT(l.ip)) AS d_today_count
+FROM public.access_logs l
+WHERE date(l.access_time) = date(NOW());
 
 
 CREATE VIEW public.total_count_top25 AS 
