@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,11 +33,73 @@ func LoginPage(c *gin.Context) {
 }
 
 func DoLogin(c *gin.Context) {
-	//TODO: Login logic
+	account := c.PostForm("account")
+	password := c.PostForm("password")
+	captchaText := c.PostForm("captcha-text")
+	captchaId := c.PostForm("captcha-id")
+
+	if utils.EemptyString(account) || utils.EemptyString(password) || len(account) < 5 || len(password) < 8 {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"title": "错误 - ohUrlShortener",
+			"error": "用户名或密码格式错误！",
+		})
+		return
+	}
+
+	if utils.EemptyString(captchaText) || utils.EemptyString(captchaId) || len(captchaText) < 6 {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"title": "错误 - ohUrlShortener",
+			"error": "验证码格式错误!",
+		})
+		return
+	}
+
+	//验证码有效性验证
+	if !captcha.VerifyString(captchaId, captchaText) {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"title": "错误 - ohUrlShortener",
+			"error": "验证码错误，请刷新页面再重新尝试！",
+		})
+		return
+	}
+
+	//用户名密码有效性验证
+	loginUser, err := service.Login(account, password)
+	if err != nil || loginUser.IsEmpty() {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"title": "错误 - ohUrlShortener",
+			"error": err.Error(),
+		})
+		return
+	}
+
+	//Write Cookie to browser
+	cValue, err := AdminCookieValue(loginUser)
+	if err != nil {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"title": "错误 - ohUrlShortener",
+			"error": "内部错误，请联系管理员",
+		})
+		return
+	}
+	c.SetCookie("ohUrlShortenerAdmin", loginUser.Account, 3600, "/", "", true, true)
+	c.SetCookie("ohUrlShortenerCookie", cValue, 3600, "/", "", true, true)
+	c.Redirect(http.StatusFound, "/admin/dashboard")
 }
 
 func DoLogout(c *gin.Context) {
-	//TODO: Login logic
+	c.SetCookie("ohUrlShortenerAdmin", "", -1, "/", "", true, true)
+	c.SetCookie("ohUrlShortenerCookie", "", -1, "/", "", true, true)
+	c.Redirect(http.StatusFound, "/login")
+}
+
+func ServeCaptchaImage(c *gin.Context) {
+	captcha.Server(200, 45).ServeHTTP(c.Writer, c.Request)
+}
+
+func RequestCaptchaImage(c *gin.Context) {
+	imageId := captcha.New()
+	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(imageId))
 }
 
 func ChangeState(c *gin.Context) {

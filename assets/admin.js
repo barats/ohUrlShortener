@@ -27,6 +27,19 @@ $(document).ready(function() {
               prompt : '密码长度不得少于8位'
             }
           ]
+        },
+        captcha: {
+          identifier  : 'captcha-text',
+          rules: [
+            {
+              type   : 'empty',
+              prompt : '验证码不能为空'
+            },
+            {
+              type   : 'length[6]',
+              prompt : '验证码长度不得少于6位'
+            }
+          ]
         }
       }
     });
@@ -126,5 +139,37 @@ function enable_url(url,state) {
     error: function(e) {          
       errorToast($.parseJSON(e.responseText).message)
     } 
+  });
+}
+
+function reload_captcha() {
+  $.ajax({
+    type: "POST",
+    url: '/captcha',
+    dataType: 'json',
+    success: function(r) {            
+      $('#captcha-image').html('<img src="/captcha/'+r.result+'.png" />');
+      $('<input>').attr({type: 'hidden', value:r.result ,name: 'captcha-id'}).appendTo('#login-form');
+    },
+    error: function(e) {
+      errorToast($.parseJSON(e.responseText).message)
+    }
+  });
+}
+
+function sign_out_config() {
+  $('body').modal('confirm','温馨提示','确认退出 ohUrlShortener 管理后端吗？', function(choice){
+    if (choice) {
+      $.ajax({
+        type:"POST",
+        url: "/admin/logout",
+        success: function() {
+          successToast('操作成功，再见！')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }
   });
 }

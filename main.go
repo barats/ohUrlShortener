@@ -53,6 +53,9 @@ func init() {
 
 	_, err = service.ReloadUrls()
 	utils.PrintOnError("Realod urls failed.", err)
+
+	err = service.ReloadUsers()
+	utils.PrintOnError("Realod users failed.", err)
 }
 
 func main() {
@@ -160,12 +163,14 @@ func initializeRoute02() (http.Handler, error) {
 	})
 	router.GET("/login", controller.LoginPage)
 	router.POST("/login", controller.DoLogin)
-	router.POST("/logout", controller.DoLogout)
+	router.GET("/captcha/:imageId", controller.ServeCaptchaImage)
+	router.POST("/captcha", controller.RequestCaptchaImage)
 
 	admin := router.Group("/admin", controller.AdminAuthHandler())
 	admin.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/admin/dashboard")
 	})
+	admin.POST("/logout", controller.DoLogout)
 	admin.GET("/dashboard", controller.DashbaordPage)
 	admin.GET("/urls", controller.UrlsPage)
 	admin.GET("/stats", controller.StatsPage)

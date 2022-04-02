@@ -28,6 +28,18 @@ CREATE INDEX access_logs_access_time_idx ON public.access_logs (access_time);
 CREATE INDEX access_logs_ip_idx ON public.access_logs (ip);
 CREATE INDEX access_logs_ua_idx ON public.access_logs (user_agent);
 
+CREATE TABLE public.users (
+  id serial4 NOT NULL,
+	account varchar(200) NOT NULL,
+	password text NOT NULL,			
+	CONSTRAINT users_pk PRIMARY KEY (id),
+	CONSTRAINT users_account_un UNIQUE (account)
+);
+
+-- account: ohUrlShortener password: -2aDzm=0(ln_9^1
+INSERT INTO public.users (account, "password") VALUES('ohUrlShortener', 'EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t');
+
+
 CREATE VIEW public.url_ip_count_stats AS
 SELECT
 	u.short_url AS short_url,	

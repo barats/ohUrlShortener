@@ -28,6 +28,17 @@
             <input type="password" name="password" placeholder="Password">
           </div>
         </div>
+        <div class="field">
+          <div class="two fields">
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="image icon"></i>
+                <input type="text" name="captcha-text" placeholder="验证码">
+              </div>              
+            </div>
+            <div id="captcha-image" class="field"><a class="ui input" href="javascript:reload_captcha()">点击获取验证码</a></div>
+          </div>  
+        </div>     
         <div class="ui fluid large black submit button">Login</div>
       </div>  
       <div class="ui error message"></div>
