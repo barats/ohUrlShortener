@@ -82,14 +82,14 @@ func DoLogin(c *gin.Context) {
 		})
 		return
 	}
-	c.SetCookie("ohUrlShortenerAdmin", loginUser.Account, 3600, "/", "", true, true)
-	c.SetCookie("ohUrlShortenerCookie", cValue, 3600, "/", "", true, true)
+	c.SetCookie("ohUrlShortenerAdmin", loginUser.Account, 3600, "/", "", false, true)
+	c.SetCookie("ohUrlShortenerCookie", cValue, 3600, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/admin/dashboard")
 }
 
 func DoLogout(c *gin.Context) {
-	c.SetCookie("ohUrlShortenerAdmin", "", -1, "/", "", true, true)
-	c.SetCookie("ohUrlShortenerCookie", "", -1, "/", "", true, true)
+	c.SetCookie("ohUrlShortenerAdmin", "", -1, "/", "", false, true)
+	c.SetCookie("ohUrlShortenerCookie", "", -1, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/login")
 }
 
