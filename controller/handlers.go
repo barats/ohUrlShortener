@@ -36,33 +36,40 @@ func AdminAuthHandler() gin.HandlerFunc {
 		user, err := c.Cookie("ohUrlShortenerAdmin")
 		if err != nil {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		cookie, err := c.Cookie("ohUrlShortenerCookie")
 		if err != nil {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		if len(user) <= 0 || len(cookie) <= 0 {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		found, err := service.GetUserByAccountFromRedis(user)
 		if err != nil {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		if found.IsEmpty() {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		cValue, err := AdminCookieValue(found)
 		if err != nil {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		if !strings.EqualFold(cValue, cookie) {
 			c.Redirect(http.StatusFound, "/login")
+			return
 		}
 
 		c.Next()
