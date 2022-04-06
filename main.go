@@ -10,6 +10,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -19,6 +20,7 @@ import (
 	"ohurlshortener/service"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
+	"strings"
 	"time"
 
 	"github.com/Masterminds/sprig"
@@ -38,6 +40,8 @@ var (
 	FS embed.FS
 
 	group errgroup.Group
+
+	cmdStart *string
 )
 
 func init() {
@@ -66,37 +70,57 @@ func main() {
 	router02, err := initializeRoute02()
 	utils.ExitOnError("Router02 initialize failed.", err)
 
-	serverWeb := &http.Server{
+	portal := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.Port),
 		Handler:      router01,
 		ReadTimeout:  WEB_READ_TIMEOUT,
 		WriteTimeout: WEB_WRITE_TIMEOUT,
 	}
 
-	serverAdmin := &http.Server{
+	admin := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.AdminPort),
 		Handler:      router02,
 		ReadTimeout:  WEB_READ_TIMEOUT,
 		WriteTimeout: WEB_WRITE_TIMEOUT,
 	}
 
-	group.Go(func() error {
-		log.Printf("[ohUrlShortener] portal starts at http://127.0.0.1:%d", utils.AppConfig.Port)
-		return serverWeb.ListenAndServe()
-	})
+	cmdStart = flag.String("start", "", "admin | portal | (omit to start both)")
+	flag.Parse()
 
-	group.Go(func() error {
-		log.Printf("[ohUrlShortener] admin starts at http://127.0.0.1:%d", utils.AppConfig.AdminPort)
-		return serverAdmin.ListenAndServe()
-	})
+	if strings.EqualFold("admin", strings.ToLower(*cmdStart)) {
+		startAdmin(group, *admin)
+	}
 
+	if strings.EqualFold("portal", strings.ToLower(*cmdStart)) {
+		startPortal(group, *portal)
+	}
+
+	if utils.EemptyString(*cmdStart) {
+		startPortal(group, *portal)
+		startAdmin(group, *admin)
+	}
+
+	err = group.Wait()
+	utils.ExitOnError("Group failed,", err)
+}
+
+func startPortal(g errgroup.Group, server http.Server) {
 	group.Go(func() error {
 		log.Println("[ohUrlShortener] ticker starts to serve")
 		return startTicker()
 	})
 
-	err = group.Wait()
-	utils.ExitOnError("Group failed,", err)
+	group.Go(func() error {
+		log.Printf("[ohUrlShortener] portal starts at http://127.0.0.1:%d", utils.AppConfig.Port)
+		return server.ListenAndServe()
+	})
+}
+
+func startAdmin(g errgroup.Group, server http.Server) {
+	group.Go(func() error {
+		log.Printf("[ohUrlShortener] admin starts at http://127.0.0.1:%d", utils.AppConfig.AdminPort)
+		return server.ListenAndServe()
+	})
 }
 
 func initializeRoute01() (http.Handler, error) {
