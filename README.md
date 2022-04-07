@@ -11,7 +11,7 @@
 支持 Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
 1. 拉取 [`baratsemet/ohurlshortener-admin`](https://hub.docker.com/r/baratsemet/ohurlshortener-admin) 镜像（本地构建可查看 `docker/admin.Dockerfile`）
 1. 拉取 [`baratsemet/ohurlshortener-portal`](https://hub.docker.com/r/baratsemet/ohurlshortener-portal) 镜像（本地构建镜像可查看`docker/portal.Dockerfile`）
-1. 通过 `docker/services.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 
+1. 通过 `docker/pull_build.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 (本地构建镜像请查阅 `local_build.yml`) 
 1. 构建名为 `network_ohurlshortener` 的虚拟网络供上述服务使用
 1. 开启本机 `9091`、`9092` 端口分别应对 `ohUrlShortener-Portal` 及 `ohUrlShortener-Admin` 应用
 
