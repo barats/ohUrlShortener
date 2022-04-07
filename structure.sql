@@ -16,13 +16,13 @@ CREATE TABLE public.short_urls (
 );
 
 INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo)
-VALUES('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', '2022-04-01 17:31:41.270', true, '短链接系统 gitlink 页面');
+VALUES('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', NOW(), true, '短链接系统 gitlink 页面');
 
 INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo)
-VALUES('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', '2022-04-01 17:31:55.899', true, '短链接系统 gitee 页面');
+VALUES('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', NOW(), true, '短链接系统 gitee 页面');
 
 INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo)
-VALUES('gkT39tb5', 'https://github.com/barats/ohUrlShortener', '2022-04-01 17:32:13.209', true, '短链接系统 github 页面');
+VALUES('gkT39tb5', 'https://github.com/barats/ohUrlShortener', NOW(), true, '短链接系统 github 页面');
 
 
 CREATE TABLE public.access_logs (
