@@ -5,6 +5,19 @@
 
 ![Screenshot](screenshot.jpg)
 
+## Docker One Step Start
+
+支持 Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
+1. 构建 `docker/admin.Dockerfile` 镜像及服务
+1. 构建 `docker/portal.Dockerfile` 镜像及服务
+1. 通过 `docker/services.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 
+1. 构建名为 `network_ohurlshortener` 的虚拟网络供上述服务使用
+1. 开启本机 `9091`、`9092` 端口分别应对 `ohUrlShortener-Portal` 及 `ohUrlShortener-Admin` 应用
+
+## 启动参数说明  
+
+`ohurlshortener [-c 配置文件路径] [-s 需要启动的服务(admin或portal，省略次参数同时启动两个服务)]`
+
 ## 配置文件说明
 根目录下 `config.ini` 中存放着关于 ohUrlShortener 短链接系统的一些必要配置，请在启动应用之前确保这些配置的正确性
 
