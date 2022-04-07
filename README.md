@@ -37,6 +37,25 @@ admin_port = 9092
 url_prefix = http://localhost:9091/
 ```
 
+## Admin 后台默认帐号 
+默认帐号: ohUrlShortener  
+默认密码: -2aDzm=0(ln_9^1  
+
+数据库中存储的是加密后的密码，在 `structure.sql` 中标有注释，如果需要自定义其他密码，可以修改这里  
+
+密码加密规则 `storage/users_storage.go` 中
+```
+func PasswordBase58Hash(password string) (string, error) {
+	data, err := utils.Sha256Of(password)
+	if err != nil {
+		return "", err
+	}
+	return base58.Encode(data), nil
+}
+```
+
+亦可参照 `storage/users_storage_test.go` 中的 `TestNewUser()` 方法
+
 ## 短链接在应用启动时会存入 Redis 中
 
 所有短链接再系统启动时会以 `Key(short_url) -> Value(original_url)` 的形式存储在 Redis 中。
