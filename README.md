@@ -1,22 +1,50 @@
 # ohUrlShortener
 
-适合中小型社区网站使用的短链接服务系统，支持短链接成产、查询及302转向，并顺带简单的点击量统计
-
+ 适合中小型社区网站使用的短链接服务系统，支持短链接生产、查询及302转向，并自带点击量统计、独立IP数统计、访问日志 
 
 ![Screenshot](screenshot.jpg)
 
-## Docker One Step Start
+## 部署及构建方式
+
+### 1. Docker One Step Start
 
 支持 Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
-1. 构建 `docker/admin.Dockerfile` 镜像及服务
-1. 构建 `docker/portal.Dockerfile` 镜像及服务
+1. 拉取 [`baratsemet/ohurlshortener-admin`](https://hub.docker.com/r/baratsemet/ohurlshortener-admin) 镜像（本地构建可查看 `docker/admin.Dockerfile`）
+1. 拉取 [`baratsemet/ohurlshortener-portal`](https://hub.docker.com/r/baratsemet/ohurlshortener-portal) 镜像（本地构建镜像可查看`docker/portal.Dockerfile`）
 1. 通过 `docker/services.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 
 1. 构建名为 `network_ohurlshortener` 的虚拟网络供上述服务使用
 1. 开启本机 `9091`、`9092` 端口分别应对 `ohUrlShortener-Portal` 及 `ohUrlShortener-Admin` 应用
 
+### 2. 通过 `Makefile` 构建
+
+查看支持的构建命令： 
+```
+make help
+```
+例如：构建 linux 平台对应的可执行文件：
+```
+make build-linux
+```
+例如：压缩 linux 平台对应的可执行文件：
+```
+make compress-linux
+```
+
+`make build-macos` 构建 macOS 版本  
+如果安装了 upx 还可以听过 `make compress-macos` 对可执行文件压缩 
+
+### 3. 使用 Go 编译
+
+项目根目录下执行 
+```
+go mod download && go build -o ohurlshortener .
+````
+
 ## 启动参数说明  
 
-`ohurlshortener [-c 配置文件路径] [-s 需要启动的服务(admin或portal，省略次参数同时启动两个服务)]`
+```
+ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]
+```
 
 ## 配置文件说明
 根目录下 `config.ini` 中存放着关于 ohUrlShortener 短链接系统的一些必要配置，请在启动应用之前确保这些配置的正确性
