@@ -20,6 +20,7 @@ import (
 	"ohurlshortener/service"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
+	"os"
 	"strings"
 	"time"
 
@@ -41,12 +42,62 @@ var (
 
 	group errgroup.Group
 
-	cmdStart *string
+	cmdStart  string
+	cmdConfig string
 )
 
-func init() {
+func main() {
+
+	flag.StringVar(&cmdStart, "s", "", "starts ohurlshortener service:  admin | portal ")
+	flag.StringVar(&cmdConfig, "c", "config.ini", "config file path")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stdout, `ohUrlShortener version:1.0 
+		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`)
+		flag.PrintDefaults()
+	}
+
+	flag.Parse()
+
+	initSettings()
+
+	router01, err := initializeRoute01()
+	utils.ExitOnError("Router01 initialize failed.", err)
+
+	router02, err := initializeRoute02()
+	utils.ExitOnError("Router02 initialize failed.", err)
+
+	portal := &http.Server{
+		Addr:         fmt.Sprintf(":%d", utils.AppConfig.Port),
+		Handler:      router01,
+		ReadTimeout:  WEB_READ_TIMEOUT,
+		WriteTimeout: WEB_WRITE_TIMEOUT,
+	}
+
+	admin := &http.Server{
+		Addr:         fmt.Sprintf(":%d", utils.AppConfig.AdminPort),
+		Handler:      router02,
+		ReadTimeout:  WEB_READ_TIMEOUT,
+		WriteTimeout: WEB_WRITE_TIMEOUT,
+	}
+
+	if strings.EqualFold("admin", strings.TrimSpace(cmdStart)) {
+		startAdmin(group, *admin)
+	} else if strings.EqualFold("portal", strings.TrimSpace(cmdStart)) {
+		startPortal(group, *portal)
+	} else if utils.EemptyString(cmdStart) {
+		startPortal(group, *portal)
+		startAdmin(group, *admin)
+	} else {
+		flag.Usage()
+	}
+
+	err = group.Wait()
+	utils.ExitOnError("Group failed,", err)
+}
+
+func initSettings() {
 	//Things MUST BE DONE before app starts
-	_, err := utils.InitConfig(CONFIG_FILE)
+	_, err := utils.InitConfig(cmdConfig)
 	utils.ExitOnError("Config initialization failed.", err)
 
 	_, err = storage.InitRedisService()
@@ -62,48 +113,6 @@ func init() {
 	utils.PrintOnError("Realod users failed.", err)
 }
 
-func main() {
-
-	router01, err := initializeRoute01()
-	utils.ExitOnError("Router01 initialize failed.", err)
-
-	router02, err := initializeRoute02()
-	utils.ExitOnError("Router02 initialize failed.", err)
-
-	portal := &http.Server{
-		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.Port),
-		Handler:      router01,
-		ReadTimeout:  WEB_READ_TIMEOUT,
-		WriteTimeout: WEB_WRITE_TIMEOUT,
-	}
-
-	admin := &http.Server{
-		Addr:         fmt.Sprintf("127.0.0.1:%d", utils.AppConfig.AdminPort),
-		Handler:      router02,
-		ReadTimeout:  WEB_READ_TIMEOUT,
-		WriteTimeout: WEB_WRITE_TIMEOUT,
-	}
-
-	cmdStart = flag.String("start", "", "admin | portal | (omit to start both)")
-	flag.Parse()
-
-	if strings.EqualFold("admin", strings.ToLower(*cmdStart)) {
-		startAdmin(group, *admin)
-	}
-
-	if strings.EqualFold("portal", strings.ToLower(*cmdStart)) {
-		startPortal(group, *portal)
-	}
-
-	if utils.EemptyString(*cmdStart) {
-		startPortal(group, *portal)
-		startAdmin(group, *admin)
-	}
-
-	err = group.Wait()
-	utils.ExitOnError("Group failed,", err)
-}
-
 func startPortal(g errgroup.Group, server http.Server) {
 	group.Go(func() error {
 		log.Println("[ohUrlShortener] ticker starts to serve")
@@ -111,14 +120,14 @@ func startPortal(g errgroup.Group, server http.Server) {
 	})
 
 	group.Go(func() error {
-		log.Printf("[ohUrlShortener] portal starts at http://127.0.0.1:%d", utils.AppConfig.Port)
+		log.Printf("[ohUrlShortener] portal starts at http://localhost:%d", utils.AppConfig.Port)
 		return server.ListenAndServe()
 	})
 }
 
 func startAdmin(g errgroup.Group, server http.Server) {
 	group.Go(func() error {
-		log.Printf("[ohUrlShortener] admin starts at http://127.0.0.1:%d", utils.AppConfig.AdminPort)
+		log.Printf("[ohUrlShortener] admin starts at http://localhost:%d", utils.AppConfig.AdminPort)
 		return server.ListenAndServe()
 	})
 }
