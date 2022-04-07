@@ -1,0 +1,73 @@
+version: '3'
+services:
+
+  ohurlshortener-admin:
+    image: baratsemet/ohurlshortener-admin:1.0 
+    container_name: ${OH_ADMIN_CONTAINER_NAME} 
+    hostname: oh_admin
+    volumes:
+      - ../docker/docker_config.ini:/app/config.ini 
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis: 
+        condition: service_healthy
+    ports:
+      - ${OH_ADMIN_PORT}:9092
+    networks:
+      - ohurlshortener      
+
+  ohurlshortener-portal:
+    image: baratsemet/ohurlshortener-portal:1.0 
+    container_name: ${OH_PORTAL_CONTAINER_NAME} 
+    hostname: oh_portal
+    volumes:
+      - ../docker/docker_config.ini:/app/config.ini      
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis: 
+        condition: service_healthy
+    ports:
+      - ${OH_PORTAL_PORT}:9091
+    networks:
+      - ohurlshortener       
+
+  postgres:
+    image: postgres:${PG_VERSION}
+    container_name: ${PG_CONTAINER_NAME}
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=${PG_SUPER_USER}
+      - POSTGRES_PASSWORD=${PG_SUPER_PWD}
+      - TZ=PRC
+      - PGTZ=PRC
+    volumes:
+      - ../structure.sql:/docker-entrypoint-initdb.d/001.sql
+      - ../docker/container-data/postgresql:/var/lib/postgresql/data      
+    healthcheck:
+      test: [ "CMD", "psql", "-U","${PG_SUPER_USER}","-d","oh_url_shortener" ]
+      timeout: 10s
+      interval: 3s
+      retries: 10     
+    networks:
+      - ohurlshortener      
+
+  redis:
+    image: redis:${RD_VERSION}
+    container_name: ${RD_CONTAINER_NAME}
+    hostname: redis        
+    healthcheck:
+      test: [ "CMD", "redis-cli","-p","6379"]
+      timeout: 10s
+      interval: 3s
+      retries: 10
+    networks:
+      - ohurlshortener 
+      
+networks:
+  ohurlshortener:
+    driver: bridge
+    name: "network_ohurlshortener"
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
