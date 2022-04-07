@@ -30,9 +30,6 @@ make build-linux
 make compress-linux
 ```
 
-`make build-macos` 构建 macOS 版本  
-如果安装了 upx 还可以听过 `make compress-macos` 对可执行文件压缩 
-
 ### 3. 使用 Go 编译
 
 项目根目录下执行 
