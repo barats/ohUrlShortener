@@ -2,7 +2,7 @@ version: '3'
 services:
 
   ohurlshortener-admin:
-    image: baratsemet/ohurlshortener-admin:1.0 
+    image: baratsemet/ohurlshortener-admin:${OH_ADMIN_VERSION}
     container_name: ${OH_ADMIN_CONTAINER_NAME} 
     hostname: oh_admin
     volumes:
@@ -18,7 +18,7 @@ services:
       - ohurlshortener      
 
   ohurlshortener-portal:
-    image: baratsemet/ohurlshortener-portal:1.0 
+    image: baratsemet/ohurlshortener-portal:${OH_PORTAL_VERSION}
     container_name: ${OH_PORTAL_CONTAINER_NAME} 
     hostname: oh_portal
     volumes:
