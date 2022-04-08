@@ -2,7 +2,7 @@ version: '3'
 services:
 
   ohurlshortener-admin:
-    image: ohurlshortener/admin:1.0 
+    image: ohurlshortener/admin:1.1
     container_name: ${OH_ADMIN_CONTAINER_NAME} 
     hostname: oh_admin
     build: 
@@ -21,7 +21,7 @@ services:
       - ohurlshortener      
 
   ohurlshortener-portal:
-    image: ohurlshortener/portal:1.0 
+    image: ohurlshortener/portal:1.1 
     container_name: ${OH_PORTAL_CONTAINER_NAME} 
     hostname: oh_portal
     build: 
