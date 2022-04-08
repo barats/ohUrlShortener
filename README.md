@@ -1,6 +1,11 @@
 # ohUrlShortener
 
- 适合中小型社区网站使用的短链接服务系统，支持短链接生产、查询及302转向，并自带点击量统计、独立IP数统计、访问日志 
+ 适合中小型社区网站使用的短链接服务系统，支持短链接生产、查询及302转向，并自带点击量统计、独立IP数统计、访问日志查询：
+
+1. 支持 Docker One Stop 部署、Makefile 编译打包
+1. 支持短链接生产、查询、存储、302转向
+1. 支持访问日志查询、访问量统计、独立IP数统计
+
 
 ![Screenshot](screenshot.jpg)
 
@@ -9,30 +14,29 @@
 ### 1. Docker One Step Start
 
 支持 Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
-1. 拉取 [`baratsemet/ohurlshortener-admin`](https://hub.docker.com/r/baratsemet/ohurlshortener-admin) 镜像（本地构建可查看 `docker/admin.Dockerfile`）
-1. 拉取 [`baratsemet/ohurlshortener-portal`](https://hub.docker.com/r/baratsemet/ohurlshortener-portal) 镜像（本地构建镜像可查看`docker/portal.Dockerfile`）
+1. 拉取 [baratsemet/ohurlshortener-admin](https://hub.docker.com/r/baratsemet/ohurlshortener-admin) 镜像（本地构建可查看 `docker/admin.Dockerfile`）
+1. 拉取 [baratsemet/ohurlshortener-portal](https://hub.docker.com/r/baratsemet/ohurlshortener-portal) 镜像（本地构建镜像可查看`docker/portal.Dockerfile`）
 1. 通过 `docker/pull_build.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 (本地构建镜像请查阅 `local_build.yml`) 
 1. 构建名为 `network_ohurlshortener` 的虚拟网络供上述服务使用
 1. 开启本机 `9091`、`9092` 端口分别应对 `ohUrlShortener-Portal` 及 `ohUrlShortener-Admin` 应用
 
 ### 2. 通过 `Makefile` 构建
 
-查看支持的构建命令： 
-```
-make help
-```
-例如：构建 linux 平台对应的可执行文件：
+构建 linux 平台对应的可执行文件：
 ```
 make build-linux
 ```
-例如：压缩 linux 平台对应的可执行文件：
+压缩 linux 平台对应的可执行文件(压缩可执行文件需要 [upx](https://github.com/upx/upx) 支持)：
 ```
 make compress-linux
 ```
 
+`make help` 查看说明文档
+
 ### 3. 使用 Go 编译
 
 项目根目录下执行 
+
 ```
 go mod download && go build -o ohurlshortener .
 ````
@@ -52,14 +56,21 @@ ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]
 应用是否以 debug 模式启动，主要作用会在go-gin 框架上体现（eg：日志输出等）
 debug = false   
 
-短链接系统本地启动端口
+# 短链接系统本地启动端口
 port = 9091
 
-短链接系统管理后台本地启动端口
+# 短链接系统管理后台本地启动端口
 admin_port = 9092
 
-短链接系统的完整 url 前缀，eg：https://t.cn/ 是前缀(不要忘记最后一个/符号)
+# 例如：https://t.cn/ 是前缀(不要忘记最后一个/符号)
 url_prefix = http://localhost:9091/
+
+[redis]
+...
+
+[postgres]
+...
+
 ```
 
 ## Admin 后台默认帐号 
@@ -68,7 +79,7 @@ url_prefix = http://localhost:9091/
 
 数据库中存储的是加密后的密码，在 `structure.sql` 中标有注释，如果需要自定义其他密码，可以修改这里  
 
-密码加密规则 `storage/users_storage.go` 中
+加密规则 `storage/users_storage.go` 中
 ```
 func PasswordBase58Hash(password string) (string, error) {
 	data, err := utils.Sha256Of(password)
