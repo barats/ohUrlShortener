@@ -15,6 +15,7 @@ import (
 
 type ResultJson struct {
 	Code    int         `json:"code"`
+	Status  bool        `json:"status"`
 	Message string      `json:"message"`
 	Result  interface{} `json:"result"`
 	Date    time.Time   `json:"date"`
@@ -24,6 +25,7 @@ func ResultJsonSuccess() ResultJson {
 	return ResultJson{
 		Code:    http.StatusOK,
 		Message: "success",
+		Status:  true,
 		Result:  nil,
 		Date:    time.Now(),
 	}
@@ -34,6 +36,7 @@ func ResultJsonSuccessWithData(data interface{}) ResultJson {
 		Code:    http.StatusOK,
 		Message: "success",
 		Result:  data,
+		Status:  true,
 		Date:    time.Now(),
 	}
 }
@@ -42,6 +45,7 @@ func ResultJsonError(message string) ResultJson {
 	return ResultJson{
 		Code:    http.StatusInternalServerError,
 		Message: message,
+		Status:  false,
 		Result:  nil,
 		Date:    time.Now(),
 	}
@@ -51,6 +55,17 @@ func ResultJsonBadRequest(message string) ResultJson {
 	return ResultJson{
 		Code:    http.StatusBadRequest,
 		Message: message,
+		Status:  false,
+		Result:  nil,
+		Date:    time.Now(),
+	}
+}
+
+func ResultJsonUnauthorized(message string) ResultJson {
+	return ResultJson{
+		Code:    http.StatusUnauthorized,
+		Message: message,
+		Status:  false,
 		Result:  nil,
 		Date:    time.Now(),
 	}

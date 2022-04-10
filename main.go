@@ -210,6 +210,13 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/access_logs", controller.AccessLogsPage)
 	admin.POST("/urls/generate", controller.GenerateShortUrl)
 	admin.POST("/urls/state", controller.ChangeState)
+
+	api := router.Group("/api", controller.APIAuthHandler())
+	api.POST("/account", controller.APINewAdmin)
+	api.PUT("/account/:account/update", controller.APIAdminUpdate)
+	api.POST("/url", controller.APIGenShortUrl)
+	api.GET("/url/:url", controller.APIUrlInfo)
+	api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
