@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
@@ -62,4 +63,56 @@ func GetUserByAccountFromRedis(account string) (core.User, error) {
 	json.Unmarshal([]byte(foundUserStr), &found)
 
 	return found, nil
+}
+
+func UpdatePassword(account, newPassword string) error {
+	found, err := GetUserByAccountFromRedis(strings.TrimSpace(account))
+	if err != nil {
+		return err
+	}
+
+	if found.IsEmpty() {
+		return utils.RaiseError("修改失败")
+	}
+
+	np, err := storage.PasswordBase58Hash(newPassword)
+	if err != nil {
+		return err
+	}
+
+	found.Password = np
+	err = storage.UpdateUser(found)
+	if err != nil {
+		return err
+	}
+
+	err = ReloadUsers()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewUser(account, password string) error {
+	found, err := GetUserByAccountFromRedis(strings.TrimSpace(account))
+	if err != nil {
+		return err
+	}
+
+	if !found.IsEmpty() {
+		return utils.RaiseError(fmt.Sprintf("用户名 %s 已存在", account))
+	}
+
+	err = storage.NewUser(account, password)
+	if err != nil {
+		return err
+	}
+
+	err = ReloadUsers()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
