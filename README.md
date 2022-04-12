@@ -56,7 +56,7 @@ ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]
 ```ini
 [app]
 
-应用是否以 debug 模式启动，主要作用会在go-gin 框架上体现（eg：日志输出等）
+# 应用是否以 debug 模式启动，主要作用会在go-gin 框架上体现（eg：日志输出等）
 debug = false   
 
 # 短链接系统本地启动端口
@@ -146,7 +146,8 @@ curl --request POST \
 2. `enable` 禁用时，传入 false；启用时，传入 true 
 
 请求示例：
-```
+
+```shell
 curl --request PUT \
   --url http://localhost:9092/api/url/33R5QUtD/change_state \
   --header 'Authorization: Bearer EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t' \
@@ -155,7 +156,8 @@ curl --request PUT \
 ```
 
 返回结果：
-```
+
+```shell
 {
 	"code": 200,
 	"status": true,
