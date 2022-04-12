@@ -7,7 +7,6 @@
 1. 支持访问日志查询、访问量统计、独立IP数统计
 1. 支持 HTTP API 方式新建短链接、禁用/启用短链接、查看短链接统计信息、新建管理员、修改管理员密码
 
-
 ![Screenshot](screenshot.jpg)
 
 ## 部署及构建方式
@@ -23,35 +22,38 @@
 
 ### 2. 通过 `Makefile` 构建
 
+项目根目录下运行 `make help` 查看说明文档
+
 构建 linux 平台对应的可执行文件：
-```
+
+```shell
 make build-linux
 ```
+
 压缩 linux 平台对应的可执行文件(压缩可执行文件需要 [upx](https://github.com/upx/upx) 支持)：
-```
+
+```shell
 make compress-linux
 ```
-
-`make help` 查看说明文档
 
 ### 3. 使用 Go 编译
 
 项目根目录下执行 
 
-```
+```golang 
 go mod download && go build -o ohurlshortener .
 ````
 
 ## 启动参数说明  
 
-```
-ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]
+```shell
+ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]  
 ```
 
 ## 配置文件说明
 根目录下 `config.ini` 中存放着关于 ohUrlShortener 短链接系统的一些必要配置，请在启动应用之前确保这些配置的正确性
 
-```
+```ini
 [app]
 
 应用是否以 debug 模式启动，主要作用会在go-gin 框架上体现（eg：日志输出等）
@@ -75,13 +77,14 @@ url_prefix = http://localhost:9091/
 ```
 
 ## Admin 后台默认帐号 
-默认帐号: ohUrlShortener  
-默认密码: -2aDzm=0(ln_9^1  
+默认帐号: `ohUrlShortener`  
+默认密码: `-2aDzm=0(ln_9^1`  
 
 数据库中存储的是加密后的密码，在 `structure.sql` 中标有注释，如果需要自定义其他密码，可以修改这里  
 
 加密规则 `storage/users_storage.go` 中
-```
+
+```golang 
 func PasswordBase58Hash(password string) (string, error) {
 	data, err := utils.Sha256Of(password)
 	if err != nil {
@@ -98,7 +101,8 @@ func PasswordBase58Hash(password string) (string, error) {
 ### `/api` 接口权限说明
 
 所有 `/api/*` 接口需要通过 `Bearer Token` 方式验证权限，亦即：每个请求 Header 须携带 
-```
+
+```shell
  Authorization: Bearer {sha256_of_password}
 ```
 
@@ -111,7 +115,8 @@ func PasswordBase58Hash(password string) (string, error) {
 2. `memo` 备注信息，选填
 
 请求示例：
-```
+
+```shell
 curl --request POST \
   --url http://localhost:9092/api/url \
   --header 'Authorization: Bearer EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t' \
@@ -121,7 +126,8 @@ curl --request POST \
 ```
 
 返回结果：
-```
+
+```shell
 {
 	"code": 200,
 	"status": true,
@@ -165,7 +171,8 @@ curl --request PUT \
 1. `url` path 参数，指定短链接，必填
 
 请求示例：
-```
+
+```shell
 curl --request GET \
   --url http://localhost:9092/api/url/33R5QUtD \
   --header 'Authorization: Bearer EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t' \
@@ -173,7 +180,8 @@ curl --request GET \
 ```
 
 返回结果：
-```
+
+```shell
 {
 	"code": 200,
 	"status": true,
@@ -202,7 +210,8 @@ curl --request GET \
 2. `password` 管理员密码，必填，最小长度8
 
 请求示例：
-```
+
+```shell
 curl --request POST \
   --url http://localhost:9092/api/account \
   --header 'Authorization: Bearer EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t' \
@@ -212,7 +221,8 @@ curl --request POST \
 ```
 
 返回结果：
-```
+
+```shell
 {
 	"code": 200,
 	"status": true,
@@ -229,7 +239,8 @@ curl --request POST \
 1. `password` 管理员密码，必填，最小长度8
 
 请求示例：
-```
+
+```shell
 curl --request PUT \
   --url http://localhost:9092/api/account/hello/update \
   --header 'Authorization: Bearer EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t' \
@@ -238,7 +249,8 @@ curl --request PUT \
 ```
 
 返回结果：
-```
+
+```shell
 {
 	"code": 200,
 	"status": true,
@@ -268,7 +280,7 @@ curl --request PUT \
 
 所在文件 `core/short_url.go` 
 
-```
+```golang
 func GenerateShortLink(initialLink string) (string, error) {
 	if utils.EemptyString(initialLink) {
 		return "", fmt.Errorf("empty string")
@@ -287,7 +299,7 @@ func GenerateShortLink(initialLink string) (string, error) {
 
 所在文件 `main.go` 
 
-```
+```golang
 const ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute 
 
 func startTicker() error {
@@ -314,3 +326,10 @@ func startTicker() error {
 5. [go-redis/redis](https://github.com/go-redis/redis/) 
 6. [jmoiron/sqlx](https://github.com/jmoiron/sqlx)
 7. [go-ini/ini](https://github.com/go-ini/ini)
+
+## ohUrlShortener 
+1. [ohUrlShortener 短链接系统 v1.2 正式发布](https://www.oschina.net/news/190546/ohurlshortener-1-2-released)
+1. 软件信息收录 [https://www.oschina.net/p/ohurlshortener](https://www.oschina.net/p/ohurlshortener)
+1. Gitee [https://gitee.com/barat/ohurlshortener](https://gitee.com/barat/ohurlshortener)
+1. Github [https://github.com/barats/ohUrlShortener](https://github.com/barats/ohUrlShortener)
+1. Gitlink [https://www.gitlink.org.cn/baladiwei/ohurlshortener](https://www.gitlink.org.cn/baladiwei/ohurlshortener)
