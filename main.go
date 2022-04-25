@@ -210,6 +210,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/access_logs", controller.AccessLogsPage)
 	admin.POST("/urls/generate", controller.GenerateShortUrl)
 	admin.POST("/urls/state", controller.ChangeState)
+	admin.GET("/access_logs_export", controller.AccessLogsExportPage)
 
 	api := router.Group("/api", controller.APIAuthHandler())
 	api.POST("/account", controller.APINewAdmin)

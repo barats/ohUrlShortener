@@ -17,7 +17,9 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.4
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 //indirect
+	github.com/xuri/excelize/v2 v2.6.0 // indirect
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 //indirect
+	golang.org/x/net v0.0.0-20220421235706-1d1ef9303861 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gopkg.in/ini.v1 v1.66.4
 )

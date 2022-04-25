@@ -59,3 +59,14 @@ func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error)
 	}
 	return found, DbSelect(query, &found, size, offset)
 }
+
+func FindNoPagedAllAccessLogs(url string) ([]core.AccessLog, error) {
+	found := []core.AccessLog{}
+	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC LIMIT 1000"
+	if !utils.EemptyString(url) {
+		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC LIMIT 1000"
+		err := DbSelect(query, &found, url)
+		return found, err
+	}
+	return found, DbSelect(query, &found)
+}
