@@ -87,7 +87,7 @@ func GetPagedAccessLogs(url string, page int, size int) ([]core.AccessLog, error
 }
 
 func GetAllAccessLogs(url string) ([]core.AccessLog, error) {
-	allAccessLogs, err := storage.FindNoPagedAllAccessLogs(url)
+	allAccessLogs, err := storage.FindAllAccessLogsByUrl(url)
 	if err != nil {
 		log.Println(err)
 		return allAccessLogs, utils.RaiseError("内部错误，请联系管理员")
