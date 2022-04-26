@@ -17,7 +17,12 @@
                 <input name="url" type="text" value="{{.url}}" placeholder="短链接">                
               </div>
               <button class="ui teal right labeled icon button" type="submit"><i class="search icon"></i>查询</button>                
-              <a class="ui teal right labeled icon button" href="/admin/access_logs"><i class="undo alternate icon"></i>重置</a>                              
+              <a class="ui teal right labeled icon button" href="/admin/access_logs"><i class="undo alternate icon"></i>重置</a>         
+              <a class="ui teal right labeled icon button" href="javascript:export_accesslog()"><i class="download icon"></i>导出</a>                        
+            </form>
+            <form id="form-export-logs" action="/admin/access_logs_export" method="post">
+              <input name="url" type="hidden" value="{{.url}}">
+              <button id="form-export-logs-btn" type="submit"></button>
             </form>
             </th>
           </tr>

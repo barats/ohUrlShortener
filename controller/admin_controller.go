@@ -14,8 +14,10 @@ import (
 	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
+	"ohurlshortener/utils/export"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
@@ -226,6 +228,37 @@ func AccessLogsPage(c *gin.Context) {
 		"last_page":   len(logs) < size,
 		"url":         strings.TrimSpace(url),
 	})
+}
+
+func AccessLogsExport(c *gin.Context) {
+	url := c.PostForm("url")
+	logs, err := service.GetAllAccessLogs(strings.TrimSpace(url))
+	if err != nil {
+		c.HTML(http.StatusOK, "access_logs.html", gin.H{
+			"title":       "访问日志查询 - ohUrlShortener",
+			"current_url": c.Request.URL.Path,
+			"prefix":      utils.AppConfig.UrlPrefix,
+			"url":         strings.TrimSpace(url),
+			"error":       err,
+		})
+		return
+	}
+	fileContent, err := export.AccessLogToExcel(logs)
+	if err != nil {
+		c.HTML(http.StatusOK, "access_logs.html", gin.H{
+			"title":       "访问日志查询 - ohUrlShortener",
+			"current_url": c.Request.URL.Path,
+			"prefix":      utils.AppConfig.UrlPrefix,
+			"url":         strings.TrimSpace(url),
+			"error":       err,
+		})
+		return
+	}
+
+	attachmentName := "访问日志" + time.Now().Format("2006-01-02 150405") + ".xlsx"
+	fileContentDisposition := "attachment;filename=\"" + attachmentName + "\""
+	c.Header("Content-Disposition", fileContentDisposition)
+	c.Data(http.StatusOK, "pplication/octet-stream", fileContent)
 }
 
 func DashbaordPage(c *gin.Context) {
