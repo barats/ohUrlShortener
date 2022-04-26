@@ -231,7 +231,7 @@ func AccessLogsPage(c *gin.Context) {
 }
 
 func FindAllAccessLogs(c *gin.Context) {
-	url := c.DefaultQuery("url", "")
+	url := c.PostForm("url")
 	logs, err := service.GetAllAccessLogs(strings.TrimSpace(url))
 	if err != nil {
 		c.HTML(http.StatusOK, "access_logs.html", gin.H{
@@ -243,7 +243,6 @@ func FindAllAccessLogs(c *gin.Context) {
 		})
 		return
 	}
-
 	fileContent, err := export.AccessLogToExcel(logs)
 	if err != nil {
 		c.HTML(http.StatusOK, "access_logs.html", gin.H{
