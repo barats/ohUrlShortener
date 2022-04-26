@@ -173,3 +173,11 @@ function sign_out_config() {
     }
   });
 }
+
+function export_accesslog() {
+  $('body').modal('confirm','温馨提示','确认导出访问日志?', function(choice){
+    if (choice) {
+      $("#form-export-logs-btn").click()
+    }
+  });
+}
