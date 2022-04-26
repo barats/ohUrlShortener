@@ -14,7 +14,7 @@ import (
 	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
-	excelizeutils "ohurlshortener/utils/excelizeUtils"
+	"ohurlshortener/utils/export"
 	"strconv"
 	"strings"
 	"time"
@@ -230,12 +230,8 @@ func AccessLogsPage(c *gin.Context) {
 	})
 }
 
-/*
-导出所有访问日志（limit: 1000条）
-*/
-func AccessLogsExportPage(c *gin.Context) {
+func FindAllAccessLogs(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
-	fmt.Printf("导出日志: " + url)
 	logs, err := service.GetAllAccessLogs(strings.TrimSpace(url))
 	if err != nil {
 		c.HTML(http.StatusOK, "access_logs.html", gin.H{
@@ -248,7 +244,7 @@ func AccessLogsExportPage(c *gin.Context) {
 		return
 	}
 
-	fileContent, err := excelizeutils.AccessLogToExcel(logs)
+	fileContent, err := export.AccessLogToExcel(logs)
 	if err != nil {
 		c.HTML(http.StatusOK, "access_logs.html", gin.H{
 			"title":       "访问日志查询 - ohUrlShortener",
@@ -264,7 +260,6 @@ func AccessLogsExportPage(c *gin.Context) {
 	fileContentDisposition := "attachment;filename=\"" + attachmentName + "\""
 	c.Header("Content-Disposition", fileContentDisposition)
 	c.Data(http.StatusOK, "pplication/octet-stream", fileContent)
-
 }
 
 func DashbaordPage(c *gin.Context) {
