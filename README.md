@@ -317,6 +317,10 @@ func startTicker() error {
 }
 ```
 
+## Contributor License Agreement
+
+在 **第一次提交 Pull Request 时** ，请您在 Pull Request 内容中明确写明「本人自愿接受并签署 [《ohUrlShortener Contributor License Agreement》](CLA.md)」，并在 Pull Request 信息中附带该协议链接信息。
+
 ## Give Thanks To
 
 由衷感谢以下开源软件、框架等（包括但不限于）
