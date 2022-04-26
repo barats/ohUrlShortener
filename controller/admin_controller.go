@@ -230,7 +230,7 @@ func AccessLogsPage(c *gin.Context) {
 	})
 }
 
-func FindAllAccessLogs(c *gin.Context) {
+func AccessLogsExport(c *gin.Context) {
 	url := c.PostForm("url")
 	logs, err := service.GetAllAccessLogs(strings.TrimSpace(url))
 	if err != nil {

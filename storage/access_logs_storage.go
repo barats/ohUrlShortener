@@ -60,7 +60,7 @@ func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error)
 	return found, DbSelect(query, &found, size, offset)
 }
 
-func FindNoPagedAllAccessLogs(url string) ([]core.AccessLog, error) {
+func FindAllAccessLogsByUrl(url string) ([]core.AccessLog, error) {
 	found := []core.AccessLog{}
 	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC"
 	if !utils.EemptyString(url) {
