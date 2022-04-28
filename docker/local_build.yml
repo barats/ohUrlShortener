@@ -55,7 +55,9 @@ services:
       test: [ "CMD", "psql", "-U","${PG_SUPER_USER}","-d","oh_url_shortener" ]
       timeout: 10s
       interval: 3s
-      retries: 10     
+      retries: 10   
+    ports:
+      - ${PG_LOCAL_PORT}:5432        
     networks:
       - ohurlshortener      
 
@@ -68,6 +70,8 @@ services:
       timeout: 10s
       interval: 3s
       retries: 10
+    ports:
+      - ${RD_LOCAL_PORT}:6379      
     networks:
       - ohurlshortener 
       
