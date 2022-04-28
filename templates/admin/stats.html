@@ -10,7 +10,7 @@
       <table class="ui celled striped table">
         <thead>
           <tr>
-            <th colspan="13">
+            <th colspan="14">
               <form id="form-search-url" action="/admin/stats" method="get">
                 <div class="ui labeled action input">
                   <div class="ui label">{{.prefix}}</div>
@@ -23,7 +23,8 @@
           </tr>
           <tr>            
             <th>短链接</th>
-            <th>生成时间</th>
+            <th class="center aligned">生成时间</th>
+            <th class="center aligned">备注</th>
             <th>今日点击量</th>  
             <th>今日独立IP数</th>  
             <th>昨日点击量</th>  
@@ -42,6 +43,7 @@
           <tr {{if not .Valid}}class="negative"{{end}}>
             <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl.ShortUrl}}" target="_blank">{{.ShortUrl.ShortUrl}}</a></td>
             <td class="center aligned collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
+            <td>{{if .ShortUrl.Memo.Valid}}{{.ShortUrl.Memo.String}}{{else}}--{{end}}</td>
             <td>{{.TodayCount}}</td>  
             <td>{{.DistinctTodayCount}}</td>  
             <td>{{.YesterdayCount}}</td>  
@@ -58,7 +60,7 @@
         </tbody>
         <tfoot>
           <tr>            
-            <th colspan="13" class="center aligned">
+            <th colspan="14" class="center aligned">
               {{if not .first_page}}
               <a class="ui small labeled icon button" href="/admin/stats?url={{.url}}&page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i>上一页</a>
               {{end}}
