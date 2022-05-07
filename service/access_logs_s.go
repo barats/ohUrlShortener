@@ -74,16 +74,20 @@ func StoreAccessLogs() error {
 	return nil
 }
 
-func GetPagedAccessLogs(url string, page int, size int) ([]core.AccessLog, error) {
+func GetPagedAccessLogs(url string, start, end string, page, size int) ([]core.AccessLog, error) {
 	if page < 1 || size < 1 {
 		return nil, nil
 	}
-	allAccessLogs, err := storage.FindAllAccessLogs(url, page, size)
+	allAccessLogs, err := storage.FindAllAccessLogs(url, start, end, page, size)
 	if err != nil {
 		log.Println(err)
 		return allAccessLogs, utils.RaiseError("内部错误，请联系管理员")
 	}
 	return allAccessLogs, nil
+}
+
+func GetAccessLogsCount(url string, start, end string) (int, int, error) {
+	return storage.FindAccessLogsCount(url, start, end)
 }
 
 func GetAllAccessLogs(url string) ([]core.AccessLog, error) {

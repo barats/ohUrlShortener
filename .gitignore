@@ -4,3 +4,4 @@ docker/container-data/*
 tmp
 .DS_Store
 build
+.idea

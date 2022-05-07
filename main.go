@@ -207,6 +207,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/dashboard", controller.DashbaordPage)
 	admin.GET("/urls", controller.UrlsPage)
 	admin.GET("/stats", controller.StatsPage)
+	admin.GET("/search_stats", controller.SearchStatsPage)
 	admin.GET("/access_logs", controller.AccessLogsPage)
 	admin.POST("/urls/generate", controller.GenerateShortUrl)
 	admin.POST("/urls/state", controller.ChangeState)

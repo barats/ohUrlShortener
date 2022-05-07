@@ -9,6 +9,7 @@
 package storage
 
 import (
+	"fmt"
 	"ohurlshortener/core"
 	"ohurlshortener/utils"
 )
@@ -37,26 +38,45 @@ func InsertAccessLogs(logs []core.AccessLog) error {
 	return DbNamedExec(query, logs)
 }
 
-func FindAccessLogsCount(url string) (int, error) {
-	var rowCount int
-	query := "SELECT count(l.id) FROM public.access_logs l"
-	if !utils.EemptyString(url) {
-		query = "SELECT count(l.id) FROM public.access_logs l WHERE l.short_url = $1"
-		err := DbGet(query, &rowCount, url)
-		return rowCount, err
+// FindAccessLogsCount
+//
+// Find Access Logs Count and Unique IP Count
+//
+// First return value is total_count, Second return value is unique_ip_count ip count
+func FindAccessLogsCount(url string, start, end string) (int, int, error) {
+	type LogsCount struct {
+		TotalCount    int `db:"total_count"`
+		UniqueIpCount int `db:"unique_ip_count"`
 	}
-	return rowCount, DbGet(query, &rowCount)
+	query := `SELECT count(l.id) as total_count, count(distinct(l.ip)) as unique_ip_count FROM public.access_logs l WHERE 1=1 `
+	if !utils.EemptyString(url) {
+		query += fmt.Sprintf(` AND l.short_url = '%s'`, url)
+	}
+	if !utils.EemptyString(start) {
+		query += fmt.Sprintf(` AND l.access_time >= to_date('%s','YYYY-MM-DD')`, start)
+	}
+	if !utils.EemptyString(end) {
+		query += fmt.Sprintf(` AND l.access_time < to_date('%s','YYYY-MM-DD')`, end)
+	}
+	var count LogsCount
+	return count.TotalCount, count.UniqueIpCount, DbGet(query, &count)
 }
 
-func FindAllAccessLogs(url string, page int, size int) ([]core.AccessLog, error) {
+func FindAllAccessLogs(url string, start, end string, page, size int) ([]core.AccessLog, error) {
 	found := []core.AccessLog{}
 	offset := (page - 1) * size
-	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC LIMIT $1 OFFSET $2"
+	query := `SELECT * FROM public.access_logs l WHERE 1=1 `
 	if !utils.EemptyString(url) {
-		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC LIMIT $2 OFFSET $3"
-		err := DbSelect(query, &found, url, size, offset)
-		return found, err
+		query += fmt.Sprintf(` AND l.short_url = '%s'`, url)
 	}
+	if !utils.EemptyString(start) {
+		query += fmt.Sprintf(` AND l.access_time >= to_date('%s','YYYY-MM-DD')`, start)
+	}
+	if !utils.EemptyString(end) {
+		query += fmt.Sprintf(` AND l.access_time < to_date('%s','YYYY-MM-DD')`, end)
+	}
+
+	query += ` ORDER BY l.id DESC LIMIT $1 OFFSET $2`
 	return found, DbSelect(query, &found, size, offset)
 }
 
