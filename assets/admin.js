@@ -53,15 +53,39 @@ $(document).ready(function() {
       }
     });
 
-    $('#form-search-logs').form({
-      fields: {
-        url: {rules:[{
-          type:'empty',
-          prompt:'链接不能为空'
-        }]}
+    $('#logs-search-start-date').calendar({
+      type:'date',
+      text: {
+        months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+      },
+      formatter: {
+        date: function (date, settings) {
+          if (!date) return '';
+          var day = date.getDate();
+          var month = date.getMonth() + 1;
+          var year = date.getFullYear();
+          return year + '-' + month + '-' + day;
+        }
       }
     });
-  
+
+  $('#logs-search-end-date').calendar({
+    type:'date',
+    text: {
+      months: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+      monthsShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+    },
+    formatter: {
+      date: function (date, settings) {
+        if (!date) return '';
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+        return year + '-' + month + '-' + day;
+      }
+    }
+  });
 
     $('#sidebar-menu').sidebar('attach events', '#sidebar-menu-toggler');
 

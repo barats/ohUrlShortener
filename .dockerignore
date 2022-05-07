@@ -2,3 +2,4 @@
 docker/container-data/*
 tmp
 build
+.idea

@@ -176,6 +176,33 @@ func StatsPage(c *gin.Context) {
 	})
 }
 
+func SearchStatsPage(c *gin.Context) {
+	url := c.DefaultQuery("url", "")
+	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DEFAULT_PAGE_NUM
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DEFAULT_PAGE_SIZE
+	}
+	urls, err := service.GetPagedUrlIpCountStats(strings.TrimSpace(url), page, size)
+	c.HTML(http.StatusOK, "search_stats.html", gin.H{
+		"title":       "查询统计 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+		"error":       err,
+		"shortUrls":   urls,
+		"page":        page,
+		"size":        size,
+		"prefix":      utils.AppConfig.UrlPrefix,
+		"first_page":  page == 1,
+		"last_page":   len(urls) < size,
+		"url":         strings.TrimSpace(url),
+	})
+}
+
 func UrlsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
 	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
@@ -207,6 +234,8 @@ func AccessLogsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
 	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
 	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	start := c.DefaultQuery("start", "")
+	end := c.DefaultQuery("end", "")
 	page, err := strconv.Atoi(strPage)
 	if err != nil {
 		page = DEFAULT_PAGE_NUM
@@ -215,18 +244,24 @@ func AccessLogsPage(c *gin.Context) {
 	if err != nil {
 		size = DEFAULT_PAGE_SIZE
 	}
-	logs, err := service.GetPagedAccessLogs(strings.TrimSpace(url), page, size)
+
+	totalCount, distinctIpCount, err := service.GetAccessLogsCount(strings.TrimSpace(url), start, end)
+	logs, err := service.GetPagedAccessLogs(strings.TrimSpace(url), start, end, page, size)
 	c.HTML(http.StatusOK, "access_logs.html", gin.H{
-		"title":       "访问日志查询 - ohUrlShortener",
-		"current_url": c.Request.URL.Path,
-		"error":       err,
-		"logs":        logs,
-		"page":        page,
-		"size":        size,
-		"prefix":      utils.AppConfig.UrlPrefix,
-		"first_page":  page == 1,
-		"last_page":   len(logs) < size,
-		"url":         strings.TrimSpace(url),
+		"title":           "访问日志查询 - ohUrlShortener",
+		"current_url":     c.Request.URL.Path,
+		"error":           err,
+		"logs":            logs,
+		"page":            page,
+		"size":            size,
+		"prefix":          utils.AppConfig.UrlPrefix,
+		"first_page":      page == 1,
+		"last_page":       len(logs) < size,
+		"url":             strings.TrimSpace(url),
+		"total_count":     totalCount,
+		"unique_ip_count": distinctIpCount,
+		"start_date":      start,
+		"end_date":        end,
 	})
 }
 
