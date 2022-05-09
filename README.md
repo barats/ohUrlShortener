@@ -10,6 +10,8 @@
 
 ![Screenshot](screenshot.jpg)
 
+[![OSCHINA](https://www.oschina.net/comment/badge/project/64133)](https://www.oschina.net/comment/project/64133)
+
 ## 部署及构建方式
 
 ### 1. Docker One Step Start
