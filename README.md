@@ -335,9 +335,10 @@ func startTicker() error {
 7. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## ohUrlShortener 
-1. [ohUrlShortener 短链接系统 v1.3 发布，支持导出访问日志](https://www.oschina.net/news/193422/ohurlshortener-1-3-released)
-1. [ohUrlShortener 短链接系统 v1.2 正式发布](https://www.oschina.net/news/190546/ohurlshortener-1-2-released)
-1. 软件信息收录 [https://www.oschina.net/p/ohurlshortener](https://www.oschina.net/p/ohurlshortener)
-1. Gitee [https://gitee.com/barat/ohurlshortener](https://gitee.com/barat/ohurlshortener)
-1. Github [https://github.com/barats/ohUrlShortener](https://github.com/barats/ohUrlShortener)
-1. Gitlink [https://www.gitlink.org.cn/baladiwei/ohurlshortener](https://www.gitlink.org.cn/baladiwei/ohurlshortener)
+1. [ohUrlShortener 短链接系统 v1.4 正式发布](https://www.oschina.net/news/194904/ohurlshortener-1-4-released)
+2. [ohUrlShortener 短链接系统 v1.3 发布，支持导出访问日志](https://www.oschina.net/news/193422/ohurlshortener-1-3-released)
+3. [ohUrlShortener 短链接系统 v1.2 正式发布](https://www.oschina.net/news/190546/ohurlshortener-1-2-released)
+4. 软件信息收录 [https://www.oschina.net/p/ohurlshortener](https://www.oschina.net/p/ohurlshortener)
+5. Gitee [https://gitee.com/barat/ohurlshortener](https://gitee.com/barat/ohurlshortener)
+6. Github [https://github.com/barats/ohUrlShortener](https://github.com/barats/ohUrlShortener)
+7. Gitlink [https://www.gitlink.org.cn/baladiwei/ohurlshortener](https://www.gitlink.org.cn/baladiwei/ohurlshortener)
