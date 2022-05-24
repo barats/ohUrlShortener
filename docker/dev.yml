@@ -5,8 +5,6 @@ services:
     image: postgres:${PG_VERSION}
     container_name: ${PG_CONTAINER_NAME}
     hostname: postgres
-    env_file:
-      - ../docker/vars.env
     environment:
       - POSTGRES_USER=${PG_SUPER_USER}
       - POSTGRES_PASSWORD=${PG_SUPER_PWD}
@@ -23,24 +21,22 @@ services:
       interval: 3s
       retries: 10
     networks:
-      - ohurlshortener      
+      - ohurlshortener
 
   redis:
     image: redis:${RD_VERSION}
     container_name: ${RD_CONTAINER_NAME}
     hostname: redis
-    env_file:
-      - ../docker/vars.env
     ports:
       - ${RD_LOCAL_PORT}:6379
     healthcheck:
-      test: [ "CMD", "redis-cli","-p","6379"]
+      test: [ "CMD", "redis-cli","-p","6379" ]
       timeout: 10s
       interval: 3s
       retries: 10
     networks:
-      - ohurlshortener 
-      
+      - ohurlshortener
+
 networks:
   ohurlshortener:
     driver: bridge
