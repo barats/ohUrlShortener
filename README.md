@@ -14,8 +14,8 @@
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/stargazers"><img src="https://img.shields.io/github/stars/barats/ohUrlShortener"/></a>
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/network/members"><img src="https://img.shields.io/github/forks/barats/ohUrlShortener"/></a>
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/issues"><img src="https://img.shields.io/github/issues/barats/ohUrlShortener"/></a>  
-<a target="_blank" href='https://gitee.com/dreamans/syncd/stargazers'><img src='https://gitee.com/barat/ohurlshortener/badge/star.svg?theme=dark' /></a>
-<a target="_blank" href='https://gitee.com/dreamans/syncd/members'><img src='https://gitee.com/barat/ohurlshortener/badge/fork.svg?theme=dark' /></a>
+<a target="_blank" href='https://gitee.com/barat/ohurlshortener/stargazers'><img src='https://gitee.com/barat/ohurlshortener/badge/star.svg?theme=dark' /></a>
+<a target="_blank" href='https://gitee.com/barat/ohurlshortener/members'><img src='https://gitee.com/barat/ohurlshortener/badge/fork.svg?theme=dark' /></a>
 <a target="_blank" href='https://www.oschina.net/comment/project/64133'><img src='https://www.oschina.net/comment/badge/project/64133'/></a> 
 </p>
 
