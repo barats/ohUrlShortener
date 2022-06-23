@@ -20,7 +20,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Add new admin user
+// APINewAdmin
+//
+//Add new admin user
 func APINewAdmin(ctx *gin.Context) {
 	account := ctx.PostForm("account")
 	password := ctx.PostForm("password")
@@ -44,7 +46,9 @@ func APINewAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccess())
 }
 
-// Update password of given admin user
+// APIAdminUpdate
+//
+//Update password of given admin user
 func APIAdminUpdate(ctx *gin.Context) {
 	account := ctx.Param("account")
 	password := ctx.PostForm("password")
@@ -68,7 +72,7 @@ func APIAdminUpdate(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccess())
 }
 
-// Generate new short url
+// APIGenShortUrl Generate new short url
 func APIGenShortUrl(ctx *gin.Context) {
 	url := ctx.PostForm("dest_url")
 	memo := ctx.PostForm("memo")
@@ -90,7 +94,7 @@ func APIGenShortUrl(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccessWithData(json))
 }
 
-// Get Short Url Stat Info.
+// APIUrlInfo Get Short Url Stat Info.
 func APIUrlInfo(ctx *gin.Context) {
 	url := ctx.Param("url")
 	if utils.EemptyString(strings.TrimSpace(url)) {
@@ -107,7 +111,7 @@ func APIUrlInfo(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccessWithData(stat))
 }
 
-// Enable or Disable Short Url
+// APIUpdateUrl Enable or Disable Short Url
 func APIUpdateUrl(ctx *gin.Context) {
 	url := ctx.Param("url")
 	enableStr := ctx.PostForm("enable")
@@ -129,4 +133,19 @@ func APIUpdateUrl(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccessWithData(res))
+}
+
+func APIDeleteUrl(ctx *gin.Context) {
+	url := ctx.Param("url")
+	if utils.EemptyString(strings.TrimSpace(url)) {
+		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("url 不能为空"))
+		return
+	}
+	err := service.DeleteUrlAndAccessLogs(url)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest(err.Error()))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, core.ResultJsonSuccess)
 }

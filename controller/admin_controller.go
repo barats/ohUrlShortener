@@ -128,6 +128,22 @@ func ChangeState(c *gin.Context) {
 	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(result))
 }
 
+func DeleteShortUrl(c *gin.Context) {
+	url := c.PostForm("short_url")
+	if utils.EemptyString(strings.TrimSpace(url)) {
+		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不存在！"))
+		return
+	}
+
+	err := service.DeleteUrlAndAccessLogs(url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, core.ResultJsonSuccess())
+}
+
 func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")

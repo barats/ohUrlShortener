@@ -159,3 +159,24 @@ func ChangeState(shortUrl string, enable bool) (bool, error) {
 
 	return true, nil
 }
+
+//DeleteUrlAndAccessLogs 删除短链接以及对应的访问日志
+func DeleteUrlAndAccessLogs(shortUrl string) error {
+	found, err := storage.FindShortUrl(shortUrl)
+	if err != nil {
+		return utils.RaiseError("内部错误，请联系管理员")
+	}
+
+	if found.IsEmpty() {
+		return utils.RaiseError("该短链接不存在")
+	}
+
+	err = storage.DeleteShortUrlWithAccessLogs(found)
+	if err != nil {
+		return utils.RaiseError("内部错误，无法删除短链接")
+	}
+
+	storage.RedisDelete(found.ShortUrl)
+
+	return nil
+}
