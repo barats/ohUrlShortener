@@ -78,6 +78,5 @@ services:
 networks:
   ohurlshortener:
     driver: bridge
-    name: "network_ohurlshortener"
     driver_opts:
       com.docker.network.enable_ipv6: "true"
