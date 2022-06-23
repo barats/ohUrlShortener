@@ -43,26 +43,39 @@ func DbNamedExec(query string, args interface{}) error {
 	return err
 }
 
-func DbExecTx(query string, args ...interface{}) error {
-	tx, err := dbService.Connection.Begin()
+func DbExecTx(query ...string) error {
+	tx := dbService.Connection.MustBegin()
+	for _, s := range query {
+		tx.MustExec(s)
+	} //end of for
+	err := tx.Commit()
 	if err != nil {
-		return err
+		return tx.Rollback()
 	}
-	defer tx.Commit()
-
-	stmt, err := tx.Prepare(dbService.Connection.Rebind(query))
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(args...)
-	if err != nil {
-		return err
-	}
-
 	return nil
-}
+} //end of func
+
+//
+//func DbExecTx(query string, args ...interface{}) error {
+//	tx, err := dbService.Connection.Begin()
+//	if err != nil {
+//		return err
+//	}
+//	defer tx.Commit()
+//
+//	stmt, err := tx.Prepare(dbService.Connection.Rebind(query))
+//	if err != nil {
+//		return err
+//	}
+//	defer stmt.Close()
+//
+//	_, err = stmt.Exec(args...)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
 
 func DbGet(query string, dest interface{}, args ...interface{}) error {
 	err := dbService.Connection.Get(dest, query, args...)

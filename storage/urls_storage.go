@@ -9,6 +9,7 @@
 package storage
 
 import (
+	"fmt"
 	"ohurlshortener/core"
 	"ohurlshortener/utils"
 )
@@ -19,6 +20,17 @@ func UpdateShortUrl(shortUrl core.ShortUrl) error {
 	query := `UPDATE public.short_urls SET short_url = :short_url, dest_url = :dest_url, is_valid = :is_valid, memo = :memo WHERE id = :id`
 	return DbNamedExec(query, shortUrl)
 }
+
+func DeleteShortUrl(shortUrl core.ShortUrl) error {
+	query := `DELETE from public.short_urls WHERE short_url = :short_url`
+	return DbNamedExec(query, shortUrl)
+}
+
+func DeleteShortUrlWithAccessLogs(shortUrl core.ShortUrl) error {
+	query1 := fmt.Sprintf(`DELETE from public.short_urls WHERE short_url = '%s'`, shortUrl.ShortUrl)
+	query2 := fmt.Sprintf(`DELETE from public.access_logs WHERE short_url = '%s'`, shortUrl.ShortUrl)
+	return DbExecTx(query1, query2)
+} //end of Transaction Action
 
 func FindShortUrl(url string) (core.ShortUrl, error) {
 	found := core.ShortUrl{}
