@@ -12,6 +12,8 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+const Version = "1.5"
+
 var (
 	DatabaseConfig DatabaseConfigInfo
 	AppConfig      AppConfigInfo
