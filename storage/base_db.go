@@ -25,14 +25,14 @@ type DatabaseService struct {
 
 func InitDatabaseService() (*DatabaseService, error) {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		utils.DatabaseConifg.Host, utils.DatabaseConifg.Port, utils.DatabaseConifg.User,
-		utils.DatabaseConifg.Password, utils.DatabaseConifg.DbName)
+		utils.DatabaseConfig.Host, utils.DatabaseConfig.Port, utils.DatabaseConfig.User,
+		utils.DatabaseConfig.Password, utils.DatabaseConfig.DbName)
 	conn, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
 		return dbService, err
 	}
-	conn.SetMaxOpenConns(utils.DatabaseConifg.MaxOpenConns)
-	conn.SetMaxIdleConns(utils.DatabaseConifg.MaxIdleConn)
+	conn.SetMaxOpenConns(utils.DatabaseConfig.MaxOpenConns)
+	conn.SetMaxIdleConns(utils.DatabaseConfig.MaxIdleConn)
 	conn.SetConnMaxLifetime(0) //always REUSE
 	dbService.Connection = conn
 	return dbService, nil

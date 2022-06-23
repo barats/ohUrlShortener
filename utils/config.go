@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	DatabaseConifg DatabaseConfigInfo
+	DatabaseConfig DatabaseConfigInfo
 	AppConfig      AppConfigInfo
 	RedisConfig    RedisConfigInfo
 )
@@ -51,13 +51,13 @@ func InitConfig(file string) (*ini.File, error) {
 	}
 
 	section := cfg.Section("postgres")
-	DatabaseConifg.Host = section.Key("host").String()
-	DatabaseConifg.Port = section.Key("port").MustInt()
-	DatabaseConifg.MaxOpenConns = section.Key("max_open_conn").MustInt()
-	DatabaseConifg.MaxIdleConn = section.Key("max_idle_conn").MustInt()
-	DatabaseConifg.User = section.Key("user").String()
-	DatabaseConifg.Password = section.Key("password").String()
-	DatabaseConifg.DbName = section.Key("database").String()
+	DatabaseConfig.Host = section.Key("host").String()
+	DatabaseConfig.Port = section.Key("port").MustInt()
+	DatabaseConfig.MaxOpenConns = section.Key("max_open_conn").MustInt()
+	DatabaseConfig.MaxIdleConn = section.Key("max_idle_conn").MustInt()
+	DatabaseConfig.User = section.Key("user").String()
+	DatabaseConfig.Password = section.Key("password").String()
+	DatabaseConfig.DbName = section.Key("database").String()
 
 	appSection := cfg.Section("app")
 	AppConfig.Debug = appSection.Key("debug").MustBool()

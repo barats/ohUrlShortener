@@ -1,7 +1,7 @@
 -- Database Structure For ohUrlShortener
 CREATE DATABASE oh_url_shortener ENCODING 'UTF8';
 
--- Connect to database repostats
+-- Connect to database oh_url_shortener
 \c oh_url_shortener
 
 CREATE TABLE public.short_urls (

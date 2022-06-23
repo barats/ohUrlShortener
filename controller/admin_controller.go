@@ -298,7 +298,7 @@ func AccessLogsExport(c *gin.Context) {
 	c.Data(http.StatusOK, "pplication/octet-stream", fileContent)
 }
 
-func DashbaordPage(c *gin.Context) {
+func DashboardPage(c *gin.Context) {
 	count, stats, err := service.GetSumOfUrlStats()
 	if err != nil {
 		c.HTML(http.StatusOK, "dashboard.html", gin.H{

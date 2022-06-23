@@ -30,7 +30,6 @@ import (
 )
 
 const (
-	CONFIG_FILE               = "config.ini"
 	ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
 	WEB_READ_TIMEOUT          = 10 * time.Second
 	WEB_WRITE_TIMEOUT         = 10 * time.Second
@@ -44,15 +43,17 @@ var (
 
 	cmdStart  string
 	cmdConfig string
+
+	Version string = "1.0"
 )
 
 func main() {
 
-	flag.StringVar(&cmdStart, "s", "", "starts ohurlshortener service:  admin | portal ")
+	flag.StringVar(&cmdStart, "s", "", "starts ohUrlShortener service:  admin | portal ")
 	flag.StringVar(&cmdConfig, "c", "config.ini", "config file path")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stdout, `ohUrlShortener version:1.0 
-		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`)
+		fmt.Fprintf(os.Stdout, `ohUrlShortener version:%s 
+		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`, Version)
 		flag.PrintDefaults()
 	}
 
@@ -107,10 +108,10 @@ func initSettings() {
 	utils.ExitOnError("Database initialization failed.", err)
 
 	_, err = service.ReloadUrls()
-	utils.PrintOnError("Realod urls failed.", err)
+	utils.PrintOnError("Reload urls failed.", err)
 
 	err = service.ReloadUsers()
-	utils.PrintOnError("Realod users failed.", err)
+	utils.PrintOnError("Reload users failed.", err)
 }
 
 func startPortal(g errgroup.Group, server http.Server) {
@@ -204,7 +205,7 @@ func initializeRoute02() (http.Handler, error) {
 		ctx.Redirect(http.StatusTemporaryRedirect, "/admin/dashboard")
 	})
 	admin.POST("/logout", controller.DoLogout)
-	admin.GET("/dashboard", controller.DashbaordPage)
+	admin.GET("/dashboard", controller.DashboardPage)
 	admin.GET("/urls", controller.UrlsPage)
 	admin.GET("/stats", controller.StatsPage)
 	admin.GET("/search_stats", controller.SearchStatsPage)

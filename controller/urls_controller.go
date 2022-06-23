@@ -49,7 +49,7 @@ func ShortUrlDetail(c *gin.Context) {
 		return
 	}
 
-	go service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent(), c.Request.Referer()) //TODO: add more params to access logs
+	go service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent(), c.Request.Referer())
 
 	c.Redirect(http.StatusFound, destUrl)
 }

@@ -10,6 +10,7 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
@@ -17,6 +18,8 @@ import (
 	"time"
 )
 
+// ReloadUrls
+//
 // 从数据库中获取所有「有效」状态的短链接
 // 并将其可以 key-> value 形式存入 Redis 中
 func ReloadUrls() (bool, error) {
@@ -54,7 +57,9 @@ func ReloadUrls() (bool, error) {
 	return true, nil
 }
 
-// 从 Redis 中查询目标短链接是否存在
+// Search4ShortUrl
+//
+//从 Redis 中查询目标短链接是否存在
 func Search4ShortUrl(shortUrl string) (string, error) {
 	destUrl, err := storage.RedisGetString(shortUrl)
 	if err != nil {
@@ -64,7 +69,9 @@ func Search4ShortUrl(shortUrl string) (string, error) {
 	return destUrl, nil
 }
 
-// 获取分页的短链接信息
+// GetPagesShortUrls
+//
+//获取分页的短链接信息
 func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) {
 	if page < 1 || size < 1 {
 		return nil, nil
@@ -77,7 +84,9 @@ func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) 
 	return allUrls, nil
 }
 
-// 生成短链接
+// GenerateShortUrl
+//
+//生成短链接
 func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	shortUrl, err := core.GenerateShortLink(destUrl)
 	if err != nil {
@@ -92,7 +101,8 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	}
 
 	if !foundUrl.IsEmpty() {
-		return shortUrl, nil
+		// Already existed
+		return shortUrl, utils.RaiseError(fmt.Sprintf("短链接 %s 已存在", shortUrl))
 	}
 
 	var nsMemo sql.NullString
@@ -121,6 +131,8 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	return shortUrl, nil
 }
 
+// ChangeState
+//
 //禁用/启用短链接
 func ChangeState(shortUrl string, enable bool) (bool, error) {
 	found, err := storage.FindShortUrl(shortUrl)
