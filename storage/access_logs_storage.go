@@ -14,6 +14,11 @@ import (
 	"ohurlshortener/utils"
 )
 
+func DeleteAccessLogs(shortUrl string) error {
+	query := `DELETE from public.access_logs WHERE short_url = :short_url`
+	return DbNamedExec(query, shortUrl)
+}
+
 func FindAccessLogs(shortUrl string) ([]core.AccessLog, error) {
 	found := []core.AccessLog{}
 	query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
