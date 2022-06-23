@@ -166,6 +166,26 @@ function enable_url(url,state) {
   });
 }
 
+function delete_url(url) {
+  $('body').modal('confirm','温馨提示','确认删除该短链接吗？<br/>本操作将会同步删除该短链接的所有访问日志。', function(choice){
+    if (choice) {
+      $.ajax({
+        type:"POST",
+        url: "/admin/urls/delete",
+        data : {
+          "short_url": url,
+        },
+        success: function() {
+          successToast('操作成功，再见！')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }
+  });
+}
+
 function reload_captcha() {
   $.ajax({
     type: "POST",

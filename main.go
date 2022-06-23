@@ -212,6 +212,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.GET("/access_logs", controller.AccessLogsPage)
 	admin.POST("/urls/generate", controller.GenerateShortUrl)
 	admin.POST("/urls/state", controller.ChangeState)
+	admin.POST("/urls/delete", controller.DeleteShortUrl)
 	admin.POST("/access_logs_export", controller.AccessLogsExport)
 
 	api := router.Group("/api", controller.APIAuthHandler())
@@ -219,6 +220,7 @@ func initializeRoute02() (http.Handler, error) {
 	api.PUT("/account/:account/update", controller.APIAdminUpdate)
 	api.POST("/url", controller.APIGenShortUrl)
 	api.GET("/url/:url", controller.APIUrlInfo)
+	api.DELETE("/url/:url", controller.APIDeleteUrl)
 	api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.HTML(http.StatusNotFound, "error.html", gin.H{
