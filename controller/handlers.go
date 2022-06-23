@@ -27,7 +27,7 @@ const (
 	authoriationTypeBearer = "Bearer"
 )
 
-// Authorization for /api
+// APIAuthHandler Authorization for /api
 func APIAuthHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader(authoriationHeaderKey)
