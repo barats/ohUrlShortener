@@ -43,8 +43,6 @@ var (
 
 	cmdStart  string
 	cmdConfig string
-
-	Version string = "1.0"
 )
 
 func main() {
@@ -53,7 +51,7 @@ func main() {
 	flag.StringVar(&cmdConfig, "c", "config.ini", "config file path")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stdout, `ohUrlShortener version:%s 
-		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`, Version)
+		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`, utils.Version)
 		flag.PrintDefaults()
 	}
 
