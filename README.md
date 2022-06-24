@@ -19,50 +19,24 @@
 <a target="_blank" href='https://www.oschina.net/comment/project/64133'><img src='https://www.oschina.net/comment/badge/project/64133'/></a> 
 </p>
 
-## 部署及构建方式
 
+## 快速使用
 
-
-### 1. Docker One Step Start
-
-支持 Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
+Docker 一步启动所有服务，运行 `docker/one_step_start.sh` ，该命令将会：  
 1. 拉取 [baratsemet/ohurlshortener-admin](https://hub.docker.com/r/baratsemet/ohurlshortener-admin) 镜像（本地构建可查看 `docker/admin.Dockerfile`）
 1. 拉取 [baratsemet/ohurlshortener-portal](https://hub.docker.com/r/baratsemet/ohurlshortener-portal) 镜像（本地构建镜像可查看`docker/portal.Dockerfile`）
 1. 通过 `docker/pull_build.yml` 其他描述内容构建 `redis` 和 `postgresql` 镜像及服务，并对其运行状态做判断，等待缓存和数据库服务正常之后，再启动其他必要服务 (本地构建镜像请查阅 `local_build.yml`) 
 1. 构建名为 `network_ohurlshortener` 的虚拟网络供上述服务使用
 1. 开启本机 `9091`、`9092` 端口分别应对 `ohUrlShortener-Portal` 及 `ohUrlShortener-Admin` 应用
 
-### 2. 通过 `Makefile` 构建
 
-项目根目录下运行 `make help` 查看说明文档
-
-构建 linux 平台对应的可执行文件：
-
-```shell
-make build-linux
-```
-
-压缩 linux 平台对应的可执行文件(压缩可执行文件需要 [upx](https://github.com/upx/upx) 支持)：
-
-```shell
-make compress-linux
-```
-
-### 3. 使用 Go 编译
-
-项目根目录下执行 
-
-```golang 
-go mod download && go build -o ohurlshortener .
-````
-
-## 启动参数说明  
+## 参数说明  
 
 ```shell
 ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]  
 ```
 
-## 配置文件说明
+## 配置文件
 根目录下 `config.ini` 中存放着关于 ohUrlShortener 短链接系统的一些必要配置，请在启动应用之前确保这些配置的正确性
 
 ```ini
@@ -274,6 +248,13 @@ curl --request PUT \
 }
 ```
 
+### 6. 删除短链接 `DELETE /api/url/:url`
+
+接受参数：
+1. `url` path 参数，要删除的短链接地址
+
+（此处省略示例）
+
 ## 短链接在应用启动时会存入 Redis 中
 
 所有短链接再系统启动时会以 `Key(short_url) -> Value(original_url)` 的形式存储在 Redis 中。
@@ -346,9 +327,11 @@ func startTicker() error {
 7. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## ohUrlShortener 
+1. [ohUrlShortener 短链接系统 v1.5 发布，管理功能增强](https://www.oschina.net/news/200621/ohurlshortener-1-5-released)
 1. [ohUrlShortener 短链接系统 v1.4 正式发布](https://www.oschina.net/news/194904/ohurlshortener-1-4-released)
 2. [ohUrlShortener 短链接系统 v1.3 发布，支持导出访问日志](https://www.oschina.net/news/193422/ohurlshortener-1-3-released)
 3. [ohUrlShortener 短链接系统 v1.2 正式发布](https://www.oschina.net/news/190546/ohurlshortener-1-2-released)
+1. [ohUrlShortener 短链接服务系统 1.0 发布](https://www.oschina.net/news/190168/ohurlshortener-1-0-released)
 4. 软件信息收录 [https://www.oschina.net/p/ohurlshortener](https://www.oschina.net/p/ohurlshortener)
 5. Gitee [https://gitee.com/barat/ohurlshortener](https://gitee.com/barat/ohurlshortener)
 6. Github [https://github.com/barats/ohUrlShortener](https://github.com/barats/ohUrlShortener)
