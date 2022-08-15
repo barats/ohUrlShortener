@@ -1,8 +1,31 @@
 package storage
 
 import (
+	"database/sql"
+	"ohurlshortener/core"
 	"testing"
+	"time"
+
+	"github.com/bxcodec/faker/v3"
 )
+
+func TestNewAccessLog(t *testing.T) {
+	init4Test(t)
+	var logs []core.AccessLog
+	for i := 0; i < 15000; i++ {
+		log := core.AccessLog{ShortUrl: "AC7VgPE9",
+			Ip:         sql.NullString{Valid: true, String: faker.IPv4()},
+			AccessTime: time.Now(),
+			UserAgent:  sql.NullString{Valid: true, String: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36"}}
+		logs = append(logs, log)
+	}
+	t.Run("TestInsertAccessLogs", func(t *testing.T) {
+		err := InsertAccessLogs(logs)
+		if err != nil {
+			t.Error(err)
+		}
+	})
+}
 
 func TestFindAccessLogsCount(t *testing.T) {
 	init4Test(t)

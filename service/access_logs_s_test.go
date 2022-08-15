@@ -12,7 +12,8 @@ import (
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
 	"testing"
-	"time"
+
+	"github.com/bxcodec/faker/v3"
 )
 
 func TestStoreAccessLog(t *testing.T) {
@@ -25,10 +26,9 @@ func TestStoreAccessLog(t *testing.T) {
 func TestNewAccessLog(t *testing.T) {
 	init4Test(t)
 	for i := 0; i < 100; i++ {
-		if err := NewAccessLog("A1HeJzob", "192.168.2.1", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36", "fffff"); err != nil {
+		if err := NewAccessLog("AvTkHZP7", faker.IPv4(), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36", "fffff"); err != nil {
 			t.Error(err)
 		}
-		time.Sleep(10 * time.Millisecond)
 	}
 }
 
