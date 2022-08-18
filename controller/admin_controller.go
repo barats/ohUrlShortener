@@ -40,7 +40,7 @@ func DoLogin(c *gin.Context) {
 	captchaText := c.PostForm("captcha-text")
 	captchaId := c.PostForm("captcha-id")
 
-	if utils.EemptyString(account) || utils.EemptyString(password) || len(account) < 5 || len(password) < 8 {
+	if utils.EmptyString(account) || utils.EmptyString(password) || len(account) < 5 || len(password) < 8 {
 		c.HTML(http.StatusOK, "login.html", gin.H{
 			"title": "错误 - ohUrlShortener",
 			"error": "用户名或密码格式错误！",
@@ -48,7 +48,7 @@ func DoLogin(c *gin.Context) {
 		return
 	}
 
-	if utils.EemptyString(captchaText) || utils.EemptyString(captchaId) || len(captchaText) < 6 {
+	if utils.EmptyString(captchaText) || utils.EmptyString(captchaId) || len(captchaText) < 6 {
 		c.HTML(http.StatusOK, "login.html", gin.H{
 			"title": "错误 - ohUrlShortener",
 			"error": "验证码格式错误!",
@@ -108,7 +108,7 @@ func ChangeState(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	enable := c.PostForm("enable")
 
-	if utils.EemptyString(destUrl) {
+	if utils.EmptyString(destUrl) {
 		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不存在！"))
 		return
 	}
@@ -130,7 +130,7 @@ func ChangeState(c *gin.Context) {
 
 func DeleteShortUrl(c *gin.Context) {
 	url := c.PostForm("short_url")
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不存在！"))
 		return
 	}
@@ -148,7 +148,7 @@ func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")
 
-	if utils.EemptyString(destUrl) {
+	if utils.EmptyString(destUrl) {
 		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不能为空！"))
 		return
 	}

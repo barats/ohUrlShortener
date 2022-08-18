@@ -9,23 +9,24 @@
 package service
 
 import (
-	"log"
-	"os"
 	"testing"
+
+	"github.com/bxcodec/faker/v3"
 )
 
 func TestGenerateShortUrl(t *testing.T) {
+
 	init4Test(t)
 	if err := StoreAccessLogs(); err != nil {
 		t.Error(err)
 	}
 
-	res, err := GenerateShortUrl("https://ww2222.ortener", "")
-	if err != nil {
-		t.Error(err)
+	for i := 0; i < 100000; i++ {
+		url := faker.URL()
+		_, err := GenerateShortUrl(url, url)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
 	}
-
-	log.SetOutput(os.Stdout)
-
-	log.Println(res)
 }

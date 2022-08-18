@@ -18,7 +18,7 @@ import (
 
 func ShortUrlDetail(c *gin.Context) {
 	url := c.Param("url")
-	if utils.EemptyString(url) {
+	if utils.EmptyString(url) {
 		c.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
 			"code":    http.StatusNotFound,
@@ -39,7 +39,7 @@ func ShortUrlDetail(c *gin.Context) {
 		return
 	}
 
-	if utils.EemptyString(destUrl) {
+	if utils.EmptyString(destUrl) {
 		c.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
 			"code":    http.StatusNotFound,

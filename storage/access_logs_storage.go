@@ -54,13 +54,13 @@ func FindAccessLogsCount(url string, start, end string) (int, int, error) {
 		UniqueIpCount int `db:"unique_ip_count"`
 	}
 	query := `SELECT count(l.id) as total_count, count(distinct(l.ip)) as unique_ip_count FROM public.access_logs l WHERE 1=1 `
-	if !utils.EemptyString(url) {
+	if !utils.EmptyString(url) {
 		query += fmt.Sprintf(` AND l.short_url = '%s'`, url)
 	}
-	if !utils.EemptyString(start) {
+	if !utils.EmptyString(start) {
 		query += fmt.Sprintf(` AND l.access_time >= to_date('%s','YYYY-MM-DD')`, start)
 	}
-	if !utils.EemptyString(end) {
+	if !utils.EmptyString(end) {
 		query += fmt.Sprintf(` AND l.access_time < to_date('%s','YYYY-MM-DD')`, end)
 	}
 	var count LogsCount
@@ -71,13 +71,13 @@ func FindAllAccessLogs(url string, start, end string, page, size int) ([]core.Ac
 	found := []core.AccessLog{}
 	offset := (page - 1) * size
 	query := `SELECT * FROM public.access_logs l WHERE 1=1 `
-	if !utils.EemptyString(url) {
+	if !utils.EmptyString(url) {
 		query += fmt.Sprintf(` AND l.short_url = '%s'`, url)
 	}
-	if !utils.EemptyString(start) {
+	if !utils.EmptyString(start) {
 		query += fmt.Sprintf(` AND l.access_time >= to_date('%s','YYYY-MM-DD')`, start)
 	}
-	if !utils.EemptyString(end) {
+	if !utils.EmptyString(end) {
 		query += fmt.Sprintf(` AND l.access_time < to_date('%s','YYYY-MM-DD')`, end)
 	}
 
@@ -88,7 +88,7 @@ func FindAllAccessLogs(url string, start, end string, page, size int) ([]core.Ac
 func FindAllAccessLogsByUrl(url string) ([]core.AccessLog, error) {
 	found := []core.AccessLog{}
 	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC"
-	if !utils.EemptyString(url) {
+	if !utils.EmptyString(url) {
 		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
 		err := DbSelect(query, &found, url)
 		return found, err

@@ -106,7 +106,7 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	}
 
 	var nsMemo sql.NullString
-	if !utils.EemptyString(memo) {
+	if !utils.EmptyString(memo) {
 		nsMemo = sql.NullString{Valid: true, String: memo}
 	}
 

@@ -34,13 +34,13 @@ func PrintOnError(message string, err error) {
 }
 
 func RaiseError(message string) error {
-	if !EemptyString(message) {
+	if !EmptyString(message) {
 		return fmt.Errorf(message)
 	}
 	return nil
 }
 
-func EemptyString(str string) bool {
+func EmptyString(str string) bool {
 	str = strings.TrimSpace(str)
 	return strings.EqualFold(str, "")
 }

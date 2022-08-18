@@ -26,7 +26,7 @@ import (
 func APINewAdmin(ctx *gin.Context) {
 	account := ctx.PostForm("account")
 	password := ctx.PostForm("password")
-	if utils.EemptyString(account) || utils.EemptyString(password) {
+	if utils.EmptyString(account) || utils.EmptyString(password) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("用户名或密码不能为空"))
 		return
 	}
@@ -53,7 +53,7 @@ func APIAdminUpdate(ctx *gin.Context) {
 	account := ctx.Param("account")
 	password := ctx.PostForm("password")
 
-	if utils.EemptyString(account) || utils.EemptyString(password) {
+	if utils.EmptyString(account) || utils.EmptyString(password) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("用户名或密码不能为空"))
 		return
 	}
@@ -77,7 +77,7 @@ func APIGenShortUrl(ctx *gin.Context) {
 	url := ctx.PostForm("dest_url")
 	memo := ctx.PostForm("memo")
 
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("dest_url 不能为空"))
 		return
 	}
@@ -97,13 +97,13 @@ func APIGenShortUrl(ctx *gin.Context) {
 // APIUrlInfo Get Short Url Stat Info.
 func APIUrlInfo(ctx *gin.Context) {
 	url := ctx.Param("url")
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("url 不能为空"))
 		return
 	}
 
 	stat, err := service.GetShortUrlStats(strings.TrimSpace(url))
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
 		return
 	}
@@ -115,7 +115,7 @@ func APIUrlInfo(ctx *gin.Context) {
 func APIUpdateUrl(ctx *gin.Context) {
 	url := ctx.Param("url")
 	enableStr := ctx.PostForm("enable")
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("url 不能为空"))
 		return
 	}
@@ -137,7 +137,7 @@ func APIUpdateUrl(ctx *gin.Context) {
 
 func APIDeleteUrl(ctx *gin.Context) {
 	url := ctx.Param("url")
-	if utils.EemptyString(strings.TrimSpace(url)) {
+	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("url 不能为空"))
 		return
 	}

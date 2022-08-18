@@ -14,7 +14,7 @@ import (
 	"ohurlshortener/utils"
 )
 
-var Max_Insert_Count = 5000
+var Max_Insert_Count = 1000
 
 func UpdateShortUrl(shortUrl core.ShortUrl) error {
 	query := `UPDATE public.short_urls SET short_url = :short_url, dest_url = :dest_url, is_valid = :is_valid, memo = :memo WHERE id = :id`
@@ -50,7 +50,7 @@ func FindPagedShortUrls(url string, page int, size int) ([]core.ShortUrl, error)
 	found := []core.ShortUrl{}
 	offset := (page - 1) * size
 	query := "SELECT * FROM public.short_urls u ORDER BY u.id DESC LIMIT $1 OFFSET $2"
-	if !utils.EemptyString(url) {
+	if !utils.EmptyString(url) {
 		query := "SELECT * FROM public.short_urls u WHERE u.short_url = $1 ORDER BY u.id DESC LIMIT $2 OFFSET $3"
 		var foundUrl core.ShortUrl
 		err := DbGet(query, &foundUrl, url, size, offset)

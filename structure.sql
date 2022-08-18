@@ -68,16 +68,15 @@ FROM public.short_urls u
 GROUP BY u.short_url;
 
 CREATE VIEW public.sum_url_ip_count_stats AS 
-SELECT 
-	COUNT(l.ip) AS today_count,	
-	COUNT(DISTINCT(l.ip)) AS d_today_count
-FROM public.access_logs l
-WHERE date(l.access_time) = date(NOW());
+	SELECT 
+		COUNT(l.ip) AS today_count,	
+		COUNT(DISTINCT(l.ip)) AS d_today_count
+	FROM public.access_logs l
+	WHERE date(l.access_time) = date(NOW());
 
 
 CREATE VIEW public.total_count_top25 AS 
-SELECT s.*, u.id,u.dest_url,u.created_at,u.is_valid,u.memo
-FROM public.url_ip_count_stats s, public.short_urls u 
-WHERE u.short_url = s.short_url
-ORDER BY s.today_count DESC 
-LIMIT 25;
+	SELECT u.*,tmp_logs.today_count, tmp_logs.d_today_count FROM public.short_urls u,(
+		SELECT l.short_url,count(l.ip) AS today_count ,COUNT(DISTINCT(l.ip)) AS d_today_count 
+		FROM public.access_logs l WHERE date(l.access_time) = date(NOW()) GROUP BY l.short_url ORDER BY today_count DESC LIMIT 25) AS tmp_logs
+	WHERE u.short_url = tmp_logs.short_url;

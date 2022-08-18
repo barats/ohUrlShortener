@@ -11,7 +11,6 @@ package core
 import (
 	"database/sql"
 	"fmt"
-	"math/big"
 	"ohurlshortener/utils"
 	"reflect"
 	"time"
@@ -31,14 +30,15 @@ func (url ShortUrl) IsEmpty() bool {
 }
 
 func GenerateShortLink(initialLink string) (string, error) {
-	if utils.EemptyString(initialLink) {
+	if utils.EmptyString(initialLink) {
 		return "", fmt.Errorf("empty string")
 	}
 	urlHash, err := utils.Sha256Of(initialLink)
 	if err != nil {
 		return "", err
 	}
-	number := new(big.Int).SetBytes(urlHash).Uint64()
-	str := utils.Base58Encode([]byte(fmt.Sprintf("%d", number)))
+	// number := new(big.Int).SetBytes(urlHash).Uint64()
+	// str := utils.Base58Encode([]byte(fmt.Sprintf("%d", number)))
+	str := utils.Base58Encode(urlHash)
 	return str[:8], nil
 }

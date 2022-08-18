@@ -31,7 +31,7 @@ const (
 func APIAuthHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader(authoriationHeaderKey)
-		if utils.EemptyString(authHeader) {
+		if utils.EmptyString(authHeader) {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, core.ResultJsonUnauthorized("Authorization Header is empty"))
 			return
 		}

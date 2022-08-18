@@ -31,8 +31,8 @@ import (
 
 const (
 	ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
-	WEB_READ_TIMEOUT          = 10 * time.Second
-	WEB_WRITE_TIMEOUT         = 10 * time.Second
+	WEB_READ_TIMEOUT          = 30 * time.Second
+	WEB_WRITE_TIMEOUT         = 30 * time.Second
 )
 
 var (
@@ -83,7 +83,7 @@ func main() {
 		startAdmin(group, *admin)
 	} else if strings.EqualFold("portal", strings.TrimSpace(cmdStart)) {
 		startPortal(group, *portal)
-	} else if utils.EemptyString(cmdStart) {
+	} else if utils.EmptyString(cmdStart) {
 		startPortal(group, *portal)
 		startAdmin(group, *admin)
 	} else {

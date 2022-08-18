@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"math/rand"
 	"ohurlshortener/core"
 	"testing"
 	"time"
@@ -9,13 +10,22 @@ import (
 	"github.com/bxcodec/faker/v3"
 )
 
+func randomTime() time.Time {
+	min := time.Date(2022, 1, 0, 0, 0, 0, 0, time.UTC).Unix()
+	max := time.Now().Unix()
+	delta := max - min
+
+	sec := rand.Int63n(delta) + min
+	return time.Unix(sec, 0)
+}
+
 func TestNewAccessLog(t *testing.T) {
 	init4Test(t)
 	var logs []core.AccessLog
-	for i := 0; i < 15000; i++ {
-		log := core.AccessLog{ShortUrl: "AC7VgPE9",
+	for i := 0; i < 100000; i++ {
+		log := core.AccessLog{ShortUrl: "AvTkHZP7",
 			Ip:         sql.NullString{Valid: true, String: faker.IPv4()},
-			AccessTime: time.Now(),
+			AccessTime: randomTime(),
 			UserAgent:  sql.NullString{Valid: true, String: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36"}}
 		logs = append(logs, log)
 	}

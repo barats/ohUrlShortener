@@ -55,6 +55,73 @@
       </div>
     </div><!--end of column-->
   </div><!--end of grid-->
+
+  <div class="ui center aligned grid stackable padded">
+    <div class="three wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="header">
+            <div class="ui red header">{{.stats.YesterdayCount}}</div>
+          </div>
+          <div class="meta">昨日点击量</div>
+          <div class="description">所有链接昨日产生的总点击量</div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/stats" target="_self" class="ui red button">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+    <div class="three wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="header">
+            <div class="ui header green">{{.stats.DistinctYesterdayCount}}</div>
+          </div>
+          <div class="meta">昨日独立IP数</div>
+          <div class="description">所有短链接昨日点击的总IP数</div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/stats" target="_self" class="ui green button">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+    <div class="three wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="header">
+            <div class="ui teal header">{{.stats.Last7DaysCount}}</div>
+          </div>
+          <div class="meta">过去七日点击量</div>
+          <div class="description">所有短链接过去七日总点击量</div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/stats" target="_self" class="ui teal button">查看详情</a>            
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->
+    <div class="three wide computer eight wide tablet sixteen wide mobile column">
+      <div class="ui fluid card">
+        <div class="content">
+          <div class="header">
+            <div class="ui yellow header">{{.stats.DistinctLast7DaysCount}}</div>
+          </div>
+          <div class="meta">过去七日独立IP数</div>
+          <div class="description">所有短链接过去七日点击的总IP数</div>
+        </div>
+        <div class="extra content">
+          <div class="ui two buttons">
+            <a href="/admin/stats" target="_self" class="ui yellow button">查看详情</a>            
+          </div>
+        </div>
+      </div>
+    </div><!--end of column-->    
+  </div><!--end of grid-->  
   
   <div class="ui grid stackable padded">
     <div class="column">

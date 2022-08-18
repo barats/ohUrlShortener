@@ -31,3 +31,8 @@ type UrlIpCountStats struct {
 	ShortUrl
 	ShortUrlStats
 }
+
+type StatsSum struct {
+	Key   string `db:"stats_key"`
+	Value int    `db:"stats_value"`
+}
