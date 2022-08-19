@@ -30,9 +30,20 @@ import (
 )
 
 const (
+	WEB_READ_TIMEOUT  = 15 * time.Second
+	WEB_WRITE_TIMEOUT = 15 * time.Second
+
+	//清理 Redis 中的访问日志的时间间隔
 	ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
-	WEB_READ_TIMEOUT          = 30 * time.Second
-	WEB_WRITE_TIMEOUT         = 30 * time.Second
+
+	// Top25 榜单计算间隔
+	TOP25_CALC_INTERVAL = 5 * time.Minute
+
+	// 仪表盘页面中其他几个统计数据计算间隔
+	STATS_SUM_CALC_INTERVAL = 5 * time.Minute
+
+	//全部访问日志分析统计的间隔
+	STATS_IP_SUM_CALC_INTERVAL = 30 * time.Minute
 )
 
 var (
@@ -114,8 +125,8 @@ func initSettings() {
 
 func startPortal(g errgroup.Group, server http.Server) {
 	group.Go(func() error {
-		log.Println("[ohUrlShortener] ticker starts to serve")
-		return startTicker()
+		log.Println("[StoreAccessLog] ticker starts to serve")
+		return startTicker1()
 	})
 
 	group.Go(func() error {
@@ -125,6 +136,22 @@ func startPortal(g errgroup.Group, server http.Server) {
 }
 
 func startAdmin(g errgroup.Group, server http.Server) {
+
+	group.Go(func() error {
+		log.Println("[Top25Urls] ticker starts to serve")
+		return startTicker2()
+	})
+
+	group.Go(func() error {
+		log.Println("[StatsIpSum] ticker starts to serve")
+		return startTicker3()
+	})
+
+	group.Go(func() error {
+		log.Println("[StatsSum] ticker starts to serve")
+		return startTicker4()
+	})
+
 	group.Go(func() error {
 		log.Printf("[ohUrlShortener] admin starts at http://localhost:%d", utils.AppConfig.AdminPort)
 		return server.ListenAndServe()
@@ -231,14 +258,50 @@ func initializeRoute02() (http.Handler, error) {
 	return router, nil
 } //end of router01
 
-func startTicker() error {
-	ticker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
-	for range ticker.C {
+func startTicker1() error {
+	redisTicker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
+	for range redisTicker.C {
 		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLogs(); err != nil {
 			log.Printf("Error while trying to store access_log %s", err)
 		}
 		log.Println("[StoreAccessLog] Finish.")
+	}
+	return nil
+}
+
+func startTicker2() error {
+	top25Ticker := time.NewTicker(TOP25_CALC_INTERVAL)
+	for range top25Ticker.C {
+		log.Println("[Top25Urls Ticker] Start.")
+		if err := storage.CallProcedureStatsTop25(); err != nil {
+			log.Printf("Error while trying to calculate Top25Urls %s", err)
+		}
+		log.Println("[Top25Urls Ticker] Finish.")
+	}
+	return nil
+}
+
+func startTicker3() error {
+	statsIpSumTicker := time.NewTicker(STATS_IP_SUM_CALC_INTERVAL)
+	for range statsIpSumTicker.C {
+		log.Println("[StatsIpSum Ticker] Start.")
+		if err := storage.CallProcedureStatsIPSum(); err != nil {
+			log.Printf("Error while trying to calculate StatsIpSum %s", err)
+		}
+		log.Println("[StatsIpSum Ticker] Finish.")
+	}
+	return nil
+}
+
+func startTicker4() error {
+	statsSumTicker := time.NewTicker(STATS_SUM_CALC_INTERVAL)
+	for range statsSumTicker.C {
+		log.Println("[StatsSum Ticker] Start.")
+		if err := storage.CallProcedureStatsSum(); err != nil {
+			log.Printf("Error while trying to calculate StatsSum %s", err)
+		}
+		log.Println("[StatsSum Ticker] Finish.")
 	}
 	return nil
 }
