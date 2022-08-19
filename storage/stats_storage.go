@@ -73,3 +73,36 @@ func FindPagedUrlIpCountStats(url string, page int, size int) ([]core.UrlIpCount
 	}
 	return found, DbSelect(query, &found, size, offset)
 }
+
+//
+// Call scheduled procedures to calculate stats result.
+//
+// Suggested time interval to call this procedure : 30 ~ 60 minutes
+//
+func CallProcedureStatsIPSum() error {
+	query := `SELECT 1 AS r FROM p_stats_ip_sum()`
+	var r int
+	return DbGet(query, &r)
+}
+
+//
+// Call scheduled procedures to calculate stats result.
+//
+// Suggested time interval to call this procedure 5 ~ 10 minutes
+//
+func CallProcedureStatsTop25() error {
+	query := `SELECT 2 AS r FROM p_stats_top25()`
+	var r int
+	return DbGet(query, &r)
+}
+
+//
+// Call scheduled procedures to calculate stats result.
+//
+// Suggested time interval to call this procedure : 5 ~ 10 minutes
+//
+func CallProcedureStatsSum() error {
+	query := `SELECT 3 AS r FROM p_stats_sum()`
+	var r int
+	return DbGet(query, &r)
+}
