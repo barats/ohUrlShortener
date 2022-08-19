@@ -18,6 +18,9 @@ builds:
     goarch:
       - amd64
       - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64    
 
 archives:
   - replacements:
@@ -39,7 +42,7 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:  
-  name_template: "1.5"
+  name_template: "1.6"
 
 nfpms:
   - file_name_template: "{{.ProjectName}}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
