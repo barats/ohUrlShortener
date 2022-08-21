@@ -5,7 +5,7 @@ import (
 	"ohurlshortener/utils"
 	"strings"
 
-	"github.com/btcsuite/btcutil/base58"
+	"github.com/btcsuite/btcd/btcutil/base58"
 )
 
 func FindAllUsers() ([]core.User, error) {

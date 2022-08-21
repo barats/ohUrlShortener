@@ -114,6 +114,8 @@ func initSettings() {
 	utils.ExitOnError("Redis initialization failed.", err)
 
 	_, err = storage.InitDatabaseService()
+	storage.CallProcedureStatsTop25() //recalculate when ohUrlShortener starts
+	storage.CallProcedureStatsSum()   //recalculate when ohUrlShortener starts
 	utils.ExitOnError("Database initialization failed.", err)
 
 	_, err = service.ReloadUrls()
