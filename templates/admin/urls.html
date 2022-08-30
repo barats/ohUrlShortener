@@ -45,6 +45,7 @@
               {{else}}
               <a href="javascript:enable_url('{{.ShortUrl}}',true)">开启</a> 
               {{end}}
+              | <a href="javascript:copy_url('{{$.prefix}}{{.ShortUrl}}')">复制</a>
               | <a href="javascript:delete_url('{{.ShortUrl}}')">删除</a>
               | <a href="/admin/stats?url={{.ShortUrl}}" target="_blank">统计数据</a></td>            
           </tr>
