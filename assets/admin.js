@@ -186,6 +186,10 @@ function delete_url(url) {
   });
 }
 
+function copy_url(url){
+  navigator.clipboard.writeText(url);
+}
+
 function reload_captcha() {
   $.ajax({
     type: "POST",
