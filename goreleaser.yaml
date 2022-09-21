@@ -42,7 +42,7 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:  
-  name_template: "1.6"
+  name_template: "1.7"
 
 nfpms:
   - file_name_template: "{{.ProjectName}}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
