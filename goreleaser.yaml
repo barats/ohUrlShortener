@@ -20,7 +20,42 @@ builds:
       - arm64
     ignore:
       - goos: windows
-        goarch: arm64    
+        goarch: arm64   
+
+dockers:
+  - use: buildx
+    goos: linux
+    goarch: amd64
+    dockerfile: "docker/goreleaser-admin.Dockerfile"
+    image_templates:      
+      - "baratsemet/ohurlshortener-admin:{{ .Version }}"
+      - "baratsemet/ohurlshortener-admin:latest"
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=cn.ohurls.image.created={{.Date}}"
+      - "--label=cn.ohurls.image.title={{.ProjectName}}"
+      - "--label=cn.ohurls.image.revision={{.FullCommit}}"
+      - "--label=cn.ohurls.image.version={{.Version}}"
+    skip_push: "true"
+    extra_files:
+      - docker/docker_config.ini
+
+  - use: buildx
+    goos: linux
+    goarch: amd64
+    dockerfile: "docker/goreleaser-portal.Dockerfile"
+    image_templates:      
+      - "baratsemet/ohurlshortener-portal:{{ .Version }}"
+      - "baratsemet/ohurlshortener-portal:latest"
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=cn.ohurls.image.created={{.Date}}"
+      - "--label=cn.ohurls.image.title={{.ProjectName}}"
+      - "--label=cn.ohurls.image.revision={{.FullCommit}}"
+      - "--label=cn.ohurls.image.version={{.Version}}"
+    skip_push: "true"
+    extra_files:
+      - docker/docker_config.ini      
 
 archives:
   - replacements:
@@ -42,7 +77,7 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:  
-  name_template: "1.7"
+  name_template: "{{ .Version }}"
 
 nfpms:
   - file_name_template: "{{.ProjectName}}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
