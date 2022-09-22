@@ -186,8 +186,15 @@ function delete_url(url) {
   });
 }
 
-function copy_url(url){
+function copy_url(url){  
   navigator.clipboard.writeText(url);
+  $('body').toast({
+    class: 'success',
+    displayTime: 2500,
+    message: '复制成功',    
+    showIcon:'exclamation circle',
+    showProgress: 'bottom'
+  });
 }
 
 function reload_captcha() {

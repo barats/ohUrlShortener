@@ -82,9 +82,9 @@ snapshot:
 nfpms:
   - file_name_template: "{{.ProjectName}}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     vendor: 巴拉迪维
-    homepage: https://github.com/barats
+    homepage: https://www.ohurls.cn
     maintainer: 巴拉迪维 <baratsemet@gmail.com>
-    description: ohUrlShortener 适合中小型社区网站使用的短链接服务系统，支持短链接生产、查询及302转向，并自带点击量统计、独立IP数统计、访问日志查询
+    description: ohUrlShortener 适合中小型社区网站使用的企业级短链接服务系统，支持短链接生产、查询及302转向，并自带点击量统计、独立IP数统计、访问日志查询
     license: MulanPSL-2.0
     formats:
       - deb
