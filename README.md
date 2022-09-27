@@ -8,7 +8,7 @@
 1. 支持 HTTP API 方式新建短链接、禁用/启用短链接、查看短链接统计信息、新建管理员、修改管理员密码
 1. 支持访问日志导出，方便线下分析
 
-![Screenshot](screenshot.jpg)
+![Screenshot](screenshot.png)
 
 <p style="text-align: center">
 <a target="_blank" href="https://www.ohurls.cn">https://www.ohurls.cn</a><br/>
