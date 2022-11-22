@@ -69,6 +69,7 @@ archives:
       - structure.sql
       - config.ini
       - CLA.md
+      - API.md
     format_overrides:
       - goos: windows
         format: zip
