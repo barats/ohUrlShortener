@@ -16,13 +16,14 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
+	"strings"
+	"time"
+
 	"ohurlshortener/controller"
 	"ohurlshortener/service"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
-	"os"
-	"strings"
-	"time"
 
 	"github.com/Masterminds/sprig"
 	"github.com/gin-gonic/gin"
@@ -30,20 +31,20 @@ import (
 )
 
 const (
-	WEB_READ_TIMEOUT  = 15 * time.Second
-	WEB_WRITE_TIMEOUT = 15 * time.Second
+	WebReadTimeout  = 15 * time.Second
+	WebWriteTimeout = 15 * time.Second
 
-	//清理 Redis 中的访问日志的时间间隔
-	ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
+	// AccessLogCleanInterval 清理 Redis 中的访问日志的时间间隔
+	AccessLogCleanInterval = 1 * time.Minute
 
-	// Top25 榜单计算间隔
-	TOP25_CALC_INTERVAL = 5 * time.Minute
+	// Top25CalcInterval Top25 榜单计算间隔
+	Top25CalcInterval = 5 * time.Minute
 
-	// 仪表盘页面中其他几个统计数据计算间隔
-	STATS_SUM_CALC_INTERVAL = 5 * time.Minute
+	// StatsSumCalcInterval 仪表盘页面中其他几个统计数据计算间隔
+	StatsSumCalcInterval = 5 * time.Minute
 
-	//全部访问日志分析统计的间隔
-	STATS_IP_SUM_CALC_INTERVAL = 30 * time.Minute
+	// StatsIpSumCalcInterval 全部访问日志分析统计的间隔
+	StatsIpSumCalcInterval = 30 * time.Minute
 )
 
 var (
@@ -57,11 +58,10 @@ var (
 )
 
 func main() {
-
 	flag.StringVar(&cmdStart, "s", "", "starts ohUrlShortener service:  admin | portal ")
 	flag.StringVar(&cmdConfig, "c", "config.ini", "config file path")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stdout, `ohUrlShortener version:%s 
+		fmt.Fprintf(os.Stdout, `ohUrlShortener version:%s
 		Usage: ohurlshortener [-s admin|portal|<omit to start both>] [-c config_file_path]`, utils.Version)
 		flag.PrintDefaults()
 	}
@@ -79,15 +79,15 @@ func main() {
 	portal := &http.Server{
 		Addr:         fmt.Sprintf(":%d", utils.AppConfig.Port),
 		Handler:      router01,
-		ReadTimeout:  WEB_READ_TIMEOUT,
-		WriteTimeout: WEB_WRITE_TIMEOUT,
+		ReadTimeout:  WebReadTimeout,
+		WriteTimeout: WebWriteTimeout,
 	}
 
 	admin := &http.Server{
 		Addr:         fmt.Sprintf(":%d", utils.AppConfig.AdminPort),
 		Handler:      router02,
-		ReadTimeout:  WEB_READ_TIMEOUT,
-		WriteTimeout: WEB_WRITE_TIMEOUT,
+		ReadTimeout:  WebReadTimeout,
+		WriteTimeout: WebWriteTimeout,
 	}
 
 	if strings.EqualFold("admin", strings.TrimSpace(cmdStart)) {
@@ -106,7 +106,7 @@ func main() {
 }
 
 func initSettings() {
-	//Things MUST BE DONE before app starts
+	// Things MUST BE DONE before app starts
 	_, err := utils.InitConfig(cmdConfig)
 	utils.ExitOnError("Config initialization failed.", err)
 
@@ -114,8 +114,8 @@ func initSettings() {
 	utils.ExitOnError("Redis initialization failed.", err)
 
 	_, err = storage.InitDatabaseService()
-	storage.CallProcedureStatsTop25() //recalculate when ohUrlShortener starts
-	storage.CallProcedureStatsSum()   //recalculate when ohUrlShortener starts
+	storage.CallProcedureStatsTop25() // recalculate when ohUrlShortener starts
+	storage.CallProcedureStatsSum()   // recalculate when ohUrlShortener starts
 	utils.ExitOnError("Database initialization failed.", err)
 
 	_, err = service.ReloadUrls()
@@ -193,7 +193,7 @@ func initializeRoute01() (http.Handler, error) {
 		})
 	})
 	return router, nil
-} //end of router01
+} // end of router01
 
 func initializeRoute02() (http.Handler, error) {
 
@@ -258,10 +258,10 @@ func initializeRoute02() (http.Handler, error) {
 		})
 	})
 	return router, nil
-} //end of router01
+} // end of router01
 
 func startTicker1() error {
-	redisTicker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
+	redisTicker := time.NewTicker(AccessLogCleanInterval)
 	for range redisTicker.C {
 		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLogs(); err != nil {
@@ -273,7 +273,7 @@ func startTicker1() error {
 }
 
 func startTicker2() error {
-	top25Ticker := time.NewTicker(TOP25_CALC_INTERVAL)
+	top25Ticker := time.NewTicker(Top25CalcInterval)
 	for range top25Ticker.C {
 		log.Println("[Top25Urls Ticker] Start.")
 		if err := storage.CallProcedureStatsTop25(); err != nil {
@@ -285,7 +285,7 @@ func startTicker2() error {
 }
 
 func startTicker3() error {
-	statsIpSumTicker := time.NewTicker(STATS_IP_SUM_CALC_INTERVAL)
+	statsIpSumTicker := time.NewTicker(StatsIpSumCalcInterval)
 	for range statsIpSumTicker.C {
 		log.Println("[StatsIpSum Ticker] Start.")
 		if err := storage.CallProcedureStatsIPSum(); err != nil {
@@ -297,7 +297,7 @@ func startTicker3() error {
 }
 
 func startTicker4() error {
-	statsSumTicker := time.NewTicker(STATS_SUM_CALC_INTERVAL)
+	statsSumTicker := time.NewTicker(StatsSumCalcInterval)
 	for range statsSumTicker.C {
 		log.Println("[StatsSum Ticker] Start.")
 		if err := storage.CallProcedureStatsSum(); err != nil {
