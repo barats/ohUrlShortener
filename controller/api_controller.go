@@ -104,7 +104,7 @@ func APIUrlInfo(ctx *gin.Context) {
 	}
 
 	stat, err := service.GetShortUrlStats(strings.TrimSpace(url))
-	if utils.EmptyString(strings.TrimSpace(url)) {
+	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
 		return
 	}
