@@ -8,7 +8,7 @@ import (
 // GetUrlStats 获取短链接的访问量统计信息
 func GetUrlStats(url string) (core.ShortUrlStats, error) {
 	found := core.ShortUrlStats{}
-	query := `select * from public.url_ip_count_stats WHERE short_url = $1`
+	query := `select * from public.stats_ip_sum WHERE short_url = $1`
 	err := DbGet(query, &found, url)
 	return found, err
 }
@@ -69,7 +69,7 @@ func FindPagedUrlIpCountStats(url string, page int, size int) ([]core.UrlIpCount
 	offset := (page - 1) * size
 	query := `SELECT s.*,u.id,u.dest_url,u.created_at,u.is_valid,u.memo FROM public.stats_ip_sum s , public.short_urls u WHERE u.short_url = s.short_url ORDER BY u.created_at DESC LIMIT $1 OFFSET $2`
 	if !utils.EmptyString(url) {
-		query := `SELECT s.*,u.id,u.dest_url,u.created_at,u.is_valid,u.memo 
+		query := `SELECT s.*,u.id,u.dest_url,u.created_at,u.is_valid,u.memo
 		FROM public.stats_ip_sum s , public.short_urls u WHERE u.short_url = s.short_url AND u.short_url = $1 ORDER BY u.created_at DESC LIMIT $2 OFFSET $3`
 		var foundUrl core.UrlIpCountStats
 		err := DbGet(query, &foundUrl, url, size, offset)
