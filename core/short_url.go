@@ -11,11 +11,13 @@ package core
 import (
 	"database/sql"
 	"fmt"
-	"ohurlshortener/utils"
 	"reflect"
 	"time"
+
+	"ohurlshortener/utils"
 )
 
+// ShortUrl 短链接
 type ShortUrl struct {
 	ID        int64          `db:"id" json:"id"`
 	ShortUrl  string         `db:"short_url" json:"short_url"`
@@ -25,10 +27,12 @@ type ShortUrl struct {
 	Memo      sql.NullString `db:"memo" json:"memo"`
 }
 
+// IsEmpty 判断是否为空
 func (url ShortUrl) IsEmpty() bool {
 	return reflect.DeepEqual(url, ShortUrl{})
 }
 
+// GenerateShortLink 生成短链接
 func GenerateShortLink(initialLink string) (string, error) {
 	if utils.EmptyString(initialLink) {
 		return "", fmt.Errorf("empty string")

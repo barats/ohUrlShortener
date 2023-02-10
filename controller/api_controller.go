@@ -11,18 +11,19 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
+
 	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
-	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 // APINewAdmin
 //
-//Add new admin user
+// Add new admin user
 func APINewAdmin(ctx *gin.Context) {
 	account := ctx.PostForm("account")
 	password := ctx.PostForm("password")
@@ -48,7 +49,7 @@ func APINewAdmin(ctx *gin.Context) {
 
 // APIAdminUpdate
 //
-//Update password of given admin user
+// Update password of given admin user
 func APIAdminUpdate(ctx *gin.Context) {
 	account := ctx.Param("account")
 	password := ctx.PostForm("password")
@@ -135,6 +136,7 @@ func APIUpdateUrl(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, core.ResultJsonSuccessWithData(res))
 }
 
+// APIDeleteUrl Delete Short Url
 func APIDeleteUrl(ctx *gin.Context) {
 	url := ctx.Param("url")
 	if utils.EmptyString(strings.TrimSpace(url)) {

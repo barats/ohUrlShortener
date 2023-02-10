@@ -11,29 +11,32 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
 	"ohurlshortener/utils/export"
-	"strconv"
-	"strings"
-	"time"
 
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	DEFAULT_PAGE_NUM  = 1
-	DEFAULT_PAGE_SIZE = 20
+	DefaultPageNum  = 1
+	DefaultPageSize = 20
 )
 
+// LoginPage 登录页面
 func LoginPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{
 		"title": "登录 - ohUrlShortener",
 	})
 }
 
+// DoLogin 登录
 func DoLogin(c *gin.Context) {
 	account := c.PostForm("account")
 	password := c.PostForm("password")
@@ -56,7 +59,7 @@ func DoLogin(c *gin.Context) {
 		return
 	}
 
-	//验证码有效性验证
+	// 验证码有效性验证
 	if !captcha.VerifyString(captchaId, captchaText) {
 		c.HTML(http.StatusOK, "login.html", gin.H{
 			"title": "错误 - ohUrlShortener",
@@ -65,7 +68,7 @@ func DoLogin(c *gin.Context) {
 		return
 	}
 
-	//用户名密码有效性验证
+	// 用户名密码有效性验证
 	loginUser, err := service.Login(account, password)
 	if err != nil || loginUser.IsEmpty() {
 		c.HTML(http.StatusOK, "login.html", gin.H{
@@ -75,7 +78,7 @@ func DoLogin(c *gin.Context) {
 		return
 	}
 
-	//Write Cookie to browser
+	// Write Cookie to browser
 	cValue, err := AdminCookieValue(loginUser)
 	if err != nil {
 		c.HTML(http.StatusOK, "login.html", gin.H{
@@ -89,21 +92,25 @@ func DoLogin(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/admin/dashboard")
 }
 
+// DoLogout 登出
 func DoLogout(c *gin.Context) {
 	c.SetCookie("ohUrlShortenerAdmin", "", -1, "/", "", false, true)
 	c.SetCookie("ohUrlShortenerCookie", "", -1, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/login")
 }
 
+// ServeCaptchaImage 生成验证码
 func ServeCaptchaImage(c *gin.Context) {
 	captcha.Server(200, 45).ServeHTTP(c.Writer, c.Request)
 }
 
+// RequestCaptchaImage 请求验证码
 func RequestCaptchaImage(c *gin.Context) {
 	imageId := captcha.New()
 	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(imageId))
 }
 
+// ChangeState 修改状态
 func ChangeState(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	enable := c.PostForm("enable")
@@ -128,6 +135,7 @@ func ChangeState(c *gin.Context) {
 	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(result))
 }
 
+// DeleteShortUrl 删除短链接
 func DeleteShortUrl(c *gin.Context) {
 	url := c.PostForm("short_url")
 	if utils.EmptyString(strings.TrimSpace(url)) {
@@ -144,6 +152,7 @@ func DeleteShortUrl(c *gin.Context) {
 	c.JSON(http.StatusOK, core.ResultJsonSuccess())
 }
 
+// GenerateShortUrl 生成短链接
 func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")
@@ -165,17 +174,18 @@ func GenerateShortUrl(c *gin.Context) {
 	c.JSON(http.StatusOK, core.ResultJsonSuccessWithData(json))
 }
 
+// StatsPage 统计页面
 func StatsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
-	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
-	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
 	page, err := strconv.Atoi(strPage)
 	if err != nil {
-		page = DEFAULT_PAGE_NUM
+		page = DefaultPageNum
 	}
 	size, err := strconv.Atoi(strSize)
 	if err != nil {
-		size = DEFAULT_PAGE_SIZE
+		size = DefaultPageSize
 	}
 	urls, err := service.GetPagedUrlIpCountStats(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "stats.html", gin.H{
@@ -192,17 +202,18 @@ func StatsPage(c *gin.Context) {
 	})
 }
 
+// SearchStatsPage 查询统计页面
 func SearchStatsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
-	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
-	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
 	page, err := strconv.Atoi(strPage)
 	if err != nil {
-		page = DEFAULT_PAGE_NUM
+		page = DefaultPageNum
 	}
 	size, err := strconv.Atoi(strSize)
 	if err != nil {
-		size = DEFAULT_PAGE_SIZE
+		size = DefaultPageSize
 	}
 	urls, err := service.GetPagedUrlIpCountStats(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "search_stats.html", gin.H{
@@ -219,17 +230,18 @@ func SearchStatsPage(c *gin.Context) {
 	})
 }
 
+// UrlsPage 短链接列表页面
 func UrlsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
-	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
-	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
 	page, err := strconv.Atoi(strPage)
 	if err != nil {
-		page = DEFAULT_PAGE_NUM
+		page = DefaultPageNum
 	}
 	size, err := strconv.Atoi(strSize)
 	if err != nil {
-		size = DEFAULT_PAGE_SIZE
+		size = DefaultPageSize
 	}
 	urls, err := service.GetPagesShortUrls(strings.TrimSpace(url), page, size)
 	c.HTML(http.StatusOK, "urls.html", gin.H{
@@ -246,19 +258,20 @@ func UrlsPage(c *gin.Context) {
 	})
 }
 
+// AccessLogsPage 访问日志页面
 func AccessLogsPage(c *gin.Context) {
 	url := c.DefaultQuery("url", "")
-	strPage := c.DefaultQuery("page", strconv.Itoa(DEFAULT_PAGE_NUM))
-	strSize := c.DefaultQuery("size", strconv.Itoa(DEFAULT_PAGE_SIZE))
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
 	start := c.DefaultQuery("start", "")
 	end := c.DefaultQuery("end", "")
 	page, err := strconv.Atoi(strPage)
 	if err != nil {
-		page = DEFAULT_PAGE_NUM
+		page = DefaultPageNum
 	}
 	size, err := strconv.Atoi(strSize)
 	if err != nil {
-		size = DEFAULT_PAGE_SIZE
+		size = DefaultPageSize
 	}
 
 	totalCount, distinctIpCount, err := service.GetAccessLogsCount(strings.TrimSpace(url), start, end)
@@ -281,6 +294,7 @@ func AccessLogsPage(c *gin.Context) {
 	})
 }
 
+// AccessLogsExport 导出访问日志
 func AccessLogsExport(c *gin.Context) {
 	url := c.PostForm("url")
 	logs, err := service.GetAllAccessLogs(strings.TrimSpace(url))
@@ -314,6 +328,7 @@ func AccessLogsExport(c *gin.Context) {
 	c.Data(http.StatusOK, "pplication/octet-stream", fileContent)
 }
 
+// DashboardPage 仪表盘页面
 func DashboardPage(c *gin.Context) {
 	count, stats, err := service.GetSumOfUrlStats()
 	if err != nil {

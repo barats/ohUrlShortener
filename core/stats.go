@@ -8,6 +8,7 @@
 
 package core
 
+// ShortUrlStats 短链接统计
 type ShortUrlStats struct {
 	ShortUrl               string `db:"short_url" json:"short_url"`
 	TodayCount             int    `db:"today_count" json:"today_count"`
@@ -22,16 +23,19 @@ type ShortUrlStats struct {
 	DistinctTotalCount     int    `db:"d_total_count" json:"d_total_count"`
 }
 
+// Top25Url 短链接统计
 type Top25Url struct {
 	ShortUrl
 	ShortUrlStats
 }
 
+// UrlIpCountStats 短链接统计
 type UrlIpCountStats struct {
 	ShortUrl
 	ShortUrlStats
 }
 
+// StatsSum 短链接统计
 type StatsSum struct {
 	Key   string `db:"stats_key"`
 	Value int    `db:"stats_value"`

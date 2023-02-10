@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// ResultJson 返回结果
 type ResultJson struct {
 	Code    int         `json:"code"`
 	Status  bool        `json:"status"`
@@ -21,6 +22,7 @@ type ResultJson struct {
 	Date    time.Time   `json:"date"`
 }
 
+// ResultJsonSuccess 返回成功结果
 func ResultJsonSuccess() ResultJson {
 	return ResultJson{
 		Code:    http.StatusOK,
@@ -31,6 +33,7 @@ func ResultJsonSuccess() ResultJson {
 	}
 }
 
+// ResultJsonSuccessWithData 返回成功结果
 func ResultJsonSuccessWithData(data interface{}) ResultJson {
 	return ResultJson{
 		Code:    http.StatusOK,
@@ -41,6 +44,7 @@ func ResultJsonSuccessWithData(data interface{}) ResultJson {
 	}
 }
 
+// ResultJsonError 返回错误结果
 func ResultJsonError(message string) ResultJson {
 	return ResultJson{
 		Code:    http.StatusInternalServerError,
@@ -51,6 +55,7 @@ func ResultJsonError(message string) ResultJson {
 	}
 }
 
+// ResultJsonBadRequest 返回错误结果
 func ResultJsonBadRequest(message string) ResultJson {
 	return ResultJson{
 		Code:    http.StatusBadRequest,
@@ -61,6 +66,7 @@ func ResultJsonBadRequest(message string) ResultJson {
 	}
 }
 
+// ResultJsonUnauthorized 返回错误结果
 func ResultJsonUnauthorized(message string) ResultJson {
 	return ResultJson{
 		Code:    http.StatusUnauthorized,

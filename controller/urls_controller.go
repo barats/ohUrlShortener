@@ -10,12 +10,14 @@ package controller
 
 import (
 	"net/http"
+
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
+// ShortUrlDetail 重定向到目标地址
 func ShortUrlDetail(c *gin.Context) {
 	url := c.Param("url")
 	if utils.EmptyString(url) {
@@ -50,6 +52,5 @@ func ShortUrlDetail(c *gin.Context) {
 	}
 
 	go service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent(), c.Request.Referer())
-
 	c.Redirect(http.StatusFound, destUrl)
 }

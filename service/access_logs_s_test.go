@@ -9,11 +9,12 @@
 package service
 
 import (
-	"ohurlshortener/storage"
-	"ohurlshortener/utils"
 	"testing"
 
 	"github.com/bxcodec/faker/v3"
+
+	"ohurlshortener/storage"
+	"ohurlshortener/utils"
 )
 
 func TestStoreAccessLog(t *testing.T) {

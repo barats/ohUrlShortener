@@ -21,9 +21,10 @@ package storage
 
 import (
 	"log"
-	"ohurlshortener/utils"
 	"testing"
 	"time"
+
+	"ohurlshortener/utils"
 
 	"github.com/dchest/captcha"
 )

@@ -12,10 +12,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
+
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
-	"time"
 )
 
 // ReloadUrls
@@ -23,28 +24,28 @@ import (
 // 从数据库中获取所有「有效」状态的短链接
 // 并将其可以 key-> value 形式存入 Redis 中
 func ReloadUrls() (bool, error) {
-	//把所有访问日志记录到数据库中
+	// 把所有访问日志记录到数据库中
 	err := StoreAccessLogs()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	//找出所有已经配置好的短链接
+	// 找出所有已经配置好的短链接
 	urls, err := storage.FindAllShortUrls()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	//清理 redis db
+	// 清理 redis db
 	err = storage.RedisFlushDB()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	//将所有「有效」状态的短域名再次放入 Redis
+	// 将所有「有效」状态的短域名再次放入 Redis
 	for _, url := range urls {
 		if url.Valid {
 			err := storage.RedisSet4Ever(url.ShortUrl, url.DestUrl)
@@ -53,16 +54,15 @@ func ReloadUrls() (bool, error) {
 				continue
 			}
 		}
-	} //end of for
+	} // end of for
 	return true, nil
 }
 
 // Search4ShortUrl
 //
-//从 Redis 中查询目标短链接是否存在
-func Search4ShortUrl(shortUrl string) (string, error) {
-	destUrl, err := storage.RedisGetString(shortUrl)
-	if err != nil {
+// 从 Redis 中查询目标短链接是否存在
+func Search4ShortUrl(shortUrl string) (destUrl string, err error) {
+	if destUrl, err = storage.RedisGetString(shortUrl); err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
@@ -71,7 +71,7 @@ func Search4ShortUrl(shortUrl string) (string, error) {
 
 // GetPagesShortUrls
 //
-//获取分页的短链接信息
+// 获取分页的短链接信息
 func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) {
 	if page < 1 || size < 1 {
 		return nil, nil
@@ -86,7 +86,7 @@ func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) 
 
 // GenerateShortUrl
 //
-//生成短链接
+// 生成短链接
 func GenerateShortUrl(destUrl string, memo string) (string, error) {
 	shortUrl, err := core.GenerateShortLink(destUrl)
 	if err != nil {
@@ -133,7 +133,7 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 
 // ChangeState
 //
-//禁用/启用短链接
+// 禁用/启用短链接
 func ChangeState(shortUrl string, enable bool) (bool, error) {
 	found, err := storage.FindShortUrl(shortUrl)
 	if err != nil {
@@ -160,7 +160,7 @@ func ChangeState(shortUrl string, enable bool) (bool, error) {
 	return true, nil
 }
 
-//DeleteUrlAndAccessLogs 删除短链接以及对应的访问日志
+// DeleteUrlAndAccessLogs 删除短链接以及对应的访问日志
 func DeleteUrlAndAccessLogs(shortUrl string) error {
 	found, err := storage.FindShortUrl(shortUrl)
 	if err != nil {

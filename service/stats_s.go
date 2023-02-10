@@ -14,6 +14,7 @@ import (
 	"ohurlshortener/utils"
 )
 
+// GetSumOfUrlStats 获取所有短链接的统计信息
 func GetSumOfUrlStats() (int, core.ShortUrlStats, error) {
 	var (
 		totalCount int
@@ -33,6 +34,7 @@ func GetSumOfUrlStats() (int, core.ShortUrlStats, error) {
 	return totalCount, result, nil
 }
 
+// GetShortUrlStats 获取单个短链接的统计信息
 func GetShortUrlStats(url string) (core.ShortUrlStats, error) {
 	found, err := storage.GetUrlStats(url)
 	if err != nil {
@@ -41,6 +43,7 @@ func GetShortUrlStats(url string) (core.ShortUrlStats, error) {
 	return found, nil
 }
 
+// GetTop25Url 获取访问量最高的 25 个短链接
 func GetTop25Url() ([]core.Top25Url, error) {
 	found, err := storage.GetTop25()
 	if err != nil {
@@ -49,6 +52,7 @@ func GetTop25Url() ([]core.Top25Url, error) {
 	return found, nil
 }
 
+// GetPagedUrlIpCountStats 获取单个短链接的 IP 访问量统计信息
 func GetPagedUrlIpCountStats(url string, page int, size int) ([]core.UrlIpCountStats, error) {
 	if page < 1 || size < 1 {
 		return nil, nil

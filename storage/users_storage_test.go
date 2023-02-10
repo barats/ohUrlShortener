@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"ohurlshortener/utils"
 	"testing"
+
+	"ohurlshortener/utils"
 )
 
 func TestNewUser(t *testing.T) {
