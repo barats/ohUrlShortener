@@ -83,7 +83,15 @@ func PasswordBase58Hash(password string) (string, error) {
 
 管理端 HTTP API 支持请参阅 [ohUrlShortener HTTP API](API.md)
 
----
+```golang
+	api := router.Group("/api", controller.APIAuthHandler())
+	api.POST("/account", controller.APINewAdmin)
+	api.PUT("/account/:account/update", controller.APIAdminUpdate)
+	api.POST("/url", controller.APIGenShortUrl)
+	api.GET("/url/:url", controller.APIUrlInfo)
+	api.DELETE("/url/:url", controller.APIDeleteUrl)
+	api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
+```
 
 ## 短链接在应用启动时会存入 Redis 中
 
@@ -125,10 +133,10 @@ func GenerateShortLink(initialLink string) (string, error) {
 
 ```golang
 //清理 Redis 中的访问日志的时间间隔
-const ACCESS_LOG_CLEAN_INTERVAL = 1 * time.Minute
+const AccessLogCleanInterval = 1 * time.Minute
 
 func startTicker() error {
-	ticker := time.NewTicker(ACCESS_LOG_CLEAN_INTERVAL)
+	ticker := time.NewTicker(AccessLogCleanInterval)
 	for range ticker.C {
 		log.Println("[StoreAccessLog] Start.")
 		if err := service.StoreAccessLogs(); err != nil {
@@ -145,10 +153,10 @@ func startTicker() error {
 
 ```golang
 // Top25 榜单计算间隔
-TOP25_CALC_INTERVAL = 5 * time.Minute
+Top25CalcInterval = 5 * time.Minute
 
 func startTicker2() error {
-	top25Ticker := time.NewTicker(TOP25_CALC_INTERVAL)
+	top25Ticker := time.NewTicker(Top25CalcInterval)
 	for range top25Ticker.C {
 		log.Println("[Top25Urls Ticker] Start.")
 		if err := storage.CallProcedureStatsTop25(); err != nil {
@@ -165,10 +173,10 @@ func startTicker2() error {
 
 ```golang
 // 仪表盘页面中其他几个统计数据计算间隔
-STATS_SUM_CALC_INTERVAL = 5 * time.Minute
+StatsSumCalcInterval = 5 * time.Minute
 
 func startTicker4() error {
-	statsSumTicker := time.NewTicker(STATS_SUM_CALC_INTERVAL)
+	statsSumTicker := time.NewTicker(StatsSumCalcInterval)
 	for range statsSumTicker.C {
 		log.Println("[StatsSum Ticker] Start.")
 		if err := storage.CallProcedureStatsSum(); err != nil {
@@ -185,10 +193,10 @@ func startTicker4() error {
 
 ```golang
 //全部访问日志分析统计的间隔
-STATS_IP_SUM_CALC_INTERVAL = 30 * time.Minute
+StatsIpSumCalcInterval = 30 * time.Minute
 
 func startTicker3() error {
-	statsIpSumTicker := time.NewTicker(STATS_IP_SUM_CALC_INTERVAL)
+	statsIpSumTicker := time.NewTicker(StatsIpSumCalcInterval)
 	for range statsIpSumTicker.C {
 		log.Println("[StatsIpSum Ticker] Start.")
 		if err := storage.CallProcedureStatsIPSum(); err != nil {
@@ -198,6 +206,22 @@ func startTicker3() error {
 	}
 	return nil
 }
+```
+
+## License 
+
+ohUrlShortener 以《木兰宽松许可证》 第2版 为开源协议发布  
+
+```
+Copyright (c) [2023] [巴拉迪维]
+[ohUrlShortener] is licensed under Mulan PSL v2.
+You can use this software according to the terms and conditions of the Mulan PSL v2.
+You may obtain a copy of Mulan PSL v2 at:
+         http://license.coscl.org.cn/MulanPSL2
+THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+See the Mulan PSL v2 for more details.
 ```
 
 ## Contributor License Agreement
