@@ -20,6 +20,7 @@ var (
 	RedisConfig    RedisConfigInfo
 )
 
+// AppConfigInfo 应用配置
 type AppConfigInfo struct {
 	Port      int
 	AdminPort int
@@ -27,6 +28,7 @@ type AppConfigInfo struct {
 	Debug     bool
 }
 
+// RedisConfigInfo redis配置
 type RedisConfigInfo struct {
 	Host     string
 	User     string
@@ -35,6 +37,7 @@ type RedisConfigInfo struct {
 	PoolSize int
 }
 
+// DatabaseConfigInfo 数据库配置
 type DatabaseConfigInfo struct {
 	Host         string
 	Port         int
@@ -45,8 +48,8 @@ type DatabaseConfigInfo struct {
 	MaxIdleConn  int
 }
 
+// InitConfig 初始化配置
 func InitConfig(file string) (*ini.File, error) {
-
 	cfg, err := ini.Load(file)
 	if err != nil {
 		return nil, nil

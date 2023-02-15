@@ -2,9 +2,10 @@ package storage
 
 import (
 	"database/sql"
-	"ohurlshortener/core"
 	"testing"
 	"time"
+
+	"ohurlshortener/core"
 
 	"github.com/bxcodec/faker/v3"
 )

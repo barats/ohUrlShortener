@@ -12,25 +12,26 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
+
 	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
-	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	authoriationHeaderKey  = "Authorization"
-	authoriationTypeBearer = "Bearer"
+	authorizationHeaderKey  = "Authorization"
+	authorizationTypeBearer = "Bearer"
 )
 
 // APIAuthHandler Authorization for /api
 func APIAuthHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		authHeader := ctx.GetHeader(authoriationHeaderKey)
+		authHeader := ctx.GetHeader(authorizationHeaderKey)
 		if utils.EmptyString(authHeader) {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, core.ResultJsonUnauthorized("Authorization Header is empty"))
 			return
@@ -42,7 +43,7 @@ func APIAuthHandler() gin.HandlerFunc {
 			return
 		}
 
-		if fields[0] != authoriationTypeBearer {
+		if fields[0] != authorizationTypeBearer {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, core.ResultJsonUnauthorized("Unsupported Authorization Type"))
 			return
 		}
@@ -63,6 +64,7 @@ func APIAuthHandler() gin.HandlerFunc {
 	}
 }
 
+// AdminCookieValue Generate cookie value for admin user
 func AdminCookieValue(user core.User) (string, error) {
 	var result string
 	data, err := utils.Sha256Of(user.Account + "a=" + user.Password + "=e" + strconv.Itoa(user.ID))
@@ -73,19 +75,20 @@ func AdminCookieValue(user core.User) (string, error) {
 	return utils.Base58Encode(data), nil
 }
 
+// AdminAuthHandler Authorization for /admin
 func AdminAuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, err := c.Cookie("ohUrlShortenerAdmin")
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
-			//c.AbortWithError(http.StatusFound, err)
+			// c.AbortWithError(http.StatusFound, err)
 			return
 		}
 
 		cookie, err := c.Cookie("ohUrlShortenerCookie")
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
-			//c.Redirect(http.StatusFound, "/login")
+			// c.Redirect(http.StatusFound, "/login")
 			return
 		}
 
@@ -122,9 +125,10 @@ func AdminAuthHandler() gin.HandlerFunc {
 		}
 
 		c.Next()
-	} //end of func
+	} // end of func
 }
 
+// WebLogFormatHandler Customized log format for web
 func WebLogFormatHandler(server string) gin.HandlerFunc {
 	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		if !strings.HasPrefix(param.Path, "/assets") {
@@ -139,10 +143,10 @@ func WebLogFormatHandler(server string) gin.HandlerFunc {
 				param.Request.UserAgent(),
 				param.ErrorMessage,
 			)
-		} //end of if
+		} // end of if
 		return ""
-	}) //end of formatter
-} //end of func
+	}) // end of formatter
+} // end of func
 
 func validateToken(token string) (bool, error) {
 	users, err := storage.FindAllUsers()

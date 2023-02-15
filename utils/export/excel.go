@@ -10,8 +10,9 @@ package export
 
 import (
 	"errors"
-	"ohurlshortener/core"
 	"strconv"
+
+	"ohurlshortener/core"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -22,7 +23,7 @@ func AccessLogToExcel(logs []core.AccessLog) ([]byte, error) {
 	}
 	f := excelize.NewFile()
 	index := f.NewSheet("Sheet1")
-	//填充表头
+	// 填充表头
 	f.SetCellValue("Sheet1", "A1", "短链接")
 	f.SetCellValue("Sheet1", "B1", "访问时间")
 	f.SetCellValue("Sheet1", "C1", "访问IP")

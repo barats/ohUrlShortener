@@ -20,6 +20,7 @@ import (
 	"github.com/btcsuite/btcd/btcutil/base58"
 )
 
+// ExitOnError 退出程序
 func ExitOnError(message string, err error) {
 	if err != nil {
 		log.Printf("[%s] - %s", message, err)
@@ -27,12 +28,14 @@ func ExitOnError(message string, err error) {
 	}
 }
 
+// PrintOnError 打印错误
 func PrintOnError(message string, err error) {
 	if err != nil {
 		log.Printf("[%s] - %s", message, err)
 	}
 }
 
+// RaiseError 返回错误
 func RaiseError(message string) error {
 	if !EmptyString(message) {
 		return fmt.Errorf(message)
@@ -40,11 +43,13 @@ func RaiseError(message string) error {
 	return nil
 }
 
+// EmptyString 判断字符串是否为空
 func EmptyString(str string) bool {
 	str = strings.TrimSpace(str)
 	return strings.EqualFold(str, "")
 }
 
+// UserAgentIpHash 生成用户代理和IP的哈希值
 func UserAgentIpHash(useragent string, ip string) string {
 	input := fmt.Sprintf("%s-%s-%s-%d", useragent, ip, time.Now().String(), rand.Int())
 	data, _ := Sha256Of(input)
@@ -52,6 +57,7 @@ func UserAgentIpHash(useragent string, ip string) string {
 	return str[:10]
 }
 
+// Sha256Of 计算字符串的哈希值
 func Sha256Of(input string) ([]byte, error) {
 	algorithm := sha256.New()
 	_, err := algorithm.Write([]byte(strings.TrimSpace(input)))
@@ -61,6 +67,7 @@ func Sha256Of(input string) ([]byte, error) {
 	return algorithm.Sum(nil), nil
 }
 
+// Base58Encode base58编码
 func Base58Encode(data []byte) string {
 	return base58.Encode(data)
 }

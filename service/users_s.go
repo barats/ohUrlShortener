@@ -3,17 +3,18 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
-	"strings"
 )
 
-const ADMIN_USER_PREFIX = "ohUrlShortenerAdmin#"
-const ADMIN_COOKIE_PREFIX = "ohUrlShortenerCookie#"
+const AdminUserPrefix = "ohUrlShortenerAdmin#"
+const AdminCookiePrefix = "ohUrlShortenerCookie#"
 
+// Login 登录
 func Login(account string, pasword string) (core.User, error) {
-
 	var found core.User
 	found, err := GetUserByAccountFromRedis(account)
 	if err != nil {
@@ -36,6 +37,7 @@ func Login(account string, pasword string) (core.User, error) {
 	return found, nil
 }
 
+// ReloadUsers 从数据库中获取所有用户
 func ReloadUsers() error {
 	users, err := storage.FindAllUsers()
 	if err != nil {
@@ -44,7 +46,7 @@ func ReloadUsers() error {
 
 	for _, user := range users {
 		jsonUser, _ := json.Marshal(user)
-		er := storage.RedisSet4Ever(ADMIN_USER_PREFIX+user.Account, jsonUser)
+		er := storage.RedisSet4Ever(AdminUserPrefix+user.Account, jsonUser)
 		if er != nil {
 			return er
 		}
@@ -55,7 +57,7 @@ func ReloadUsers() error {
 
 func GetUserByAccountFromRedis(account string) (core.User, error) {
 	var found core.User
-	foundUserStr, err := storage.RedisGetString(ADMIN_USER_PREFIX + account)
+	foundUserStr, err := storage.RedisGetString(AdminUserPrefix + account)
 	if err != nil {
 		return found, err
 	}

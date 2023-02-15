@@ -13,26 +13,29 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
+
 	"ohurlshortener/core"
 	"ohurlshortener/storage"
 	"ohurlshortener/utils"
-	"time"
 )
 
-const access_logs_prefix = "OH_ACCESS_LOGS#"
+const accessLogsPrefix = "OH_ACCESS_LOGS#"
 
+// NewAccessLog 记录访问日志
 func NewAccessLog(url string, ip string, useragent string, referer string) error {
+	var (
+		l = core.AccessLog{
+			ShortUrl:   url,
+			AccessTime: time.Now(),
+			Ip:         sql.NullString{String: ip, Valid: true},
+			UserAgent:  sql.NullString{String: useragent, Valid: true},
+		}
+		logJson, _ = json.Marshal(l)
+		key        = fmt.Sprintf("%s%s", accessLogsPrefix, utils.UserAgentIpHash(useragent, ip))
+		err        = storage.RedisSet30m(key, logJson)
+	)
 
-	l := core.AccessLog{
-		ShortUrl:   url,
-		AccessTime: time.Now(),
-		Ip:         sql.NullString{String: ip, Valid: true},
-		UserAgent:  sql.NullString{String: useragent, Valid: true},
-	}
-
-	logJson, _ := json.Marshal(l)
-	key := fmt.Sprintf("%s%s", access_logs_prefix, utils.UserAgentIpHash(useragent, ip))
-	err := storage.RedisSet30m(key, logJson)
 	if err != nil {
 		log.Println(err)
 		return utils.RaiseError("内部错误，请联系管理员")
@@ -41,24 +44,25 @@ func NewAccessLog(url string, ip string, useragent string, referer string) error
 	return nil
 }
 
+// StoreAccessLogs 将访问日志存入数据库
 func StoreAccessLogs() error {
-	keys, err := storage.RedisScan4Keys(access_logs_prefix + "*")
+	keys, err := storage.RedisScan4Keys(accessLogsPrefix + "*")
 	if err != nil {
 		log.Println(err)
 		return utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	logs := []core.AccessLog{}
+	var logs []core.AccessLog
 	for _, k := range keys {
 		v, err := storage.RedisGetString(k)
 		if err != nil {
 			log.Printf("redis error for key %s", k)
 			continue
 		}
-		log := core.AccessLog{}
-		json.Unmarshal([]byte(v), &log)
-		logs = append(logs, log)
-	} //end of for
+		accessLog := core.AccessLog{}
+		json.Unmarshal([]byte(v), &accessLog)
+		logs = append(logs, accessLog)
+	} // end of for
 
 	err = storage.InsertAccessLogs(logs)
 	if err != nil {
@@ -74,6 +78,7 @@ func StoreAccessLogs() error {
 	return nil
 }
 
+// GetPagedAccessLogs 获取分页访问日志
 func GetPagedAccessLogs(url string, start, end string, page, size int) ([]core.AccessLog, error) {
 	if page < 1 || size < 1 {
 		return nil, nil
@@ -86,10 +91,12 @@ func GetPagedAccessLogs(url string, start, end string, page, size int) ([]core.A
 	return allAccessLogs, nil
 }
 
+// GetAccessLogsCount 获取访问日志总数
 func GetAccessLogsCount(url string, start, end string) (int, int, error) {
 	return storage.FindAccessLogsCount(url, start, end)
 }
 
+// GetAllAccessLogs 获取所有访问日志
 func GetAllAccessLogs(url string) ([]core.AccessLog, error) {
 	allAccessLogs, err := storage.FindAllAccessLogsByUrl(url)
 	if err != nil {

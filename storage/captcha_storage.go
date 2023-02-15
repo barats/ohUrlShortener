@@ -21,8 +21,9 @@ package storage
 
 import (
 	"fmt"
-	"ohurlshortener/utils"
 	"time"
+
+	"ohurlshortener/utils"
 
 	"github.com/dchest/captcha"
 )

@@ -10,6 +10,7 @@ package storage
 
 import (
 	"fmt"
+
 	"ohurlshortener/core"
 	"ohurlshortener/utils"
 )
@@ -20,9 +21,12 @@ func DeleteAccessLogs(shortUrl string) error {
 }
 
 func FindAccessLogs(shortUrl string) ([]core.AccessLog, error) {
-	found := []core.AccessLog{}
-	query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
-	err := DbSelect(query, &found, shortUrl)
+	var (
+		found []core.AccessLog
+		query = "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
+		err   = DbSelect(query, &found, shortUrl)
+	)
+
 	return found, err
 }
 
@@ -31,8 +35,8 @@ func InsertAccessLogs(logs []core.AccessLog) error {
 		return nil
 	}
 	query := `INSERT INTO public.access_logs (short_url, access_time, ip, user_agent) VALUES(:short_url,:access_time,:ip,:user_agent)`
-	if len(logs) >= Max_Insert_Count {
-		logsSlice := splitLogsArray(logs, Max_Insert_Count)
+	if len(logs) >= MaxInsertCount {
+		logsSlice := splitLogsArray(logs, MaxInsertCount)
 		for _, slice := range logsSlice {
 			err := DbNamedExec(query, slice)
 			if err != nil {
@@ -45,7 +49,7 @@ func InsertAccessLogs(logs []core.AccessLog) error {
 
 // FindAccessLogsCount
 //
-// Find Access Logs Count and Unique IP Count
+// # Find Access Logs Count and Unique IP Count
 //
 // First return value is total_count, Second return value is unique_ip_count ip count
 func FindAccessLogsCount(url string, start, end string) (int, int, error) {
@@ -68,9 +72,12 @@ func FindAccessLogsCount(url string, start, end string) (int, int, error) {
 }
 
 func FindAllAccessLogs(url string, start, end string, page, size int) ([]core.AccessLog, error) {
-	found := []core.AccessLog{}
-	offset := (page - 1) * size
-	query := `SELECT * FROM public.access_logs l WHERE 1=1 `
+	var (
+		found  []core.AccessLog
+		offset = (page - 1) * size
+		query  = `SELECT * FROM public.access_logs l WHERE 1=1 `
+	)
+
 	if !utils.EmptyString(url) {
 		query += fmt.Sprintf(` AND l.short_url = '%s'`, url)
 	}
@@ -86,10 +93,13 @@ func FindAllAccessLogs(url string, start, end string, page, size int) ([]core.Ac
 }
 
 func FindAllAccessLogsByUrl(url string) ([]core.AccessLog, error) {
-	found := []core.AccessLog{}
-	query := "SELECT * FROM public.access_logs l ORDER BY l.id DESC"
+	var (
+		found []core.AccessLog
+		query = "SELECT * FROM public.access_logs l ORDER BY l.id DESC"
+	)
+
 	if !utils.EmptyString(url) {
-		query := "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
+		query = "SELECT * FROM public.access_logs l WHERE l.short_url = $1 ORDER BY l.id DESC"
 		err := DbSelect(query, &found, url)
 		return found, err
 	}
