@@ -11,7 +11,7 @@
 ![Screenshot](screenshot.jpg)
 
 <p style="text-align: center">
-<a target="_blank" href="https://www.ohurls.cn">https://www.ohurls.cn</a><br/>
+<a target="_blank" href="https://www.ohurls.cn">https://www.ohurls.cn</a><br/><br/>
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/stargazers"><img src="https://img.shields.io/github/stars/barats/ohUrlShortener"/></a>
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/network/members"><img src="https://img.shields.io/github/forks/barats/ohUrlShortener"/></a>
 <a target="_blank" href="https://github.com/barats/ohUrlShortener/issues"><img src="https://img.shields.io/github/issues/barats/ohUrlShortener"/></a>  
@@ -45,9 +45,6 @@ ohurlshortener [-c config_file] [-s admin|portal|<omit to start both>]
 ```ini
 [app]
 
-# 应用是否以 debug 模式启动，主要作用会在go-gin 框架上体现（eg：日志输出等）
-debug = false   
-
 # 短链接系统本地启动端口
 port = 9091
 
@@ -63,7 +60,7 @@ url_prefix = http://localhost:9091/
 默认帐号: `ohUrlShortener`  
 默认密码: `-2aDzm=0(ln_9^1`  
 
-数据库中存储的是加密后的密码，在 `structure.sql` 中标有注释，如果需要自定义其他密码，可以修改这里  
+数据库中存储的是加密后的密码，在 [`structure.sql`](structure.sql) 中标有注释，如果需要自定义其他密码，可以修改这里  
 
 加密规则 `storage/users_storage.go` 中
 
@@ -84,13 +81,13 @@ func PasswordBase58Hash(password string) (string, error) {
 管理端 HTTP API 支持请参阅 [ohUrlShortener HTTP API](API.md)
 
 ```golang
-	api := router.Group("/api", controller.APIAuthHandler())
-	api.POST("/account", controller.APINewAdmin)
-	api.PUT("/account/:account/update", controller.APIAdminUpdate)
-	api.POST("/url", controller.APIGenShortUrl)
-	api.GET("/url/:url", controller.APIUrlInfo)
-	api.DELETE("/url/:url", controller.APIDeleteUrl)
-	api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
+api := router.Group("/api", controller.APIAuthHandler())
+api.POST("/account", controller.APINewAdmin)
+api.PUT("/account/:account/update", controller.APIAdminUpdate)
+api.POST("/url", controller.APIGenShortUrl)
+api.GET("/url/:url", controller.APIUrlInfo)
+api.DELETE("/url/:url", controller.APIDeleteUrl)
+api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
 ```
 
 ## 短链接在应用启动时会存入 Redis 中
@@ -241,6 +238,7 @@ See the Mulan PSL v2 for more details.
 7. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## ohUrlShortener 
+1. [ohUrlShortener 短链接系统 v1.8 发布，API 问题处理](https://www.oschina.net/news/228559/ohurlshortener-1-8-released)
 1. [ohUrlShortener 短链接系统 v1.7 发布，安全更新](https://www.oschina.net/news/211116/ohurlshortener-1-7-released)
 1. [ohUrlShortener 短链接系统 v1.6 发布，统计功能增强](https://www.oschina.net/news/207439/ohurlshortener-1-6-released) 
 1. [ohUrlShortener 短链接系统 v1.5 发布，管理功能增强](https://www.oschina.net/news/200621/ohurlshortener-1-5-released)
