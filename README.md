@@ -54,6 +54,28 @@ admin_port = 9092
 # 例如：https://t.cn/ 是前缀(不要忘记最后一个/符号)
 url_prefix = http://localhost:9091/
 
+# captcha 验证码默认会写入内存，也可以指定存储到 redis
+[captcha]
+store = memory
+# store = redis
+
+# Redis 配置信息 
+[redis]
+host = redis:6379
+database = 0
+username =
+password =
+pool_size = 50
+
+# Postgresql 数据库配置信息
+[postgres]
+host = localhost
+port = 5432
+user = postgres
+password = xxx
+database = oh_url_shortener
+max_open_conn = 20
+max_idle_conn = 5
 ```
 
 ## Admin 后台默认帐号 

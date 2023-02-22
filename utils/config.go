@@ -18,7 +18,12 @@ var (
 	DatabaseConfig DatabaseConfigInfo
 	AppConfig      AppConfigInfo
 	RedisConfig    RedisConfigInfo
+	CaptchaConfig  CaptchaConfigInfo
 )
+
+type CaptchaConfigInfo struct {
+	Store string
+}
 
 // AppConfigInfo 应用配置
 type AppConfigInfo struct {
@@ -76,6 +81,9 @@ func InitConfig(file string) (*ini.File, error) {
 	RedisConfig.Password = redisSection.Key("password").String()
 	RedisConfig.Database = redisSection.Key("database").MustInt()
 	RedisConfig.PoolSize = redisSection.Key("pool_size").MustInt()
+
+	captchaSection := cfg.Section("captcha")
+	CaptchaConfig.Store = captchaSection.Key("store").String()
 
 	return cfg, err
 }

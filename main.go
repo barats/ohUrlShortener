@@ -26,6 +26,7 @@ import (
 	"ohurlshortener/utils"
 
 	"github.com/Masterminds/sprig"
+	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -110,8 +111,13 @@ func initSettings() {
 	_, err := utils.InitConfig(cmdConfig)
 	utils.ExitOnError("Config initialization failed.", err)
 
-	_, err = storage.InitRedisService()
+	rs, err := storage.InitRedisService()
 	utils.ExitOnError("Redis initialization failed.", err)
+
+	if strings.EqualFold("redis", strings.ToLower(utils.CaptchaConfig.Store)) {
+		crs := storage.CaptchaRedisStore{KeyPrefix: "oh_captcha", Expiration: 1 * time.Minute, RedisService: rs}
+		captcha.SetCustomStore(&crs)
+	}
 
 	_, err = storage.InitDatabaseService()
 	storage.CallProcedureStatsTop25() // recalculate when ohUrlShortener starts
