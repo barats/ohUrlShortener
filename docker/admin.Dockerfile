@@ -1,7 +1,7 @@
 ##
 ## Build 
 ##
-FROM golang:1.16-alpine AS ohurlshortener_builder 
+FROM golang:1.18-alpine AS ohurlshortener_builder 
 ENV GO111MODULE=on
 ENV GOPROXY=https://proxy.golang.com.cn,direct
 ADD . /app

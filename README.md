@@ -67,6 +67,13 @@ username =
 password =
 pool_size = 50
 
+# Redis 集群配置
+[redis-cluster]
+hosts = localhost:6371,localhost:6372,localhost:6373,localhost:6374,localhost:6375,localhost:6376
+username = 
+password = 
+pool_size = 50
+
 # Postgresql 数据库配置信息
 [postgres]
 host = localhost

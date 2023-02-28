@@ -9,16 +9,19 @@
 package utils
 
 import (
+	"strings"
+
 	"gopkg.in/ini.v1"
 )
 
-const Version = "1.5"
+const Version = "1.9"
 
 var (
-	DatabaseConfig DatabaseConfigInfo
-	AppConfig      AppConfigInfo
-	RedisConfig    RedisConfigInfo
-	CaptchaConfig  CaptchaConfigInfo
+	DatabaseConfig     DatabaseConfigInfo
+	AppConfig          AppConfigInfo
+	RedisConfig        RedisConfigInfo
+	RedisClusterConfig RedisClusterConfigInfo
+	CaptchaConfig      CaptchaConfigInfo
 )
 
 type CaptchaConfigInfo struct {
@@ -31,6 +34,14 @@ type AppConfigInfo struct {
 	AdminPort int
 	UrlPrefix string
 	Debug     bool
+}
+
+// RedisClusterConfigInfo redis配置
+type RedisClusterConfigInfo struct {
+	Hosts    []string
+	User     string
+	Password string
+	PoolSize int
 }
 
 // RedisConfigInfo redis配置
@@ -77,10 +88,20 @@ func InitConfig(file string) (*ini.File, error) {
 
 	redisSection := cfg.Section("redis")
 	RedisConfig.Host = redisSection.Key("host").String()
-	RedisConfig.User = redisSection.Key("user").String()
+	RedisConfig.User = redisSection.Key("username").String()
 	RedisConfig.Password = redisSection.Key("password").String()
 	RedisConfig.Database = redisSection.Key("database").MustInt()
 	RedisConfig.PoolSize = redisSection.Key("pool_size").MustInt()
+
+	redisClusterSection := cfg.Section("redis-cluster")
+	hosts := redisClusterSection.Key("hosts").String()
+	if !EmptyString(hosts) {
+		hostsArr := strings.Split(hosts, ",")
+		RedisClusterConfig.Hosts = hostsArr
+	}
+	RedisClusterConfig.User = redisClusterSection.Key("username").String()
+	RedisClusterConfig.Password = redisClusterSection.Key("password").String()
+	RedisClusterConfig.PoolSize = redisClusterSection.Key("pool_size").MustInt()
 
 	captchaSection := cfg.Section("captcha")
 	CaptchaConfig.Store = captchaSection.Key("store").String()
