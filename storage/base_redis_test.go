@@ -16,6 +16,7 @@ import (
 )
 
 func testInitRedisSettings(t *testing.T) {
+
 	_, err := utils.InitConfig("../config.ini")
 	if err != nil {
 		t.Error(err)

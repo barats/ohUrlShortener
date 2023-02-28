@@ -42,6 +42,7 @@ func InitRedisService() (*RedisService, error) {
 
 	_, err := redisClusterClient.Ping(ctx).Result()
 	if err != nil {
+		log.Println(err)
 		log.Println("Failed to connect to Redis cluster. Will try to connect to single node.")
 		// If there's any error while connecting to Redis cluster,
 		// then try to connect to single Redis node.
