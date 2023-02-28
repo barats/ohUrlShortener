@@ -78,49 +78,49 @@ func AdminCookieValue(user core.User) (string, error) {
 // AdminAuthHandler Authorization for /admin
 func AdminAuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		user, err := c.Cookie("ohUrlShortenerAdmin")
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.AbortWithError(http.StatusFound, err)
-			return
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 		}
 
 		cookie, err := c.Cookie("ohUrlShortenerCookie")
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
 		if len(user) <= 0 || len(cookie) <= 0 {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
 		found, err := service.GetUserByAccountFromRedis(user)
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
 		if found.IsEmpty() {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
 		cValue, err := AdminCookieValue(found)
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
 		if !strings.EqualFold(cValue, cookie) {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			// c.Redirect(http.StatusFound, "/login")
+			c.Redirect(http.StatusFound, "/login")
+			c.Next()
 			return
 		}
 
