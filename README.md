@@ -5,7 +5,7 @@
 1. 支持 Docker One Step Start 部署启动
 1. 支持短链接生产、查询、存储、302转向
 1. 支持访问日志查询、访问量统计、独立IP数统计
-1. 支持 HTTP API 方式新建短链接、禁用/启用短链接、查看短链接统计信息、新建管理员、修改管理员密码
+1. 支持 HTTP API 方式新建短链接、禁用/启用短链接、查看短链接统计信息、管理员设置
 1. 支持访问日志导出，方便线下分析
 
 ![Screenshot](screenshot.jpg)
@@ -267,6 +267,7 @@ See the Mulan PSL v2 for more details.
 7. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## ohUrlShortener 
+1. [ohUrlShortener 短链接系统 v1.9 发布，Redis Cluster 集群支持](https://www.oschina.net/news/230519/ohurlshortener-1-9-released)
 1. [ohUrlShortener 短链接系统 v1.8 发布，API 问题处理](https://www.oschina.net/news/228559/ohurlshortener-1-8-released)
 1. [ohUrlShortener 短链接系统 v1.7 发布，安全更新](https://www.oschina.net/news/211116/ohurlshortener-1-7-released)
 1. [ohUrlShortener 短链接系统 v1.6 发布，统计功能增强](https://www.oschina.net/news/207439/ohurlshortener-1-6-released) 
