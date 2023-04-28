@@ -137,7 +137,7 @@ func RedisFlushDB() error {
 func RedisDelete(key ...string) error {
 	if len(key) > 0 {
 		if redisService.clusterMode {
-			// Apprently you can NOT delete multiple keys in one request,since keys are distributed across multiple nodes.
+			// Apparently you can NOT delete multiple keys in a single request,since keys are distributed across multiple nodes.
 			var err error
 			for _, k := range key {
 				err = redisService.redisClusterClient.Del(ctx, k).Err()

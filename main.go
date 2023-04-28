@@ -124,6 +124,9 @@ func initSettings() {
 	storage.CallProcedureStatsSum()   // recalculate when ohUrlShortener starts
 	utils.ExitOnError("Database initialization failed.", err)
 
+	err = service.StoreAccessLogs()
+	utils.PrintOnError("StoreAccessLogs failed.", err)
+
 	_, err = service.ReloadUrls()
 	utils.PrintOnError("Reload urls failed.", err)
 

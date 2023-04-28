@@ -52,6 +52,18 @@ func FindAllShortUrls() ([]core.ShortUrl, error) {
 	return found, err
 }
 
+// FindAllShortUrls 查找所有短链接
+func FindAllShortUrlsByPage(page, size int) ([]core.ShortUrl, error) {
+	found := []core.ShortUrl{}
+	if page < 0 {
+		return found, nil
+	}
+	offset := (page - 1) * size
+	query := `SELECT * FROM public.short_urls ORDER BY id DESC LIMIT $1 OFFSET $2`
+	err := DbSelect(query, &found, size, offset)
+	return found, err
+}
+
 // FindPagedShortUrls 分页查找短链接
 func FindPagedShortUrls(url string, page int, size int) ([]core.ShortUrl, error) {
 	found := []core.ShortUrl{}
