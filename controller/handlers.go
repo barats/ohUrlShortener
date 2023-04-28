@@ -124,6 +124,7 @@ func AdminAuthHandler() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("current_account", found.Account)
 		c.Next()
 	} // end of func
 }

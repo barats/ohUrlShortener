@@ -1,0 +1,44 @@
+{{define "users.html" -}}
+{{template "header.html" . -}}
+{{template "sidebar.html" . -}}
+<div class="pusher">
+{{template "admin-left-menu.html" . -}}
+{{template "admin-top-menu.html" . -}}
+<div id="admin-right-content" class="ui basic segment">  
+  <div class="ui grid stackable padded">
+    <div class="eight wide column">
+      <table class="ui celled striped table">
+        <thead>
+          <tr>            
+            <th>编号</th>
+            <th class="center aligned">用户名</th>
+            <th class="center aligned">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .users}}
+          <tr>
+            <td>{{.ID}}</td>
+            <td>{{.Account}}</td>
+            <td>sss</td>
+          </tr>
+          {{end}}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="14" class="center aligned">
+              {{if not .first_page}}
+              <a class="ui small labeled icon button" href="/admin/users?page={{sub .page 1}}"><i class="arrow alternate circle left outline icon"></i>上一页</a>
+              {{end}}
+              {{if not .last_page}}
+              <a class="ui small labeled icon button" href="/admin/users?page={{add .page 1}}"><i class="arrow alternate circle right outline icon"></i>下一页</a>              
+              {{end}} 
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div><!--end fo grid-->
+</div><!--end of segment-->
+</div><!--end of pusher-->
+{{end -}}

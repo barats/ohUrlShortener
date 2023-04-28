@@ -118,3 +118,14 @@ func NewUser(account, password string) error {
 
 	return nil
 }
+
+func GetPagedUsers(page, size int) ([]core.User, error) {
+	if page < 1 || size < 1 {
+		return nil, nil
+	}
+	found, err := storage.FindPagedUsers(page, size)
+	if err != nil {
+		return found, utils.RaiseError("内部错误，请联系管理员!")
+	}
+	return found, nil
+}

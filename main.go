@@ -250,6 +250,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.POST("/urls/state", controller.ChangeState)
 	admin.POST("/urls/delete", controller.DeleteShortUrl)
 	admin.POST("/access_logs_export", controller.AccessLogsExport)
+	admin.GET("/users", controller.UsersPage)
 
 	api := router.Group("/api", controller.APIAuthHandler())
 	api.POST("/account", controller.APINewAdmin)

@@ -16,6 +16,18 @@ func FindAllUsers() ([]core.User, error) {
 	return found, DbSelect(query, &found)
 }
 
+func FindPagedUsers(page, size int) ([]core.User, error) {
+	var found []core.User
+
+	if page > 0 && size > 0 {
+		offset := (page - 1) * size
+		query := `SELECT * FROM public.users u ORDER BY u.id DESC LIMIT $1 OFFSET $2`
+		return found, DbSelect(query, &found, size, offset)
+	}
+
+	return found, nil
+}
+
 // NewUser 新建用户
 func NewUser(account string, password string) error {
 	query := `INSERT INTO public.users (account, "password") VALUES(:account,:password)`

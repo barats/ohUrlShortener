@@ -36,6 +36,32 @@ func LoginPage(c *gin.Context) {
 	})
 }
 
+// Users Page
+func UsersPage(c *gin.Context) {
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DefaultPageNum
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DefaultPageSize
+	}
+
+	found, err := service.GetPagedUsers(page, size)
+	c.HTML(http.StatusOK, "users.html", gin.H{
+		"title":       "用户管理 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+		"users":       found,
+		"error":       err,
+		"page":        page,
+		"size":        size,
+		"first_page":  page == 1,
+		"last_page":   len(found) < size,
+	})
+}
+
 // DoLogin 登录
 func DoLogin(c *gin.Context) {
 	account := c.PostForm("account")

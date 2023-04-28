@@ -8,7 +8,9 @@ import (
 
 func TestNewUser(t *testing.T) {
 	init4Test(t)
-	NewUser("ohUrlShortener", "-2aDzm=0(ln_9^1")
+	// NewUser("ohUrlShortener", "-2aDzm=0(ln_9^1")
+	NewUser("ohUrlShortener1", "-2aDzm=0(ln_9^1")
+	NewUser("ohUrlShortener2", "-2aDzm=0(ln_9^1")
 }
 
 func init4Test(t *testing.T) {
