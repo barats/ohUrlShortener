@@ -11,6 +11,7 @@ type User struct {
 	Account   string    `db:"account"`
 	CreatedAt time.Time `db:"created_at"`
 	Password  string    `db:"password"`
+	Enabled   bool      `db:"is_enable" json:"is_enable"`
 }
 
 // IsEmpty 判断是否为空

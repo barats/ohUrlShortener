@@ -35,6 +35,7 @@ CREATE TABLE public.users (
 	account varchar(200) NOT NULL,
 	password text NOT NULL,			
 	created_at timestamp with time zone NOT NULL DEFAULT NOW(), 
+	is_enable bool NOT NULL DEFAULT true,	 
 	CONSTRAINT users_pk PRIMARY KEY (id),
 	CONSTRAINT users_account_un UNIQUE (account)
 );
