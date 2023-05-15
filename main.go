@@ -119,6 +119,7 @@ func initSettings() {
 	}
 
 	_, err = storage.InitDatabaseService()
+	storage.CallProcedureStatsIPSum() //recalculate when ohUrlShortener starts
 	storage.CallProcedureStatsTop25() // recalculate when ohUrlShortener starts
 	storage.CallProcedureStatsSum()   // recalculate when ohUrlShortener starts
 	utils.ExitOnError("Database initialization failed.", err)

@@ -11,8 +11,6 @@ CREATE TABLE public.short_urls (
 	created_at timestamp with time zone NOT NULL DEFAULT now(),
 	is_valid bool NOT NULL DEFAULT true,	
 	memo text,
-	creator_account text,
-	creator_id serial4,
 	CONSTRAINT short_urls_pk PRIMARY KEY (id),
 	CONSTRAINT short_urls_un UNIQUE (short_url)
 );

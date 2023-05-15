@@ -26,7 +26,6 @@
             <th>短链接</th>
             <th class="center aligned collapsing">生成时间</th>
             <th>备注信息</th>  
-            <th>创建人</th>  
             <th class="center aligned collapsing">是否有效</th>                      
             <th class="center aligned">目标链接</th>
             <th class="center aligned">操作</th>       
@@ -38,7 +37,6 @@
             <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a></td>
             <td class="center aligned collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
             <td>{{.Memo.String}}</td>
-            <td>{{.CreatorAccount}}</td>
             <td class="center aligned">{{.Valid}}</td>            
             <td class="center aligned collapsing"><a href="{{.DestUrl}}" target="_blank">打开链接</a></td>                                   
             <td class="center aligned">
