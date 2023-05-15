@@ -20,7 +20,7 @@ func TestGenerateShortUrl(t *testing.T) {
 
 	for i := 0; i < 100000; i++ {
 		url := faker.URL()
-		_, err := GenerateShortUrl(url, url+" | memo")
+		_, err := GenerateShortUrl(url, url+" | memo", 0)
 		if err != nil {
 			t.Error(err)
 			continue

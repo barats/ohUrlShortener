@@ -182,13 +182,18 @@ func DeleteShortUrl(c *gin.Context) {
 func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")
+	strOpenType := c.PostForm("open_type")
+	openType, err := strconv.Atoi(strOpenType)
+	if err != nil {
+		openType = int(core.OpenInAll)
+	}
 
 	if utils.EmptyString(destUrl) {
 		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不能为空！"))
 		return
 	}
 
-	result, err := service.GenerateShortUrl(destUrl, memo)
+	result, err := service.GenerateShortUrl(destUrl, memo, openType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
 		return

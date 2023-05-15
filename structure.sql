@@ -11,6 +11,7 @@ CREATE TABLE public.short_urls (
 	created_at timestamp with time zone NOT NULL DEFAULT now(),
 	is_valid bool NOT NULL DEFAULT true,	
 	memo text,
+	open_type int8 NOT NULL DEFAULT 0,
 	CONSTRAINT short_urls_pk PRIMARY KEY (id),
 	CONSTRAINT short_urls_un UNIQUE (short_url)
 );
@@ -42,11 +43,11 @@ CREATE TABLE public.users (
 INSERT INTO public.users (account, "password") VALUES('ohUrlShortener', 'EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t');
 
 -- Insert new data
-INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo,creator_id,creator_account) VALUES
-	('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', NOW(), true, '短链接系统 gitlink 页面',1,'ohUrlShortener'),
-	('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', NOW(), true, '短链接系统 gitee 页面',1,'ohUrlShortener'),
-	('gkT39tb5', 'https://github.com/barats/ohUrlShortener', NOW(), true, '短链接系统 github 页面',1,'ohUrlShortener'),
-	('9HtCr7YN', 'https://www.ohurls.cn', NOW(), true, 'ohUrlShortener 短链接系统首页',1,'ohUrlShortener');
+INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo,open_type) VALUES
+	('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', NOW(), true, '短链接系统 gitlink 页面',0),
+	('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', NOW(), true, '短链接系统 gitee 页面',0),
+	('gkT39tb5', 'https://github.com/barats/ohUrlShortener', NOW(), true, '短链接系统 github 页面',0),
+	('9HtCr7YN', 'https://www.ohurls.cn', NOW(), true, 'ohUrlShortener 短链接系统首页',0);
 
 
 -- Create table for top25 urls
