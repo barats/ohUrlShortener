@@ -83,8 +83,8 @@ func FindPagedShortUrls(url string, page int, size int) ([]core.ShortUrl, error)
 
 // InsertShortUrl 插入短链接
 func InsertShortUrl(url core.ShortUrl) error {
-	query := `INSERT INTO public.short_urls (short_url, dest_url, created_at, is_valid, memo)
-	 VALUES(:short_url,:dest_url,:created_at,:is_valid,:memo)`
+	query := `INSERT INTO public.short_urls (short_url, dest_url, created_at, is_valid, memo,open_type)
+	 VALUES(:short_url,:dest_url,:created_at,:is_valid,:memo,:open_type)`
 	return DbNamedExec(query, url)
 }
 
