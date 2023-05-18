@@ -14,7 +14,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-const Version = "1.9"
+const Version = "2.0"
 
 var (
 	DatabaseConfig     DatabaseConfigInfo
