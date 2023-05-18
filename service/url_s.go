@@ -10,6 +10,7 @@ package service
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -24,49 +25,60 @@ import (
 // 从数据库中获取所有「有效」状态的短链接
 // 并将其可以 key-> value 形式存入 Redis 中
 func ReloadUrls() (bool, error) {
-	// 把所有访问日志记录到数据库中
-	err := StoreAccessLogs()
+
+	//Get total count to calculate page size
+	count, err := storage.GetUrlCount()
 	if err != nil {
 		log.Println(err)
 		return false, utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	// 找出所有已经配置好的短链接
-	urls, err := storage.FindAllShortUrls()
-	if err != nil {
-		log.Println(err)
-		return false, utils.RaiseError("内部错误，请联系管理员")
-	}
+	if count > 0 {
+		// query for all urls by page
+		totalPageCount := (count / 100) + 1 //100 at a time
 
-	// 清理 redis db
-	err = storage.RedisFlushDB()
-	if err != nil {
-		log.Println(err)
-		return false, utils.RaiseError("内部错误，请联系管理员")
-	}
-
-	// 将所有「有效」状态的短域名再次放入 Redis
-	for _, url := range urls {
-		if url.Valid {
-			err := storage.RedisSet4Ever(url.ShortUrl, url.DestUrl)
+		for i := 1; i <= totalPageCount; i++ {
+			urls, err := storage.FindAllShortUrlsByPage(i, 100)
 			if err != nil {
 				log.Println(err)
 				continue
 			}
+			go func() {
+				for _, url := range urls {
+					if url.Valid {
+						mu := core.MemShortUrl{DestUrl: url.DestUrl, OpenType: url.OpenType}
+						res, err := json.Marshal(mu)
+						if err != nil {
+							log.Println(err)
+							continue
+						}
+						err = storage.RedisSet4Ever(url.ShortUrl, res)
+						if err != nil {
+							log.Println(err)
+							continue
+						}
+					}
+				} // end of for
+			}()
 		}
-	} // end of for
+	}
 	return true, nil
 }
 
 // Search4ShortUrl
 //
 // 从 Redis 中查询目标短链接是否存在
-func Search4ShortUrl(shortUrl string) (destUrl string, err error) {
-	if destUrl, err = storage.RedisGetString(shortUrl); err != nil {
+func Search4ShortUrl(shortUrl string) (url core.MemShortUrl, err error) {
+	mu := core.MemShortUrl{}
+	found, err := storage.RedisGetString(shortUrl)
+	if err != nil {
 		log.Println(err)
-		return "", utils.RaiseError("内部错误，请联系管理员")
+		return mu, utils.RaiseError("内部错误，请联系管理员")
 	}
-	return destUrl, nil
+	if utils.EmptyString(found) {
+		return mu, nil
+	}
+	return mu, json.Unmarshal([]byte(found), &mu)
 }
 
 // GetPagesShortUrls
@@ -87,7 +99,7 @@ func GetPagesShortUrls(url string, page int, size int) ([]core.ShortUrl, error) 
 // GenerateShortUrl
 //
 // 生成短链接
-func GenerateShortUrl(destUrl string, memo string) (string, error) {
+func GenerateShortUrl(destUrl string, memo string, openType int) (string, error) {
 	shortUrl, err := core.GenerateShortLink(destUrl)
 	if err != nil {
 		log.Println(err)
@@ -116,6 +128,7 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 		CreatedAt: time.Now(),
 		Valid:     true,
 		Memo:      nsMemo,
+		OpenType:  core.OpenType(openType),
 	}
 
 	if err := storage.InsertShortUrl(url); err != nil {
@@ -123,7 +136,13 @@ func GenerateShortUrl(destUrl string, memo string) (string, error) {
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
 
-	if err := storage.RedisSet4Ever(shortUrl, destUrl); err != nil {
+	mu := core.MemShortUrl{DestUrl: url.DestUrl, OpenType: url.OpenType}
+	res, err := json.Marshal(mu)
+	if err != nil {
+		return "", utils.RaiseError("内部错误，请联系管理员")
+	}
+
+	if err := storage.RedisSet4Ever(shortUrl, res); err != nil {
 		log.Println(err)
 		return "", utils.RaiseError("内部错误，请联系管理员")
 	}
@@ -152,7 +171,12 @@ func ChangeState(shortUrl string, enable bool) (bool, error) {
 	}
 
 	if enable {
-		storage.RedisSet4Ever(found.ShortUrl, found.DestUrl)
+		mu := core.MemShortUrl{DestUrl: found.DestUrl, OpenType: found.OpenType}
+		res, err := json.Marshal(mu)
+		if err != nil {
+			return false, utils.RaiseError("内部错误，请联系管理员")
+		}
+		storage.RedisSet4Ever(found.ShortUrl, res)
 	} else {
 		storage.RedisDelete(found.ShortUrl)
 	}

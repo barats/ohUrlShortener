@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+  $('.ui.dropdown').dropdown();
+
   $('#login-form')
     .form({
       fields: {
@@ -96,6 +99,7 @@ $(document).ready(function() {
     $('#btn-gen-short-url').click(function() {
       var destUrl = $('#input_dest_url');
       var memo = $('#input_demo');
+      var openType = $('#input_open_type')
       if( $.trim(destUrl.val()).length <= 0) {
         errorToast('目标链接不能为空！');
         destUrl.parent().addClass('error');
@@ -104,7 +108,8 @@ $(document).ready(function() {
       
       var data = {
         "dest_url": $.trim(destUrl.val()),
-        "memo": $.trim(memo.val())
+        "memo": $.trim(memo.val()),
+        "open_type": $.trim(openType.val()),
       };
 
       $.ajax({

@@ -17,13 +17,10 @@ import (
 func TestGenerateShortUrl(t *testing.T) {
 
 	init4Test(t)
-	if err := StoreAccessLogs(); err != nil {
-		t.Error(err)
-	}
 
 	for i := 0; i < 100000; i++ {
 		url := faker.URL()
-		_, err := GenerateShortUrl(url, url)
+		_, err := GenerateShortUrl(url, url+" | memo", 0)
 		if err != nil {
 			t.Error(err)
 			continue

@@ -11,17 +11,10 @@ CREATE TABLE public.short_urls (
 	created_at timestamp with time zone NOT NULL DEFAULT now(),
 	is_valid bool NOT NULL DEFAULT true,	
 	memo text,
+	open_type int8 NOT NULL DEFAULT 0,
 	CONSTRAINT short_urls_pk PRIMARY KEY (id),
 	CONSTRAINT short_urls_un UNIQUE (short_url)
 );
-
--- Insert new data
-INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo) VALUES
-	('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', NOW(), true, '短链接系统 gitlink 页面'),
-	('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', NOW(), true, '短链接系统 gitee 页面'),
-	('gkT39tb5', 'https://github.com/barats/ohUrlShortener', NOW(), true, '短链接系统 github 页面'),
-	('9HtCr7YN', 'https://www.ohurls.cn', NOW(), true, 'ohUrlShortener 短链接系统首页');
-
 
 CREATE TABLE public.access_logs (
 	id serial4 NOT NULL,
@@ -40,12 +33,21 @@ CREATE TABLE public.users (
   id serial4 NOT NULL,
 	account varchar(200) NOT NULL,
 	password text NOT NULL,			
+	created_at timestamp with time zone NOT NULL DEFAULT NOW(), 
+	is_enable bool NOT NULL DEFAULT true,	 
 	CONSTRAINT users_pk PRIMARY KEY (id),
 	CONSTRAINT users_account_un UNIQUE (account)
 );
 
 -- account: ohUrlShortener password: -2aDzm=0(ln_9^1
 INSERT INTO public.users (account, "password") VALUES('ohUrlShortener', 'EZ2zQjC3fqbkvtggy9p2YaJiLwx1kKPTJxvqVzowtx6t');
+
+-- Insert new data
+INSERT INTO public.short_urls(short_url, dest_url, created_at, is_valid, memo,open_type) VALUES
+	('AC7VgPE9', 'https://www.gitlink.org.cn/baladiwei/ohurlshortener', NOW(), true, '短链接系统 gitlink 页面',0),
+	('AvTkHZP7', 'https://gitee.com/barat/ohurlshortener', NOW(), true, '短链接系统 gitee 页面',0),
+	('gkT39tb5', 'https://github.com/barats/ohUrlShortener', NOW(), true, '短链接系统 github 页面',0),
+	('9HtCr7YN', 'https://www.ohurls.cn', NOW(), true, 'ohUrlShortener 短链接系统首页',0);
 
 
 -- Create table for top25 urls

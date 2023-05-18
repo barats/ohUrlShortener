@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 //
-// Custom redis storage for captcha, Accroding to https://github.com/dchest/captcha/blob/master/store.go
+// Custom redis storage for captcha, According to https://github.com/dchest/captcha/blob/master/store.go
 //
 // An object implementing Store interface can be registered with SetCustomStore
 // function to handle storage and retrieval of captcha ids and solutions for

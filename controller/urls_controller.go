@@ -11,6 +11,7 @@ package controller
 import (
 	"net/http"
 
+	"ohurlshortener/core"
 	"ohurlshortener/service"
 	"ohurlshortener/utils"
 
@@ -30,7 +31,7 @@ func ShortUrlDetail(c *gin.Context) {
 		return
 	}
 
-	destUrl, err := service.Search4ShortUrl(url)
+	memUrl, err := service.Search4ShortUrl(url)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"title":   "内部错误 - ohUrlShortener",
@@ -41,7 +42,7 @@ func ShortUrlDetail(c *gin.Context) {
 		return
 	}
 
-	if utils.EmptyString(destUrl) {
+	if utils.EmptyString(memUrl.DestUrl) {
 		c.HTML(http.StatusNotFound, "error.html", gin.H{
 			"title":   "404 - ohUrlShortener",
 			"code":    http.StatusNotFound,
@@ -51,6 +52,71 @@ func ShortUrlDetail(c *gin.Context) {
 		return
 	}
 
-	go service.NewAccessLog(url, c.ClientIP(), c.Request.UserAgent(), c.Request.Referer())
-	c.Redirect(http.StatusFound, destUrl)
+	ua := c.Request.UserAgent()
+	switch ot := memUrl.OpenType; ot {
+	case core.OpenInAndroid:
+		if utils.IsAndroid(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInDingTalk:
+		if utils.IsDingTalk(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInChrome:
+		if utils.IsChrome(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInIPad:
+		if utils.IsIPad(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInIPhone:
+		if utils.IsIPhone(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInSafari:
+		if utils.IsSafari(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInWeChat:
+		if utils.IsWeChatUA(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInFirefox:
+		if utils.IsFirefox(ua) {
+			redirectSuccess(url, memUrl.DestUrl, c)
+		} else {
+			redirectFail(c)
+		}
+	case core.OpenInAll:
+		redirectSuccess(url, memUrl.DestUrl, c)
+	}
+}
+
+func redirectSuccess(shortUrl, destUrl string, ctx *gin.Context) {
+	ctx.Redirect(http.StatusFound, destUrl)
+	go service.NewAccessLog(shortUrl, ctx.ClientIP(), ctx.Request.UserAgent(), ctx.Request.Referer())
+}
+
+func redirectFail(ctx *gin.Context) {
+	ctx.HTML(http.StatusNotFound, "error.html", gin.H{
+		"title":   "404 - ohUrlShortener",
+		"code":    http.StatusNotFound,
+		"message": "不支持的打开方式",
+		"label":   "Status Not Found",
+	})
 }

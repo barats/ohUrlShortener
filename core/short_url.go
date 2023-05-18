@@ -17,6 +17,20 @@ import (
 	"ohurlshortener/utils"
 )
 
+type OpenType int
+
+const (
+	OpenInAll OpenType = iota
+	OpenInWeChat
+	OpenInDingTalk
+	OpenInIPhone
+	OpenInAndroid
+	OpenInIPad
+	OpenInSafari
+	OpenInChrome
+	OpenInFirefox
+)
+
 // ShortUrl 短链接
 type ShortUrl struct {
 	ID        int64          `db:"id" json:"id"`
@@ -25,6 +39,12 @@ type ShortUrl struct {
 	CreatedAt time.Time      `db:"created_at" json:"created_at"`
 	Valid     bool           `db:"is_valid" json:"is_valid"`
 	Memo      sql.NullString `db:"memo" json:"memo"`
+	OpenType  OpenType       `db:"open_type" json:"open_type"`
+}
+
+type MemShortUrl struct {
+	DestUrl  string
+	OpenType OpenType
 }
 
 // IsEmpty 判断是否为空

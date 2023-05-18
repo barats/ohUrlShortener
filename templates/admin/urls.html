@@ -26,6 +26,7 @@
             <th>短链接</th>
             <th class="center aligned collapsing">生成时间</th>
             <th>备注信息</th>  
+            <th>打开方式</th>
             <th class="center aligned collapsing">是否有效</th>                      
             <th class="center aligned">目标链接</th>
             <th class="center aligned">操作</th>       
@@ -37,6 +38,29 @@
             <td class="collapsing"><a href="{{$.prefix}}{{.ShortUrl}}" target="_blank">{{.ShortUrl}}</a></td>
             <td class="center aligned collapsing">{{.CreatedAt | date "2006-01-02 15:04:05"}}</td>
             <td>{{.Memo.String}}</td>
+            <td>
+              {{if eq 0 .OpenType}}
+              不限制
+              {{else if eq 1 .OpenType}}
+              微信内打开
+              {{else if eq 2 .OpenType}}
+              钉钉内打开
+              {{else if eq 3 .OpenType}}
+              iPhone 打开
+              {{else if eq 4 .OpenType}}
+              Android 打开
+              {{else if eq 5 .OpenType}}
+              iPad 打开
+              {{else if eq 6 .OpenType}}
+              Safari 浏览器
+              {{else if eq 7 .OpenType}}
+              Chrome 浏览器
+              {{else if eq 8 .OpenType}}
+              Firefox 浏览器
+              {{else}}
+                不确定
+              {{end}}
+            </td>
             <td class="center aligned">{{.Valid}}</td>            
             <td class="center aligned collapsing"><a href="{{.DestUrl}}" target="_blank">打开链接</a></td>                                   
             <td class="center aligned">
@@ -77,6 +101,20 @@
         <div class="field">
           <label>目标链接</label>
           <textarea id="input_dest_url" name="dest_url" rows="1"></textarea>
+        </div>
+        <div class="field">
+          <label>打开方式</label>
+          <select id="input_open_type" name="open_type" class="ui search dropdown" name="open_type">
+            <option value="0">不限制</option>
+            <option value="1">微信内打开</option>
+            <option value="2">钉钉内打开</option>
+            <option value="3">iPhone 打开</option>
+            <option value="4">Android 打开</option>
+            <option value="5">iPad 打开</option>
+            <option value="6">Safari 浏览器</option>
+            <option value="7">Chrome 浏览器</option>
+            <option value="8">Firefox 浏览器</option>
+          </select>
         </div>
         <div class="field">
           <label>备注</label>

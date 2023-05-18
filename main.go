@@ -71,22 +71,22 @@ func main() {
 
 	initSettings()
 
-	router01, err := initializeRoute01()
-	utils.ExitOnError("Router01 initialize failed.", err)
+	portalRoutes, err := initPortalRoutes()
+	utils.ExitOnError("Portal Routes initialization failed.", err)
 
-	router02, err := initializeRoute02()
-	utils.ExitOnError("Router02 initialize failed.", err)
+	adminRoutes, err := initAdminRoutes()
+	utils.ExitOnError("Admin Routes initialization failed.", err)
 
 	portal := &http.Server{
 		Addr:         fmt.Sprintf(":%d", utils.AppConfig.Port),
-		Handler:      router01,
+		Handler:      portalRoutes,
 		ReadTimeout:  WebReadTimeout,
 		WriteTimeout: WebWriteTimeout,
 	}
 
 	admin := &http.Server{
 		Addr:         fmt.Sprintf(":%d", utils.AppConfig.AdminPort),
-		Handler:      router02,
+		Handler:      adminRoutes,
 		ReadTimeout:  WebReadTimeout,
 		WriteTimeout: WebWriteTimeout,
 	}
@@ -107,7 +107,6 @@ func main() {
 }
 
 func initSettings() {
-	// Things MUST BE DONE before app starts
 	_, err := utils.InitConfig(cmdConfig)
 	utils.ExitOnError("Config initialization failed.", err)
 
@@ -120,9 +119,13 @@ func initSettings() {
 	}
 
 	_, err = storage.InitDatabaseService()
+	storage.CallProcedureStatsIPSum() //recalculate when ohUrlShortener starts
 	storage.CallProcedureStatsTop25() // recalculate when ohUrlShortener starts
 	storage.CallProcedureStatsSum()   // recalculate when ohUrlShortener starts
 	utils.ExitOnError("Database initialization failed.", err)
+
+	err = service.StoreAccessLogs()
+	utils.PrintOnError("StoreAccessLogs failed.", err)
 
 	_, err = service.ReloadUrls()
 	utils.PrintOnError("Reload urls failed.", err)
@@ -134,7 +137,7 @@ func initSettings() {
 func startPortal(g errgroup.Group, server http.Server) {
 	group.Go(func() error {
 		log.Println("[StoreAccessLog] ticker starts to serve")
-		return startTicker1()
+		return startAccessLogsTicker()
 	})
 
 	group.Go(func() error {
@@ -147,17 +150,17 @@ func startAdmin(g errgroup.Group, server http.Server) {
 
 	group.Go(func() error {
 		log.Println("[Top25Urls] ticker starts to serve")
-		return startTicker2()
+		return startTop25StatsTicker()
 	})
 
 	group.Go(func() error {
 		log.Println("[StatsIpSum] ticker starts to serve")
-		return startTicker3()
+		return startIPSumStatsTicker()
 	})
 
 	group.Go(func() error {
 		log.Println("[StatsSum] ticker starts to serve")
-		return startTicker4()
+		return startSumStatsTicker()
 	})
 
 	group.Go(func() error {
@@ -166,7 +169,7 @@ func startAdmin(g errgroup.Group, server http.Server) {
 	})
 }
 
-func initializeRoute01() (http.Handler, error) {
+func initPortalRoutes() (http.Handler, error) {
 
 	if utils.AppConfig.Debug {
 		gin.SetMode(gin.DebugMode)
@@ -199,9 +202,9 @@ func initializeRoute01() (http.Handler, error) {
 		})
 	})
 	return router, nil
-} // end of router01
+} // end of initPortalRoutes
 
-func initializeRoute02() (http.Handler, error) {
+func initAdminRoutes() (http.Handler, error) {
 
 	if utils.AppConfig.Debug {
 		gin.SetMode(gin.DebugMode)
@@ -247,6 +250,7 @@ func initializeRoute02() (http.Handler, error) {
 	admin.POST("/urls/state", controller.ChangeState)
 	admin.POST("/urls/delete", controller.DeleteShortUrl)
 	admin.POST("/access_logs_export", controller.AccessLogsExport)
+	admin.GET("/users", controller.UsersPage)
 
 	api := router.Group("/api", controller.APIAuthHandler())
 	api.POST("/account", controller.APINewAdmin)
@@ -264,9 +268,9 @@ func initializeRoute02() (http.Handler, error) {
 		})
 	})
 	return router, nil
-} // end of router01
+} // end of initAdminRoutes
 
-func startTicker1() error {
+func startAccessLogsTicker() error {
 	redisTicker := time.NewTicker(AccessLogCleanInterval)
 	for range redisTicker.C {
 		log.Println("[StoreAccessLog] Start.")
@@ -278,7 +282,7 @@ func startTicker1() error {
 	return nil
 }
 
-func startTicker2() error {
+func startTop25StatsTicker() error {
 	top25Ticker := time.NewTicker(Top25CalcInterval)
 	for range top25Ticker.C {
 		log.Println("[Top25Urls Ticker] Start.")
@@ -290,7 +294,7 @@ func startTicker2() error {
 	return nil
 }
 
-func startTicker3() error {
+func startIPSumStatsTicker() error {
 	statsIpSumTicker := time.NewTicker(StatsIpSumCalcInterval)
 	for range statsIpSumTicker.C {
 		log.Println("[StatsIpSum Ticker] Start.")
@@ -302,7 +306,7 @@ func startTicker3() error {
 	return nil
 }
 
-func startTicker4() error {
+func startSumStatsTicker() error {
 	statsSumTicker := time.NewTicker(StatsSumCalcInterval)
 	for range statsSumTicker.C {
 		log.Println("[StatsSum Ticker] Start.")

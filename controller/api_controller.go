@@ -77,13 +77,18 @@ func APIAdminUpdate(ctx *gin.Context) {
 func APIGenShortUrl(ctx *gin.Context) {
 	url := ctx.PostForm("dest_url")
 	memo := ctx.PostForm("memo")
+	strOpenType := ctx.PostForm("open_type")
+	openType, err := strconv.Atoi(strOpenType)
+	if err != nil {
+		openType = int(core.OpenInAll)
+	}
 
 	if utils.EmptyString(strings.TrimSpace(url)) {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest("dest_url 不能为空"))
 		return
 	}
 
-	res, err := service.GenerateShortUrl(strings.TrimSpace(url), strings.TrimSpace(memo))
+	res, err := service.GenerateShortUrl(strings.TrimSpace(url), strings.TrimSpace(memo), openType)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, core.ResultJsonBadRequest(err.Error()))
 		return

@@ -36,6 +36,32 @@ func LoginPage(c *gin.Context) {
 	})
 }
 
+// Users Page
+func UsersPage(c *gin.Context) {
+	strPage := c.DefaultQuery("page", strconv.Itoa(DefaultPageNum))
+	strSize := c.DefaultQuery("size", strconv.Itoa(DefaultPageSize))
+	page, err := strconv.Atoi(strPage)
+	if err != nil {
+		page = DefaultPageNum
+	}
+	size, err := strconv.Atoi(strSize)
+	if err != nil {
+		size = DefaultPageSize
+	}
+
+	found, err := service.GetPagedUsers(page, size)
+	c.HTML(http.StatusOK, "users.html", gin.H{
+		"title":       "用户管理 - ohUrlShortener",
+		"current_url": c.Request.URL.Path,
+		"users":       found,
+		"error":       err,
+		"page":        page,
+		"size":        size,
+		"first_page":  page == 1,
+		"last_page":   len(found) < size,
+	})
+}
+
 // DoLogin 登录
 func DoLogin(c *gin.Context) {
 	account := c.PostForm("account")
@@ -156,13 +182,18 @@ func DeleteShortUrl(c *gin.Context) {
 func GenerateShortUrl(c *gin.Context) {
 	destUrl := c.PostForm("dest_url")
 	memo := c.PostForm("memo")
+	strOpenType := c.PostForm("open_type")
+	openType, err := strconv.Atoi(strOpenType)
+	if err != nil {
+		openType = int(core.OpenInAll)
+	}
 
 	if utils.EmptyString(destUrl) {
 		c.JSON(http.StatusBadRequest, core.ResultJsonError("目标链接不能为空！"))
 		return
 	}
 
-	result, err := service.GenerateShortUrl(destUrl, memo)
+	result, err := service.GenerateShortUrl(destUrl, memo, openType)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, core.ResultJsonError(err.Error()))
 		return
