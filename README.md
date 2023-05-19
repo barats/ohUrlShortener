@@ -121,7 +121,7 @@ api.PUT("/url/:url/change_state", controller.APIUpdateUrl)
 
 ## 短链接在应用启动时会存入 Redis 中
 
-所有短链接再系统启动时会以 `Key(short_url) -> Value(original_url)` 的形式存储在 Redis 中。
+所有短链接再系统启动时会以 `Key(short_url) -> Value(JSON{original_url,open_type})` 的形式存储在 Redis 中。
 
 ### 1. 为什么要这么做？  
 
@@ -267,6 +267,7 @@ See the Mulan PSL v2 for more details.
 7. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## ohUrlShortener 
+1. [ohUrlShortener 短链接系统 v2.0 发布，指定「打开方式」功能支持](https://www.oschina.net/news/241622/ohurlshortener-2-0-released)
 1. [ohUrlShortener 短链接系统 v1.9 发布，Redis Cluster 集群支持](https://www.oschina.net/news/230519/ohurlshortener-1-9-released)
 1. [ohUrlShortener 短链接系统 v1.8 发布，API 问题处理](https://www.oschina.net/news/228559/ohurlshortener-1-8-released)
 1. [ohUrlShortener 短链接系统 v1.7 发布，安全更新](https://www.oschina.net/news/211116/ohurlshortener-1-7-released)
