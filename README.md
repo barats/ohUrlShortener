@@ -281,3 +281,7 @@ See the Mulan PSL v2 for more details.
 5. Gitee [https://gitee.com/barat/ohurlshortener](https://gitee.com/barat/ohurlshortener)
 6. Github [https://github.com/barats/ohUrlShortener](https://github.com/barats/ohUrlShortener)
 7. Gitlink [https://www.gitlink.org.cn/baladiwei/ohurlshortener](https://www.gitlink.org.cn/baladiwei/ohurlshortener)
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/barats/ohUrlShortener.svg)](https://starchart.cc/barats/ohUrlShortener)
+
